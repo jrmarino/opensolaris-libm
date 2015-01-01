@@ -39,18 +39,18 @@ LIBM_ANSI_PRAGMA_WEAK(fmod,function)
 	movlpd	%xmm1,-16(%rbp)
 	movlpd	%xmm0,-8(%rbp)
 
-	movl	-12(%rbp),%eax		/ eax <-- hi_32(y)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(|y|)
-	orl	-16(%rbp),%eax		/ eax <-- lo_32(y)|hi_32(|y|)
+	movl	-12(%rbp),%eax		# eax <-- hi_32(y)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(|y|)
+	orl	-16(%rbp),%eax		# eax <-- lo_32(y)|hi_32(|y|)
 	je	.yzero
 
-	fldl	-16(%rbp)		/ y
-	fldl	-8(%rbp)		/ x
+	fldl	-16(%rbp)		# y
+	fldl	-8(%rbp)		# x
 .loop:
-	fprem				/ partial remainder
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check for incomplete reduction
-	jne	.loop			/ loop while reduction incomplete
+	fprem				# partial remainder
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check for incomplete reduction
+	jne	.loop			# loop while reduction incomplete
 	fstpl	-8(%rbp)
 	movsd	-8(%rbp),%xmm0
 	fstp	%st(0)

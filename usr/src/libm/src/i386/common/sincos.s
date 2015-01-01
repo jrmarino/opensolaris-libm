@@ -42,7 +42,7 @@ LIBM_ANSI_PRAGMA_WEAK(sincos,function)
 	je	.sincos1
 	cmpl	$2,%eax
 	je	.sincos2
-	/ n=3
+	# n=3
 	fchs
 	movl	12(%esp),%eax
 	fstpl	0(%eax)
@@ -51,7 +51,7 @@ LIBM_ANSI_PRAGMA_WEAK(sincos,function)
 	fwait
 	ret
 .sincos2:
-	/ n=2
+	# n=2
 	fchs
 	movl	16(%esp),%eax
 	fstpl	0(%eax)
@@ -61,7 +61,7 @@ LIBM_ANSI_PRAGMA_WEAK(sincos,function)
 	fwait
 	ret
 .sincos1:
-	/ n=1
+	# n=1
 	movl	12(%esp),%eax
 	fstpl	0(%eax)
 	fchs
@@ -70,7 +70,7 @@ LIBM_ANSI_PRAGMA_WEAK(sincos,function)
 	fwait
 	ret
 .sincos0:
-	/ n=0
+	# n=0
 	movl	16(%esp),%eax
 	fstpl	0(%eax)
 	movl	12(%esp),%eax

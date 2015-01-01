@@ -33,37 +33,37 @@ LIBM_ANSI_PRAGMA_WEAK(remquof,function)
 #include "libm_protos.h"
 
 	ENTRY(remquof)
-	flds	8(%esp)			/ load arg y
-	flds	4(%esp)			/ load arg x
+	flds	8(%esp)			# load arg y
+	flds	4(%esp)			# load arg x
 .Lremf_loop:
-	fprem1				/ partial remainder
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check whether reduction complete
-	jne	.Lremf_loop		/ while reduction incomplete, do fprem1
+	fprem1				# partial remainder
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check whether reduction complete
+	jne	.Lremf_loop		# while reduction incomplete, do fprem1
 	fstsw	%ax
 	fwait
 	fstp	%st(1)
 	movw	%ax,%dx
-	andw	$0x4000,%dx		/ get C3
+	andw	$0x4000,%dx		# get C3
 	sarw	$13,%dx
 	movw	%ax,%cx
-	andw	$0x100,%cx		/ get C0
+	andw	$0x100,%cx		# get C0
 	sarw	$6,%cx
 	addw	%cx,%dx
-	andw	$0x200,%ax		/ get C1
+	andw	$0x200,%ax		# get C1
 	sarw	$9,%ax
 	addw	%dx,%ax
 	cwtl	
-	movl	4(%esp),%edx		/ sign and bexp of x
-	movl	8(%esp),%ecx		/ sign and bexp of y
-	andl	$0x80000000,%edx	/ edx <- sign(x)
-	andl	$0x80000000,%ecx	/ ecx <- sign(y)
+	movl	4(%esp),%edx		# sign and bexp of x
+	movl	8(%esp),%ecx		# sign and bexp of y
+	andl	$0x80000000,%edx	# edx <- sign(x)
+	andl	$0x80000000,%ecx	# ecx <- sign(y)
 	cmpl	%edx,%ecx
 	je	.pos
-	negl	%eax			/ negative n
+	negl	%eax			# negative n
 .pos:
 	movl	12(%esp),%ecx
-	movl	%eax,0(%ecx)		/ last 3 significant bits of quotient
+	movl	%eax,0(%ecx)		# last 3 significant bits of quotient
 	ret
 	.align	4
 	SET_SIZE(remquof)

@@ -32,13 +32,13 @@ LIBM_ANSI_PRAGMA_WEAK(fmodl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(fmodl)
-	fldt	24(%rsp)		/ load arg y
-	fldt	8(%rsp)			/ load arg x
+	fldt	24(%rsp)		# load arg y
+	fldt	8(%rsp)			# load arg x
 .mod_loop:
-	fprem				/ partial fmod
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check for incomplete reduction
-	jne	.mod_loop		/ while incomplete, do fprem again
+	fprem				# partial fmod
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check for incomplete reduction
+	jne	.mod_loop		# while incomplete, do fprem again
 	fstp	%st(1)
 	ret
 	.align	16

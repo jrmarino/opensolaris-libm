@@ -39,28 +39,28 @@ LIBM_ANSI_PRAGMA_WEAK(remainder,function)
 	movlpd	%xmm1,-16(%rbp)
 	movlpd	%xmm0,-8(%rbp)
 
-	ucomisd %xmm0,%xmm1		/ if x or y is NaN, use fprem1
+	ucomisd %xmm0,%xmm1		# if x or y is NaN, use fprem1
 	jp	1f
 
-	movl	-12(%rbp),%eax		/ eax <-- hi_32(y)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(|y|)
-	orl	-16(%rbp),%eax		/ eax <-- lo_32(y)|hi_32(|y|)
+	movl	-12(%rbp),%eax		# eax <-- hi_32(y)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(|y|)
+	orl	-16(%rbp),%eax		# eax <-- lo_32(y)|hi_32(|y|)
 	je	.yzero_or_xinf
 
-	movl	-4(%rbp),%eax		/ eax <-- hi_32(x)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(|x|)
+	movl	-4(%rbp),%eax		# eax <-- hi_32(x)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(|x|)
 	cmpl	$0x7ff00000,%eax
 	jne	1f
 	cmpl	$0,-8(%rbp)
 	je	.yzero_or_xinf
 1:
-	fldl	-16(%rbp)		/ y
-	fldl	-8(%rbp)		/ x
+	fldl	-16(%rbp)		# y
+	fldl	-8(%rbp)		# x
 .rem_loop:
-	fprem1				/ partial remainder
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check for incomplete reduction
-	jne	.rem_loop		/ while incomplete, do fprem1 again
+	fprem1				# partial remainder
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check for incomplete reduction
+	jne	.rem_loop		# while incomplete, do fprem1 again
 	fstpl	-8(%rbp)
 	movsd	-8(%rbp),%xmm0
 	fstp	%st(0)

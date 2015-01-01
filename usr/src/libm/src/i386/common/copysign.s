@@ -32,19 +32,19 @@ LIBM_ANSI_PRAGMA_WEAK(copysign,function)
 #include "libm_synonyms.h"
 
 	ENTRY(copysign)
-	movl    8(%esp),%eax		/ eax <-- hi_32(x)
-	movl    16(%esp),%ecx		/ ecx <-- hi_32(y)
-	andl    $0x7fffffff,%eax	/ eax <-- hi_32(abs(x))
-	andl    $0x80000000,%ecx	/ ecx[31] <-- sign_bit(y)
-	orl     %ecx,%eax		/ eax <-- hi_32(copysign(x,y))
-	movl	4(%esp),%ecx		/ ecx <-- lo_32(x)
-					/	= lo_32(copysign(x,y))
-	subl	$8,%esp			/ set up loading dock for result
-	movl	%ecx,(%esp)		/ copy lo_32(result) to loading dock
-	movl    %eax,4(%esp)		/ copy hi_32(result) to loading dock
-	fldl    (%esp)			/ load copysign(x,y)
-	fwait				/ in case fldl causes exception
-	addl	$8,%esp			/ restore stack-pointer for return
+	movl    8(%esp),%eax		# eax <-- hi_32(x)
+	movl    16(%esp),%ecx		# ecx <-- hi_32(y)
+	andl    $0x7fffffff,%eax	# eax <-- hi_32(abs(x))
+	andl    $0x80000000,%ecx	# ecx[31] <-- sign_bit(y)
+	orl     %ecx,%eax		# eax <-- hi_32(copysign(x,y))
+	movl	4(%esp),%ecx		# ecx <-- lo_32(x)
+					#	= lo_32(copysign(x,y))
+	subl	$8,%esp			# set up loading dock for result
+	movl	%ecx,(%esp)		# copy lo_32(result) to loading dock
+	movl    %eax,4(%esp)		# copy hi_32(result) to loading dock
+	fldl    (%esp)			# load copysign(x,y)
+	fwait				# in case fldl causes exception
+	addl	$8,%esp			# restore stack-pointer for return
 	ret
 	.align	4
 	SET_SIZE(copysign)

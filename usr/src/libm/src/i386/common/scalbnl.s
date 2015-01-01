@@ -32,9 +32,9 @@ LIBM_ANSI_PRAGMA_WEAK(scalbnl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(scalbnl)
-	fildl	16(%esp)		/ convert 32-bit integer N
-					/ to extended-double
-	fldt	4(%esp)			/ push x
+	fildl	16(%esp)		# convert 32-bit integer N
+					# to extended-double
+	fldt	4(%esp)			# push x
 	fscale
 	fstp	%st(1)
 	ret

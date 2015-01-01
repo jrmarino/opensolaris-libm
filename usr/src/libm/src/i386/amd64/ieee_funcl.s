@@ -36,7 +36,7 @@ LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(isinfl)
-	movl	16(%rsp),%eax		/ ax <-- sign and bexp of x 
+	movl	16(%rsp),%eax		# ax <-- sign and bexp of x 
 	notl	%eax
 	andq	$0x7fff,%rax
 	jz	.L6
@@ -44,9 +44,9 @@ LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
 .not_inf:
 	ret
 
-.L6:					/ here, (eax) = 0.0
+.L6:					# here, (eax) = 0.0
 	movl	12(%rsp),%ecx
-	xorl	$0x80000000,%ecx	/ handle unsupported implicitly
+	xorl	$0x80000000,%ecx	# handle unsupported implicitly
 	orl	8(%rsp), %ecx
 	jnz	.not_inf
 	movq	$1,%rax
@@ -55,19 +55,20 @@ LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
 	SET_SIZE(isinfl)
 
 	ENTRY(isnormall)
-					/ TRUE iff (x is finite, but
-					/	    neither subnormal nor zero)
-					/      iff (msb(sgnfcnd(x) /= 0 
-					/	    &  0 < bexp(x) < 0x7fff)
-	movl	12(%rsp),%eax		/ eax <-- hi_32(sgnfcnd(x))
-	andq	$0x80000000,%rax	/ eax[31]  <-- msb(sgnfcnd(x)),
-					/ rest_of(eax) <-- 0
-	jz	.L8			/ jump iff msb(sgnfcnd(x)) = 0
-	movl	16(%rsp),%eax		/ ax <-- sign and bexp of x
-	notl	%eax			/ ax[0..14] <-- not(bexp(x))
-	andq	$0x7fff,%rax		/ eax  <-- zero_xtnd(not(bexp(x)))
-	jz	.L8			/ jump	iff bexp(x) = 0x7fff or 0
-	xorq	$0x7fff,%rax		/ treat pseudo-denormal as subnormal
+					# TRUE iff (x is finite, but
+					#	    neither subnormal nor zero)
+					#      iff (msb(sgnfcnd(x) /= 0 
+					#	    &  0 < bexp(x) < 0x7fff)
+	movl	12(%rsp),%eax		# eax <-- hi_32(sgnfcnd(x))
+	movq	$0x80000000,%rbx	# intermediate > 32 bits -> register
+	andq	%rbx,%rax		# eax[31]  <-- msb(sgnfcnd(x)),
+					# rest_of(eax) <-- 0
+	jz	.L8			# jump iff msb(sgnfcnd(x)) = 0
+	movl	16(%rsp),%eax		# ax <-- sign and bexp of x
+	notl	%eax			# ax[0..14] <-- not(bexp(x))
+	andq	$0x7fff,%rax		# eax  <-- zero_xtnd(not(bexp(x)))
+	jz	.L8			# jump	iff bexp(x) = 0x7fff or 0
+	xorq	$0x7fff,%rax		# treat pseudo-denormal as subnormal
 	jz	.L8
 	movq	$1,%rax
 .L8:
@@ -76,19 +77,19 @@ LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
 	SET_SIZE(isnormall)
 
 	ENTRY(issubnormall)
-					/ TRUE iff (bexp(x) = 0 &
-					/ msb(sgnfcnd(x)) = 0 & frac(x) /= 0)
-	movl	12(%rsp),%eax		/ eax <-- hi_32(sgnfcnd(x))
-	testl	$0x80000000,%eax	/ eax[31] = msb(sgnfcnd(x));
-					/ set ZF if it's 0.
-	jz	.may_be_subnorm		/ jump iff msb(sgnfcnd(x)) = 0
+					# TRUE iff (bexp(x) = 0 &
+					# msb(sgnfcnd(x)) = 0 & frac(x) /= 0)
+	movl	12(%rsp),%eax		# eax <-- hi_32(sgnfcnd(x))
+	testl	$0x80000000,%eax	# eax[31] = msb(sgnfcnd(x));
+					# set ZF if it's 0.
+	jz	.may_be_subnorm		# jump iff msb(sgnfcnd(x)) = 0
 .not_subnorm:
 	movq	$0,%rax
 	ret
 .may_be_subnorm:
-	testl	$0x7fff,16(%rsp)	/ set ZF iff bexp(x)  = 0
-	jnz	.not_subnorm		/ jump   iff bexp(x) /= 0
-	orl	8(%rsp),%eax		/ (eax) = 0 iff sgnfcnd(x) = 0
+	testl	$0x7fff,16(%rsp)	# set ZF iff bexp(x)  = 0
+	jnz	.not_subnorm		# jump   iff bexp(x) /= 0
+	orl	8(%rsp),%eax		# (eax) = 0 iff sgnfcnd(x) = 0
 	jz	.not_subnorm
 	movq	$1,%rax
 	ret
@@ -96,25 +97,25 @@ LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
 	SET_SIZE(issubnormall)
 
 	ENTRY(iszerol)
-	movl	16(%rsp),%eax		/ ax <-- sign and bexp of x
-	andl	$0x7fff,%eax		/ eax <-- zero_xtnd(bexp(x))
-	jz	.may_be_zero		/ jump iff bexp(x) = 0
+	movl	16(%rsp),%eax		# ax <-- sign and bexp of x
+	andl	$0x7fff,%eax		# eax <-- zero_xtnd(bexp(x))
+	jz	.may_be_zero		# jump iff bexp(x) = 0
 .not_zero:
 	movq	$0,%rax
 	ret
-.may_be_zero:				/ here, (eax) = 0
-	orl	12(%rsp),%eax		/ is hi_32(sgnfcnd(x)) = 0?
-	jnz	.not_zero		/ jump iff hi_32(sgnfcnd(x)) /= 0
-	orl	8(%rsp),%eax		/ is lo_32(sgnfcnd(x)) = 0?
-	jnz	.not_zero		/ jump iff lo_32(sgnfcnd(x)) /= 0
+.may_be_zero:				# here, (eax) = 0
+	orl	12(%rsp),%eax		# is hi_32(sgnfcnd(x)) = 0?
+	jnz	.not_zero		# jump iff hi_32(sgnfcnd(x)) /= 0
+	orl	8(%rsp),%eax		# is lo_32(sgnfcnd(x)) = 0?
+	jnz	.not_zero		# jump iff lo_32(sgnfcnd(x)) /= 0
 	movq	$1,%rax
 	ret
 	.align	16
 	SET_SIZE(iszerol)
 
 	ENTRY(signbitl)
-	movl	16(%rsp),%eax		/ eax[15] <-- sign_bit(x)
-	shrl	$15,%eax		/ eax <-- zero_xtnd(sign_bit(x))
+	movl	16(%rsp),%eax		# eax[15] <-- sign_bit(x)
+	shrl	$15,%eax		# eax <-- zero_xtnd(sign_bit(x))
 	andq	$1,%rax
 	ret
 	.align	16

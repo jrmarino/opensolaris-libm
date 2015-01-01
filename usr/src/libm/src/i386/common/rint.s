@@ -32,12 +32,12 @@ LIBM_ANSI_PRAGMA_WEAK(rint,function)
 #include "libm_synonyms.h"
 
 	ENTRY(rint)
-	fldl	4(%esp)			/ load x
-	movl	8(%esp),%eax		/ eax <-- hi_32(x)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(|x|)
-	cmpl	$0x43300000,%eax	/ is |x| >= 2**52?
-	jae	.done			/ if so, branch (already integral)
-	frndint				/ [x], per rounding mode
+	fldl	4(%esp)			# load x
+	movl	8(%esp),%eax		# eax <-- hi_32(x)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(|x|)
+	cmpl	$0x43300000,%eax	# is |x| >= 2**52?
+	jae	.done			# if so, branch (already integral)
+	frndint				# [x], per rounding mode
 .done:
 	fwait
 	ret

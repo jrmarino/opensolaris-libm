@@ -33,34 +33,34 @@ LIBM_ANSI_PRAGMA_WEAK(atan2,function)
 #include "libm_protos.h"
 
 	ENTRY(atan2)
-	movl	4(%esp),%eax		/ low part of y
-	movl	12(%esp),%ecx		/ low part of x
+	movl	4(%esp),%eax		# low part of y
+	movl	12(%esp),%ecx		# low part of x
 	orl	%eax,%ecx
 	jz	.maybe_0s
 
-	/ not both x and y are 0's
+	# not both x and y are 0's
 1:
-	fldl	4(%esp)			/ push y
-	fldl	12(%esp)		/ push x
-	fpatan				/ return atan2(y,x)
+	fldl	4(%esp)			# push y
+	fldl	12(%esp)		# push x
+	fpatan				# return atan2(y,x)
 	ret
 
 .maybe_0s:
-	movl	8(%esp),%eax		/ high part of y
-	movl	16(%esp),%ecx		/ high part of x
+	movl	8(%esp),%eax		# high part of y
+	movl	16(%esp),%ecx		# high part of x
 	orl	%eax,%ecx
-	andl	$0x7fffffff,%ecx	/ clear sign
+	andl	$0x7fffffff,%ecx	# clear sign
 	jnz	1b
-	/ both x and y are 0's
+	# both x and y are 0's
 	pushl	%ebp
 	movl	%esp,%ebp
 	PIC_SETUP(1)
 	pushl	$3
-	pushl	12(%ebp)		/ high y
-	pushl	8(%ebp)			/ low y
-	pushl	20(%ebp)		/ high x
-	pushl	16(%ebp)		/ low x
-	call	PIC_F(_SVID_libm_err)	/ report SVID result/error
+	pushl	12(%ebp)		# high y
+	pushl	8(%ebp)			# low y
+	pushl	20(%ebp)		# high x
+	pushl	16(%ebp)		# low x
+	call	PIC_F(_SVID_libm_err)	# report SVID result/error
 	addl	$20,%esp
 	PIC_WRAPUP
 	leave

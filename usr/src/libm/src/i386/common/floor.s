@@ -39,16 +39,16 @@ LIBM_ANSI_PRAGMA_WEAK(floor,function)
 	orw	$0x0c00,%cx
 	xorw	$0x0800,%cx
 	movw	%cx,4(%esp)
-	fldcw	4(%esp)			/ set RD = down
+	fldcw	4(%esp)			# set RD = down
 	frndint
-	fstcw	4(%esp)			/ restore RD
+	fstcw	4(%esp)			# restore RD
 	movw	4(%esp),%dx
 	andw	$0xf3ff,%dx
 	movw	(%esp),%cx
 	andw	$0x0c00,%cx
 	orw	%dx,%cx
 	movw	%cx,(%esp)
-	fldcw	(%esp)			/ restore RD
+	fldcw	(%esp)			# restore RD
 	addl	$8,%esp
 	ret
 	.align	4

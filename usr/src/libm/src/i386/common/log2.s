@@ -32,9 +32,9 @@ LIBM_ANSI_PRAGMA_WEAK(log2,function)
 #include "libm_synonyms.h"
 
 	ENTRY(log2)
-	fld1			/ push 1.0
-	fldl	4(%esp)		/ push x
-	fyl2x			/ st = 1.0*log2(arg)
+	fld1			# push 1.0
+	fldl	4(%esp)		# push x
+	fyl2x			# st = 1.0*log2(arg)
 	ret
 	.align	4
 	SET_SIZE(log2)

@@ -32,8 +32,8 @@ LIBM_ANSI_PRAGMA_WEAK(scalbln,function)
 #include "libm_synonyms.h"
 
 	ENTRY(scalbln)
-	fildl	12(%esp)		/ convert N to extended
-	fldl	4(%esp)			/ push x
+	fildl	12(%esp)		# convert N to extended
+	fldl	4(%esp)			# push x
 	fscale
 	fstp	%st(1)
 	ret

@@ -32,8 +32,8 @@ LIBM_ANSI_PRAGMA_WEAK(rintl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(rintl)
-	fldt	4(%esp)			/ load x
-	frndint				/ [x], per rounding mode
+	fldt	4(%esp)			# load x
+	frndint				# [x], per rounding mode
 	fwait
 	ret
 	.align	4

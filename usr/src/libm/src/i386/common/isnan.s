@@ -41,23 +41,23 @@ isnand	= __isnan
 #include "libm_synonyms.h"
 
 	ENTRY(isnan)
-	movl    8(%esp),%eax		/ eax <-- hi_32(x)
-	andl    $0x7fffffff,%eax	/ eax <-- hi_32(abs(x))
-	subl    $0x7ff00000,%eax	/ weed out finite values
-	jae	.nan_or_inf		/ no jump if arg. is finite
-	movl	$0,%eax			/ ansi needs (eax) = 0
+	movl    8(%esp),%eax		# eax <-- hi_32(x)
+	andl    $0x7fffffff,%eax	# eax <-- hi_32(abs(x))
+	subl    $0x7ff00000,%eax	# weed out finite values
+	jae	.nan_or_inf		# no jump if arg. is finite
+	movl	$0,%eax			# ansi needs (eax) = 0
 	ret
 .nan_or_inf:
-	ja	.got_nan		/ no jump if arg. may be infinite;
-					/ let nan waste time
-					/ (eax) = 0 here
-	testl	$0xffffffff,4(%esp)	/ ZF <-- 1 iff lo_frac. = 0
-					/	   iff arg. is infinite
-	jnz	.got_nan		/ no jump if arg. is infinite;
+	ja	.got_nan		# no jump if arg. may be infinite;
+					# let nan waste time
+					# (eax) = 0 here
+	testl	$0xffffffff,4(%esp)	# ZF <-- 1 iff lo_frac. = 0
+					#	   iff arg. is infinite
+	jnz	.got_nan		# no jump if arg. is infinite;
 	ret
 .got_nan:
-	movl	$1,%eax			/ %eax was 0, must be made 1 to
-					/ indicate TRUE 
+	movl	$1,%eax			# %eax was 0, must be made 1 to
+					# indicate TRUE 
 	ret
 	.align	4
 	SET_SIZE(isnan)

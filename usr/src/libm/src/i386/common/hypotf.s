@@ -35,32 +35,32 @@ LIBM_ANSI_PRAGMA_WEAK(hypotf,function)
 #undef fabs
 
 	ENTRY(hypotf)
-	movl	4(%esp),%eax		/ eax <-- x
-	andl	$0x7fffffff,%eax	/ eax <-- |x|
-	jz	.return_abs_y		/ if x = +/-0, return |y|
-	subl	$0x7f800000,%eax	/ eax <-- |x| - INF
-	jz	.return_abs_x		/ if x = +/-INF, return |x|
-	movl	8(%esp),%eax		/ eax <-- y
-	andl	$0x7fffffff,%eax	/ eax <-- |y|
-	jz	.return_abs_x		/ if y = +/-0, return |x|
-	subl	$0x7f800000,%eax	/ eax <-- |y| - INF
+	movl	4(%esp),%eax		# eax <-- x
+	andl	$0x7fffffff,%eax	# eax <-- |x|
+	jz	.return_abs_y		# if x = +/-0, return |y|
+	subl	$0x7f800000,%eax	# eax <-- |x| - INF
+	jz	.return_abs_x		# if x = +/-INF, return |x|
+	movl	8(%esp),%eax		# eax <-- y
+	andl	$0x7fffffff,%eax	# eax <-- |y|
+	jz	.return_abs_x		# if y = +/-0, return |x|
+	subl	$0x7f800000,%eax	# eax <-- |y| - INF
 .return_abs_y:
-	flds	8(%esp)			/ y
-	jz	.take_abs		/ if y = +/-INF, return |y|
-	fmul	%st(0),%st		/ y*y
-	flds	4(%esp)			/ x,y*y
-	fmul	%st(0),%st		/ x*x,y*y
-	faddp	%st,%st(1)		/ x*x+y*y
-	fsqrt				/ sqrt(x*x+y*y)
+	flds	8(%esp)			# y
+	jz	.take_abs		# if y = +/-INF, return |y|
+	fmul	%st(0),%st		# y*y
+	flds	4(%esp)			# x,y*y
+	fmul	%st(0),%st		# x*x,y*y
+	faddp	%st,%st(1)		# x*x+y*y
+	fsqrt				# sqrt(x*x+y*y)
 	subl	$4,%esp
-	fstps	(%esp)			/ round to single
+	fstps	(%esp)			# round to single
 	flds	(%esp)
 	fwait
 	addl	$4,%esp
 	ret
 
 .return_abs_x:
-	/ returns |x|
+	# returns |x|
 	flds	4(%esp)
 .take_abs:
 	fabs	

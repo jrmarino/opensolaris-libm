@@ -32,22 +32,22 @@ LIBM_ANSI_PRAGMA_WEAK(copysignl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(copysignl)
-	movl    12(%esp),%eax		/ sign and bexp of x
-	movl    24(%esp),%ecx		/ sign and bexp of y
-	andl    $0x00007fff,%eax	/ eax <-- bexp(x)
-	andl    $0x00008000,%ecx	/ ecx <-- sign(y)
-	orl     %ecx,%eax		/ eax <-- bexp(x) with sign(y)
-	movl    8(%esp),%ecx		/ ecx <-- hi_32(sgnfcnd(x))
-	movl    4(%esp),%edx		/ edx <-- lo_32(sgnfcnd(x))
-	subl	$12,%esp		/ set up loading dock for result
-	movl	%edx,(%esp)		/ copy lo_32(result's sgnfcnd)
-					/ to loading dock
-	movl	%ecx,4(%esp)		/ copy hi_32(result's sgnfcnd)
-					/ to loading dock
-	movl    %eax,8(%esp)		/ copy sign&bexp(result)
-					/ to loading dock
-	fldt    (%esp)			/ load copysign(x,y)
-	addl	$12,%esp		/ restore stack-pointer for return
+	movl    12(%esp),%eax		# sign and bexp of x
+	movl    24(%esp),%ecx		# sign and bexp of y
+	andl    $0x00007fff,%eax	# eax <-- bexp(x)
+	andl    $0x00008000,%ecx	# ecx <-- sign(y)
+	orl     %ecx,%eax		# eax <-- bexp(x) with sign(y)
+	movl    8(%esp),%ecx		# ecx <-- hi_32(sgnfcnd(x))
+	movl    4(%esp),%edx		# edx <-- lo_32(sgnfcnd(x))
+	subl	$12,%esp		# set up loading dock for result
+	movl	%edx,(%esp)		# copy lo_32(result's sgnfcnd)
+					# to loading dock
+	movl	%ecx,4(%esp)		# copy hi_32(result's sgnfcnd)
+					# to loading dock
+	movl    %eax,8(%esp)		# copy sign&bexp(result)
+					# to loading dock
+	fldt    (%esp)			# load copysign(x,y)
+	addl	$12,%esp		# restore stack-pointer for return
 	ret
 	.align	4
 	SET_SIZE(copysignl)

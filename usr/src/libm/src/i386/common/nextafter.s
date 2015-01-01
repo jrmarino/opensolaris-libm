@@ -38,27 +38,27 @@ _nextafter	= __nextafter
 	.data
 	.align	8
 Fmin:	.long	0x1,0x0
-ftmp:	.long	0,0		/// WILL WRITE INTO
+ftmp:	.long	0,0		//# WILL WRITE INTO
 
 
 	ENTRY(nextafter)
 	pushl	%ebp
 	movl	%esp,%ebp
-	fldl	16(%ebp)	/ y
+	fldl	16(%ebp)	# y
 	subl	$8,%esp
-	fldl	8(%ebp)		/ load x
-	fucom			/ x : y
+	fldl	8(%ebp)		# load x
+	fucom			# x : y
 	fstsw	%ax
 	sahf
 	jp	.NaN
 	je	.equal
-	fstp	%st(1)		/ x
+	fstp	%st(1)		# x
 	ja	.bigger
-	/ x < y
+	# x < y
 	ftst
-	movl	$1,%ecx		/// Fmin
+	movl	$1,%ecx		//# Fmin
 	movl	%ecx,-8(%ebp)
-	movl	$0,%ecx		/// Fmin+4
+	movl	$0,%ecx		//# Fmin+4
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf
@@ -66,11 +66,11 @@ ftmp:	.long	0,0		/// WILL WRITE INTO
 	ja	.addulp
 	jb	.subulp
 .bigger:
-	/ x > y
+	# x > y
 	ftst
-	movl	$1,%ecx		/// Fmin
+	movl	$1,%ecx		//# Fmin
 	movl	%ecx,-8(%ebp)
-	movl	$0,%ecx		/// Fmin+4
+	movl	$0,%ecx		//# Fmin+4
 	xorl	$0x80000000,%ecx
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
@@ -78,17 +78,17 @@ ftmp:	.long	0,0		/// WILL WRITE INTO
 	je	.final
 	jb	.addulp
 .subulp:
-	movl	8(%ebp),%eax	/ low x
-	movl	12(%ebp),%ecx	/ high x
-	subl	$1,%eax		/ low x - ulp
+	movl	8(%ebp),%eax	# low x
+	movl	12(%ebp),%ecx	# high x
+	subl	$1,%eax		# low x - ulp
 	movl	%eax,-8(%ebp)
 	sbbl	$0x0,%ecx
 	movl	%ecx,-4(%ebp)
 	jmp	.final
 .addulp:
-	movl	8(%ebp),%eax	/ low x
-	movl	12(%ebp),%ecx	/ high x
-	addl	$1,%eax		/ low x + ulp
+	movl	8(%ebp),%eax	# low x
+	movl	12(%ebp),%ecx	# high x
+	addl	$1,%eax		# low x + ulp
 	movl	%eax,-8(%ebp)
 	adcl	$0x0,%ecx
 	movl	%ecx,-4(%ebp)
@@ -104,7 +104,7 @@ ftmp:	.long	0,0		/// WILL WRITE INTO
 .overflow:
 	PIC_SETUP(1)
 	pushl	$46
-	fstp	%st(0)		/ stack empty
+	fstp	%st(0)		# stack empty
 	pushl	-4(%ebp)
 	pushl	-8(%ebp)
 	pushl	-4(%ebp)
@@ -117,14 +117,14 @@ ftmp:	.long	0,0		/// WILL WRITE INTO
 	PIC_SETUP(2)
 	fldl	PIC_L(Fmin)
 	fmul	%st(0),%st
-	fstpl	PIC_L(ftmp)	/ create underflow signal
+	fstpl	PIC_L(ftmp)	# create underflow signal
 	PIC_WRAPUP
 	jmp	.return
 .equal:
-	fstp	%st(0)		/ C99 says to return y when x == y
+	fstp	%st(0)		# C99 says to return y when x == y
 	jmp	.return
 .NaN:
-	faddp	%st,%st(1)	/ x+y,x
+	faddp	%st,%st(1)	# x+y,x
 .return:
 	fwait
 	leave

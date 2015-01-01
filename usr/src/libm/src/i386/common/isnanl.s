@@ -32,21 +32,21 @@ LIBM_ANSI_PRAGMA_WEAK(isnanl,function)
 #include "libm_synonyms.h"
 
 	ENTRY(isnanl)
-	movl    12(%esp),%eax		/ ax <-- sign bit and exp
+	movl    12(%esp),%eax		# ax <-- sign bit and exp
 	andl    $0x00007fff,%eax
-	jz	.not_nan		/ jump if exp is all 0
+	jz	.not_nan		# jump if exp is all 0
 	xorl    $0x00007fff,%eax
-	jz	.nan_or_inf		/ jump if exp is all 1
+	jz	.nan_or_inf		# jump if exp is all 1
 	testl   $0x80000000,8(%esp)
-	jz	.got_nan		/ jump if leading bit is 0
+	jz	.got_nan		# jump if leading bit is 0
 	movl	$0,%eax
 .not_nan:
 	ret
-.nan_or_inf:				/ note that %eax = 0 from before
-	cmpl    $0x80000000,8(%esp)     / what is first half of significand?
-	jnz	.got_nan		/ jump if not equal to 0x80000000
-	testl	$0xffffffff,4(%esp)	/ is second half of significand 0?
-	jnz	.got_nan		/ jump if not equal to 0
+.nan_or_inf:				# note that %eax = 0 from before
+	cmpl    $0x80000000,8(%esp)     # what is first half of significand?
+	jnz	.got_nan		# jump if not equal to 0x80000000
+	testl	$0xffffffff,4(%esp)	# is second half of significand 0?
+	jnz	.got_nan		# jump if not equal to 0
 	ret
 .got_nan:
 	movl	$1,%eax

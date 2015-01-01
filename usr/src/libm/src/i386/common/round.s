@@ -44,9 +44,9 @@ LIBM_ANSI_PRAGMA_WEAK(round,function)
 	movw	-8(%ecx),%dx
 	andw	$0xf3ff,%dx
 	movw	%dx,-4(%ecx)
-	fldcw	-4(%ecx)		/ set RD = to_nearest
+	fldcw	-4(%ecx)		# set RD = to_nearest
 	fld	%st(0)
-	frndint				/ [x],x
+	frndint				# [x],x
 	fstcw	-4(%ecx)
 	movw	-4(%ecx),%dx
 	andw	$0xf3ff,%dx
@@ -54,30 +54,30 @@ LIBM_ANSI_PRAGMA_WEAK(round,function)
 	andw	$0x0c00,%ax
 	orw	%dx,%ax
 	movw	%ax,-8(%ecx)
-	fldcw	-8(%ecx)		/ restore RD
-	fucom				/ check if x is already an integer
+	fldcw	-8(%ecx)		# restore RD
+	fucom				# check if x is already an integer
 	fstsw	%ax
 	sahf
 	jp	0f
 	je	0f
-	fxch				/ x,[x]
-	fsub	%st(1),%st		/ x-[x],[x]
-	fabs				/ |x-[x]|,[x]
+	fxch				# x,[x]
+	fsub	%st(1),%st		# x-[x],[x]
+	fabs				# |x-[x]|,[x]
 	PIC_SETUP(1)
 	fcoms	PIC_L(.Lhalf)
 	PIC_WRAPUP
 	fnstsw	%ax
 	sahf
-	jae	2f			/ if |x-[x]| = 0.5 goto halfway, 
-					/ most cases will not take branch.
+	jae	2f			# if |x-[x]| = 0.5 goto halfway, 
+					# most cases will not take branch.
 0:
 	addl	$8,%esp
 	fstp	%st(0)
 	ret
 2:
-    / x = n+0.5, recompute round(x) as x+sign(x)*0.5
-	fldl	4(%ecx)			/ x, 0.5, [x]
-	movl	8(%ecx),%eax		/ high part of x
+    # x = n+0.5, recompute round(x) as x+sign(x)*0.5
+	fldl	4(%ecx)			# x, 0.5, [x]
+	movl	8(%ecx),%eax		# high part of x
 	andl	$0x80000000,%eax
 	jnz	3f
 	fadd
@@ -85,8 +85,8 @@ LIBM_ANSI_PRAGMA_WEAK(round,function)
 	fstp	%st(1)
 	ret
 3:
-	/ here, x is negative, so return x-0.5
-	fsubp	%st,%st(1)		/ x-0.5,[x]
+	# here, x is negative, so return x-0.5
+	fsubp	%st,%st(1)		# x-0.5,[x]
 	addl	$8,%esp
 	fstp	%st(1)
 	ret

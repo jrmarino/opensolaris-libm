@@ -43,7 +43,7 @@ LIBM_ANSI_PRAGMA_WEAK(nintl,function)
 	movw	-8(%eax),%cx
 	orw	$0x0c00,%cx
 	movw	%cx,-4(%eax)
-	fldcw	-4(%eax)		/ set RD = to_zero
+	fldcw	-4(%eax)		# set RD = to_zero
 	frndint
 	fstcw	-4(%eax)
 	movw	-4(%eax),%dx
@@ -52,7 +52,7 @@ LIBM_ANSI_PRAGMA_WEAK(nintl,function)
 	andw	$0x0c00,%cx
 	orw	%dx,%cx
 	movw	%cx,-8(%eax)
-	fldcw	-8(%eax)		/ restore RD
+	fldcw	-8(%eax)		# restore RD
 	addl	$8,%esp
 	ret
 	.align	4
@@ -61,8 +61,8 @@ LIBM_ANSI_PRAGMA_WEAK(nintl,function)
 	ENTRY(irintl)
 	movl	%esp,%ecx
 	subl	$8,%esp
-	fldt	4(%ecx)			/ load x
-	fistpl	-8(%ecx)		/ [x]
+	fldt	4(%ecx)			# load x
+	fistpl	-8(%ecx)		# [x]
 	fwait
 	movl	-8(%ecx),%eax
 	addl	$8,%esp
@@ -83,9 +83,9 @@ half:	.float	0.5
 	movw	-8(%ecx),%dx
 	andw	$0xf3ff,%dx
 	movw	%dx,-4(%ecx)
-	fldcw	-4(%ecx)		/ set RD = to_nearest
+	fldcw	-4(%ecx)		# set RD = to_nearest
 	fld	%st(0)
-	frndint				/ [x],x
+	frndint				# [x],x
 	fstcw	-4(%ecx)
 	movw	-4(%ecx),%dx
 	andw	$0xf3ff,%dx
@@ -93,39 +93,39 @@ half:	.float	0.5
 	andw	$0x0c00,%ax
 	orw	%dx,%ax
 	movw	%ax,-8(%ecx)
-	fldcw	-8(%ecx)		/ restore RD
-	fucom				/ check if x is already an integer
+	fldcw	-8(%ecx)		# restore RD
+	fucom				# check if x is already an integer
 	fstsw	%ax
 	sahf
 	jp	.L0
 	je	.L0
-	fxch				/ x,[x]
-	fsub	%st(1),%st		/ x-[x],[x]
-	fabs				/ |x-[x]|,[x]
+	fxch				# x,[x]
+	fsub	%st(1),%st		# x-[x],[x]
+	fabs				# |x-[x]|,[x]
 	PIC_SETUP(1)
 	fcoms	PIC_L(half)
 	PIC_WRAPUP
 	fnstsw	%ax
 	sahf
-	jae	.halfway		/ if |x-[x]| = 0.5 goto halfway, 
-					/ most cases will not take branch.
+	jae	.halfway		# if |x-[x]| = 0.5 goto halfway, 
+					# most cases will not take branch.
 .L0:
 	addl	$8,%esp
 	fstp	%st(0)
 	ret
 .halfway:
-	/ x = n+0.5, recompute anint(x) as x+sign(x)*0.5
-	fldt	4(%ecx)			/ x, 0.5, [x]
-	movw	12(%ecx),%ax		/ sign+exp part of x
-	andw	$0x8000,%ax		/ look at sign bit
+	# x = n+0.5, recompute anint(x) as x+sign(x)*0.5
+	fldt	4(%ecx)			# x, 0.5, [x]
+	movw	12(%ecx),%ax		# sign+exp part of x
+	andw	$0x8000,%ax		# look at sign bit
 	jnz	.x_neg
 	fadd
 	addl	$8,%esp
 	fstp	%st(1)
 	ret
 .x_neg:
-	/ here, x is negative, so return x-0.5
-	fsubp	%st,%st(1)		/ x-0.5,[x]
+	# here, x is negative, so return x-0.5
+	fsubp	%st,%st(1)		# x-0.5,[x]
 	addl	$8,%esp
 	fstp	%st(1)
 	ret
@@ -139,7 +139,7 @@ half:	.float	0.5
 	pushl	16(%ebp)
 	pushl	12(%ebp)
 	pushl	8(%ebp)
-	call	.Lanintl		/// LOCAL
+	call	.Lanintl		//# LOCAL
 	fistpl	-8(%ebp)
 	fwait
 	movl	-8(%ebp),%eax

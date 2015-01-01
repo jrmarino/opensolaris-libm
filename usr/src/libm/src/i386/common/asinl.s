@@ -34,26 +34,26 @@ LIBM_ANSI_PRAGMA_WEAK(asinl,function)
 #undef fabs
 
 	ENTRY(asinl)
-	fldt	4(%esp)			/ push x
-	fld1				/ push 1
-	fld	%st(1)			/ x , 1 , x
-	fabs				/ |x| , 1 , x
+	fldt	4(%esp)			# push x
+	fld1				# push 1
+	fld	%st(1)			# x , 1 , x
+	fabs				# |x| , 1 , x
 	fucomp
 	fstsw	%ax
 	sahf
 	ja	9f
-	fadd	%st(1),%st		/ 1+x,x
-	fld1				/ 1,1+x,x
-	fsub	%st(2),%st		/ 1-x,1+x,x
-	fmulp	%st,%st(1)		/ (1-x)*(1+x),x
-	fsqrt				/ sqrt((1-x)*(1+x)),x
-	fpatan				/ atan(x/sqrt((1-x)*(1+x)))
+	fadd	%st(1),%st		# 1+x,x
+	fld1				# 1,1+x,x
+	fsub	%st(2),%st		# 1-x,1+x,x
+	fmulp	%st,%st(1)		# (1-x)*(1+x),x
+	fsqrt				# sqrt((1-x)*(1+x)),x
+	fpatan				# atan(x/sqrt((1-x)*(1+x)))
 	ret
 9:
-	/ |x| > 1
-	fstp	%st(0)			/ x
-	fsub	%st,%st(0)		/ +/-0 or NaN+invalid
-	fdiv	%st,%st(0)		/ NaN+invalid or NaN
+	# |x| > 1
+	fstp	%st(0)			# x
+	fsub	%st,%st(0)		# +/-0 or NaN+invalid
+	fdiv	%st,%st(0)		# NaN+invalid or NaN
 	ret
 	.align	4
 	SET_SIZE(asinl)

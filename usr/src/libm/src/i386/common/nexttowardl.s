@@ -40,21 +40,21 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	ENTRY(nexttowardl)
 	pushl	%ebp
 	movl	%esp,%ebp
-	fldt	20(%ebp)	/ y
+	fldt	20(%ebp)	# y
 	subl	$12,%esp
-	fldt	8(%ebp)		/ load x
-	fucom			/ x : y
+	fldt	8(%ebp)		# load x
+	fucom			# x : y
 	fstsw	%ax
 	sahf
 	jp	.LNaN
 	je	.Lequal
-	fstp	%st(1)		/ x
+	fstp	%st(1)		# x
 	ja	.Lbigger
-	/ x < y
+	# x < y
 	ftst
-	movl	$1,-12(%ebp)	/// -12(%ebp) contains Fminl
+	movl	$1,-12(%ebp)	//# -12(%ebp) contains Fminl
 	movl	$0,-8(%ebp)
-	movl	$0,%ecx			/// final needs this
+	movl	$0,%ecx			//# final needs this
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf
@@ -62,38 +62,38 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	ja	.Laddulp
 	jb	.Lsubulp
 .Lbigger:
-	/ x > y
+	# x > y
 	ftst
-	movl	$1,-12(%ebp)	/// -12(%ebp) contains -Fminl
+	movl	$1,-12(%ebp)	//# -12(%ebp) contains -Fminl
 	movl	$0,-8(%ebp)
-	movl	$0x00008000,%ecx	/// final needs this
+	movl	$0x00008000,%ecx	//# final needs this
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf
 	je	.Lfinal
 	jb	.Laddulp
 .Lsubulp:
-	movl	12(%ebp),%edx	/ high word of significand of x
-	movl	16(%ebp),%ecx	/ x's exponent
+	movl	12(%ebp),%edx	# high word of significand of x
+	movl	16(%ebp),%ecx	# x's exponent
 	andl	$0x0000ffff,%ecx
 	movl	%edx,%eax
 	not	%eax
-	andl	$0x80000000,%eax	/ look at explicit leading bit
+	andl	$0x80000000,%eax	# look at explicit leading bit
 	orl	%ecx,%eax
 	andl	$0x80007fff,%eax
-	jnz	.Lnot_pseudonormal	/ zero value implies pseudonormal
-	addl	$1,%ecx		/ if pseudonormal, turn into equivalent normal
+	jnz	.Lnot_pseudonormal	# zero value implies pseudonormal
+	addl	$1,%ecx		# if pseudonormal, turn into equivalent normal
 .Lnot_pseudonormal:
-	movl	8(%ebp),%eax	/ low x
-	subl	$1,%eax		/ low x - ulp
+	movl	8(%ebp),%eax	# low x
+	subl	$1,%eax		# low x - ulp
 	movl	%eax,-12(%ebp)
-	cmpl	$0xffffffff,%eax	/ this means low x was 0
+	cmpl	$0xffffffff,%eax	# this means low x was 0
 	jz	.Lborrow
 	movl	%edx,-8(%ebp)
 	movl	%ecx,-4(%ebp)
 	jmp	.Lfinal
 .Lborrow:
-	cmpl	$0x80000000,%edx	/ look at high x
+	cmpl	$0x80000000,%edx	# look at high x
 	je	.Lsecond_borrow
 	subl	$1,%edx
 	movl	%edx,-8(%ebp)
@@ -101,9 +101,9 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	jmp	.Lfinal
 .Lsecond_borrow:
 	movl	%ecx,%eax
-	andl	$0x7fff,%eax	/ look at exp x without sign bit
+	andl	$0x7fff,%eax	# look at exp x without sign bit
 	cmpl	$1,%eax
-	jbe	.Lsubnormal_result	/ exp > 1 ==> result will be normal
+	jbe	.Lsubnormal_result	# exp > 1 ==> result will be normal
 	movl	$0xffffffff,-8(%ebp)
 	subl	$1,%ecx
 	movl	%ecx,-4(%ebp)
@@ -111,7 +111,7 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 .Lsubnormal_result:
 	movl	$0x7fffffff,-8(%ebp)
 	movl	%ecx,%eax
-	andl	$0x8000,%eax	/ look at sign bit
+	andl	$0x8000,%eax	# look at sign bit
 	jz	.Lpositive
 	movl	$0x8000,%ecx
 	movl	%ecx,-4(%ebp)
@@ -121,28 +121,28 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	movl	%ecx,-4(%ebp)
 	jmp	.Lfinal
 .Laddulp:
-	movl	12(%ebp),%edx	/ high x
-	movl	16(%ebp),%ecx	/ x's exponent
+	movl	12(%ebp),%edx	# high x
+	movl	16(%ebp),%ecx	# x's exponent
 	andl	$0x0000ffff,%ecx
 	movl	%edx,%eax
 	not	%eax
-	andl	$0x80000000,%eax	/ look at explicit leading bit
+	andl	$0x80000000,%eax	# look at explicit leading bit
 	orl	%ecx,%eax
 	andl	$0x80007fff,%eax
-	jnz	.Lnot_pseudonormal_2	/ zero value implies pseudonormal
+	jnz	.Lnot_pseudonormal_2	# zero value implies pseudonormal
 	addl	$1,%ecx
 .Lnot_pseudonormal_2:
-	movl	8(%ebp),%eax	/ low x
-	addl	$1,%eax		/ low x + ulp
+	movl	8(%ebp),%eax	# low x
+	addl	$1,%eax		# low x + ulp
 	movl	%eax,-12(%ebp)
-	jz	.Lcarry		/ jump if the content of %eax is 0
+	jz	.Lcarry		# jump if the content of %eax is 0
 	movl	%edx,-8(%ebp)
 	movl	%ecx,-4(%ebp)
 	jmp .Lfinal
 .Lcarry:
 	movl	%edx,%eax
 	andl	$0x7fffffff,%eax
-	cmpl	$0x7fffffff,%eax	/ look at high x
+	cmpl	$0x7fffffff,%eax	# look at high x
 	je	.Lsecond_carry
 	addl	$1,%edx
 	movl	%edx,-8(%ebp)
@@ -164,19 +164,19 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	PIC_SETUP(1)
 	fldt	PIC_L(.LFmaxl)
 	PIC_WRAPUP
-	fmulp	%st,%st(0)	/ create overflow signal
+	fmulp	%st,%st(0)	# create overflow signal
 	jmp	.Lreturn
 .Lunderflow:
 	PIC_SETUP(2)
 	fldt	PIC_L(.LFminl)
 	PIC_WRAPUP
-	fmulp	%st,%st(0)	/ create underflow signal
+	fmulp	%st,%st(0)	# create underflow signal
 	jmp	.Lreturn
 .Lequal:
-	fstp	%st(0)		/ C99 says to return y when x == y
+	fstp	%st(0)		# C99 says to return y when x == y
 	jmp	.Lreturn
 .LNaN:
-	faddp	%st,%st(1)	/ x+y,x
+	faddp	%st,%st(1)	# x+y,x
 .Lreturn:
 	fwait
 	leave

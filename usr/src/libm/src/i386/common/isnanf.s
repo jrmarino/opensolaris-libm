@@ -35,19 +35,19 @@ _isnanf	= __isnanf
 #include "libm_synonyms.h"
 
 	ENTRY(isnanf)
-	movl    4(%esp),%eax		/ eax <-- x
-	andl	$0x7fffffff,%eax	/ eax <-- abs(x)
-	subl    $0x7f800000,%eax	/ ZF <-- 1      iff x is infinite
-	jae	.nan_or_inf		/ no jump iff arg. is finite
+	movl    4(%esp),%eax		# eax <-- x
+	andl	$0x7fffffff,%eax	# eax <-- abs(x)
+	subl    $0x7f800000,%eax	# ZF <-- 1      iff x is infinite
+	jae	.nan_or_inf		# no jump iff arg. is finite
 	movl	$0,%eax
 	ret
 .nan_or_inf:
-	jnz	.got_nan		/ no jump if arg. infinite;
-					/ let nan waste time
-	ret				/ %eax = 0 here
+	jnz	.got_nan		# no jump if arg. infinite;
+					# let nan waste time
+	ret				# %eax = 0 here
 .got_nan:
-	movl	$1,%eax			/ %eax was 0, must be made 1 to
-					/ indicate TRUE 
+	movl	$1,%eax			# %eax was 0, must be made 1 to
+					# indicate TRUE 
 	ret
 	.align	4
 	SET_SIZE(isnanf)

@@ -34,8 +34,8 @@ LIBM_ANSI_PRAGMA_WEAK(llrintf,function)
 	ENTRY(llrintf)
 	movl	%esp,%ecx
 	subl	$8,%esp
-	flds	4(%ecx)			/ load x
-	fistpll	-8(%ecx)		/ [x]
+	flds	4(%ecx)			# load x
+	fistpll	-8(%ecx)		# [x]
 	fwait
 	movl	-8(%ecx),%eax
 	movl	-4(%ecx),%edx

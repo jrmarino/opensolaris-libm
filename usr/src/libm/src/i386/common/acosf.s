@@ -35,43 +35,43 @@ LIBM_ANSI_PRAGMA_WEAK(acosf,function)
 #undef fabs
 
 	ENTRY(acosf)
-	flds	4(%esp)			/ push x
-	fld1				/ push 1
-	fld	%st(1)			/ x , 1 , x
-	fabs				/ |x| , 1 , x
+	flds	4(%esp)			# push x
+	fld1				# push 1
+	fld	%st(1)			# x , 1 , x
+	fabs				# |x| , 1 , x
 	fucomp
 	fstsw   %ax
 	sahf
 	ja	.ERR
-	fadd	%st(1),%st		/ 1+x,x
+	fadd	%st(1),%st		# 1+x,x
 	fldz
 	fucomp	
 	fstsw	%ax
 	sahf
 	jp	.L1
 	jne	.L1
-	/ x is -1 
-	fstp	%st(0)			/ x
-	fstp	%st(0)			/ empty NPX stack
+	# x is -1 
+	fstp	%st(0)			# x
+	fstp	%st(0)			# empty NPX stack
 	fldpi
 	ret
 .L1:
-	fxch	%st(1)			/ x,1+x
-	fld1				/ 1,x,1+x
-	fsubp	%st,%st(1)		/ 1-x,1+x
-	fdivp	%st,%st(1)		/ (1-x)/(1+x)
+	fxch	%st(1)			# x,1+x
+	fld1				# 1,x,1+x
+	fsubp	%st,%st(1)		# 1-x,1+x
+	fdivp	%st,%st(1)		# (1-x)/(1+x)
 	fsqrt
-	fld1				/ 1,sqrt((1-x)/(1+x))
+	fld1				# 1,sqrt((1-x)/(1+x))
 	fpatan
 	fadd	%st(0),%st
 	ret
 
 .ERR:
-	/ |x| > 1
-	fstp	%st(0)			/ x
-	fstp	%st(0)			/ empty NPX stack
+	# |x| > 1
+	fstp	%st(0)			# x
+	fstp	%st(0)			# empty NPX stack
 	fldz
-	fdiv	%st(0),%st		/ 0/0
+	fdiv	%st(0),%st		# 0/0
 	ret
 	.align	4
 	SET_SIZE(acosf)

@@ -32,24 +32,24 @@ LIBM_ANSI_PRAGMA_WEAK(finitel,function)
 #include "libm_synonyms.h"
 
 	ENTRY(finitel)
-	movl    12(%esp),%eax		/ %ax <-- sign&bexp(x)
-	testl	$0x80000000,8(%esp)	/ ZF = 1 iff hi_32(sgnfcnd(x))'s msb = 0
+	movl    12(%esp),%eax		# %ax <-- sign&bexp(x)
+	testl	$0x80000000,8(%esp)	# ZF = 1 iff hi_32(sgnfcnd(x))'s msb = 0
 	jz	.chk_denormal_or_0
-	notl	%eax			/ not(bexp) = 0 iff bexp = all 1's
-	andl    $0x00007fff,%eax	/ ZF <-- 1      iff not(bexp) = 0
-	jz	.done			/ no jump if arg. is finite
-	movl	$1,%eax			/ ansi needs %eax = 1
+	notl	%eax			# not(bexp) = 0 iff bexp = all 1's
+	andl    $0x00007fff,%eax	# ZF <-- 1      iff not(bexp) = 0
+	jz	.done			# no jump if arg. is finite
+	movl	$1,%eax			# ansi needs %eax = 1
 .done:
 	ret
 
 .chk_denormal_or_0:
-	andl	$0x00007fff,%eax	/ ZF <-- 1 iff bexp = 0 iff denormal or 0
-	jnz	.unsupported		/ jump if arg has unsupported format
-	movl	$1,%eax			/ ansi needs %eax = 1
+	andl	$0x00007fff,%eax	# ZF <-- 1 iff bexp = 0 iff denormal or 0
+	jnz	.unsupported		# jump if arg has unsupported format
+	movl	$1,%eax			# ansi needs %eax = 1
 	ret
 
 .unsupported:
-	movl	$0,%eax			/ unsupported format does not represent
-	ret				/ a finite number
+	movl	$0,%eax			# unsupported format does not represent
+	ret				# a finite number
 	.align	4
 	SET_SIZE(finitel)

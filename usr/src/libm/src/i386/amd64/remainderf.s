@@ -37,13 +37,13 @@ LIBM_ANSI_PRAGMA_WEAK(remainderf,function)
 	subq	$16,%rsp
 	movss	%xmm1,-8(%rbp)
 	movss	%xmm0,-4(%rbp)
-	flds	-8(%rbp)		/ load arg y
-	flds	-4(%rbp)		/ load arg x
+	flds	-8(%rbp)		# load arg y
+	flds	-4(%rbp)		# load arg x
 .rem_loop:
-	fprem1				/ partial remainder
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check whether reduction complete
-	jne	.rem_loop		/ while reduction incomplete, do fprem1
+	fprem1				# partial remainder
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check whether reduction complete
+	jne	.rem_loop		# while reduction incomplete, do fprem1
 	fstps	-4(%rbp)
 	movss	-4(%rbp),%xmm0
 	fstp	%st(0)

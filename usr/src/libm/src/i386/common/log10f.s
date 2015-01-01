@@ -34,8 +34,8 @@ LIBM_ANSI_PRAGMA_WEAK(log10f,function)
 
 	ENTRY(log10f)
 	fldlg2	
-	flds	4(%esp)			/ st = arg, st(1) = log10(2)
-	fyl2x				/ st = log10(arg) = log10(2)*log2(arg)
+	flds	4(%esp)			# st = arg, st(1) = log10(2)
+	fyl2x				# st = log10(arg) = log10(2)*log2(arg)
 	ret
 	.align	4
 	SET_SIZE(log10f)

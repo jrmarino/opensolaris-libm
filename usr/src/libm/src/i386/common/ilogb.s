@@ -34,28 +34,28 @@ LIBM_ANSI_PRAGMA_WEAK(ilogb,function)
 
 	.data
 	.align	8
-two52:	.long	0x0,0x43300000	/ 2**52
+two52:	.long	0x0,0x43300000	# 2**52
 
 	ENTRY(ilogb)
-	movl	8(%esp),%eax		/ eax <-- hi_32(x)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(abs(x))
-	testl	$0x7ff00000,%eax	/ is bexp(x) 0?
-	jz	.bexp_0 		/ jump if x is 0 or subnormal
-					/ biased exponent is non-zero
-	cmpl	$0x7ff00000,%eax	/ is bexp(x) 0x7ff?
-	jae	.bexp_all_1		/ jump if x is NaN or Inf
-	shrl	$20,%eax		/ eax <-- bexp(x)
-	subl	$1023,%eax		/ unbias exponent by 1023
+	movl	8(%esp),%eax		# eax <-- hi_32(x)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(abs(x))
+	testl	$0x7ff00000,%eax	# is bexp(x) 0?
+	jz	.bexp_0 		# jump if x is 0 or subnormal
+					# biased exponent is non-zero
+	cmpl	$0x7ff00000,%eax	# is bexp(x) 0x7ff?
+	jae	.bexp_all_1		# jump if x is NaN or Inf
+	shrl	$20,%eax		# eax <-- bexp(x)
+	subl	$1023,%eax		# unbias exponent by 1023
 	ret
 
 .bexp_all_1:
-	movl	$0x7fffffff,%eax	/ x is NaN or inf, so return 0x7fffffff
+	movl	$0x7fffffff,%eax	# x is NaN or inf, so return 0x7fffffff
 	jmp	0f
 
 .bexp_0:
-	orl	4(%esp),%eax		/ test whether x is 0
+	orl	4(%esp),%eax		# test whether x is 0
 	jnz	.ilogb_subnorm
-	movl	$0x80000001,%eax	/ x is +/-0, so return 0x80000001
+	movl	$0x80000001,%eax	# x is +/-0, so return 0x80000001
 0:
 	PIC_SETUP(0)
 	PIC_G_LOAD(movzwl,__xpg6,ecx)
@@ -64,21 +64,21 @@ two52:	.long	0x0,0x43300000	/ 2**52
 	cmpl	$0,%ecx
 	je	1f
 	fldz
-	fdivp	%st,%st(0)		/ raise invalid as per SUSv3
+	fdivp	%st,%st(0)		# raise invalid as per SUSv3
 1:
 	ret
 
-.ilogb_subnorm:				/ subnormal input
-	fldl	4(%esp)			/ push x
+.ilogb_subnorm:				# subnormal input
+	fldl	4(%esp)			# push x
 	PIC_SETUP(1)
-	fmull	PIC_L(two52)		/ x*2**52
+	fmull	PIC_L(two52)		# x*2**52
 	PIC_WRAPUP
-	subl	$8,%esp			/ set up storage area
-	fstpl	(%esp)			/ store x*2**52 in storage are
+	subl	$8,%esp			# set up storage area
+	fstpl	(%esp)			# store x*2**52 in storage are
 	movl	$0x7ff00000,%eax
 	andl	4(%esp),%eax
-	shrl	$20,%eax		/ extract exponent of x*2**52
-	subl	$1075,%eax		/ unbias it by 1075 (= 1023 + 52)
+	shrl	$20,%eax		# extract exponent of x*2**52
+	subl	$1075,%eax		# unbias it by 1075 (= 1023 + 52)
 	addl	$8,%esp
 	ret
 	.align	4

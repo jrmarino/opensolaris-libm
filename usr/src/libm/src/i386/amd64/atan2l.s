@@ -32,9 +32,9 @@ LIBM_ANSI_PRAGMA_WEAK(atan2l,function)
 #include "libm_synonyms.h"
 
 	ENTRY(atan2l)
-	fldt	8(%rsp)			/ push y
-	fldt	24(%rsp)		/ push x
-	fpatan				/ return atan2(y,x)
+	fldt	8(%rsp)			# push y
+	fldt	24(%rsp)		# push x
+	fpatan				# return atan2(y,x)
 	ret
 	.align	16
 	SET_SIZE(atan2l)

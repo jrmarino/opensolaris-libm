@@ -40,16 +40,16 @@ LIBM_ANSI_PRAGMA_WEAK(floorl,function)
 	orw	$0x0c00,%cx
 	xorw	$0x0400,%cx
 	movw	%cx,4(%rsp)
-	fldcw	4(%rsp)			/ set RD = up
+	fldcw	4(%rsp)			# set RD = up
 	frndint
-	fstcw	4(%rsp)			/ restore RD
+	fstcw	4(%rsp)			# restore RD
 	movw	4(%rsp),%dx
 	andw	$0xf3ff,%dx
 	movw	(%rsp),%cx
 	andw	$0x0c00,%cx
 	orw	%dx,%cx
 	movw	%cx,(%rsp)
-	fldcw	(%rsp)			/ restore RD
+	fldcw	(%rsp)			# restore RD
 	addq	$16,%rsp
 	ret
 	.align	16
@@ -64,16 +64,16 @@ LIBM_ANSI_PRAGMA_WEAK(floorl,function)
 	orw	$0x0c00,%cx
 	xorw	$0x0800,%cx
 	movw	%cx,4(%rsp)
-	fldcw	4(%rsp)			/ set RD = down
+	fldcw	4(%rsp)			# set RD = down
 	frndint
-	fstcw	4(%rsp)			/ restore RD
+	fstcw	4(%rsp)			# restore RD
 	movw	4(%rsp),%dx
 	andw	$0xf3ff,%dx
 	movw	(%rsp),%cx
 	andw	$0x0c00,%cx
 	orw	%dx,%cx
 	movw	%cx,(%rsp)
-	fldcw	(%rsp)			/ restore RD
+	fldcw	(%rsp)			# restore RD
 	addq	$16,%rsp
 	ret
 	.align	16

@@ -37,25 +37,25 @@
  * and MXCSR bits 12-7, return the complement of the previous FPCW
  * bits 5-0.
  */
-	ENTRY(__swapTE)		/ di <-- NOT(desired xcptn_masks)
+	ENTRY(__swapTE)		# di <-- NOT(desired xcptn_masks)
 	subq	$8,%rsp
-	fstcw	(%rsp)		/ push current_cw on '86 stack
-	movq	(%rsp),%rcx	/ cx <-- current_cw
-	movw	%cx,%ax		/ ax <-- current_cw
-	orw	$0x3f,%cx	/ cx <-- current_cw, but masking all xcptns
-	andw	$0x3f,%di	/ make sure bits > B5 are all zero
-	xorw	%di,%cx		/ cx <-- present_cw, with new xcptn_masks
+	fstcw	(%rsp)		# push current_cw on '86 stack
+	movq	(%rsp),%rcx	# cx <-- current_cw
+	movw	%cx,%ax		# ax <-- current_cw
+	orw	$0x3f,%cx	# cx <-- current_cw, but masking all xcptns
+	andw	$0x3f,%di	# make sure bits > B5 are all zero
+	xorw	%di,%cx		# cx <-- present_cw, with new xcptn_masks
 	movw	%cx,(%rsp)
-	fldcw	(%rsp)		/ load new cw 
+	fldcw	(%rsp)		# load new cw 
 	stmxcsr	(%rsp)
 	movq	(%rsp),%rcx
-	orw	$0x1f80,%cx	/ cx <-- current mxcsr, but masking all xcptns
+	orw	$0x1f80,%cx	# cx <-- current mxcsr, but masking all xcptns
 	shlw	$7,%di
-	xorw	%di,%cx		/ cx <-- present mxcsr, with new xcptn_masks
+	xorw	%di,%cx		# cx <-- present mxcsr, with new xcptn_masks
 	movq	%rcx,(%rsp)
 	ldmxcsr	(%rsp)
-	andq	$0x3f,%rax	/ al[5..0] <-- former xcptn_masks
-	xorq	$0x3f,%rax	/ al[5..0] <-- NOT(former xcptn_masks)
+	andq	$0x3f,%rax	# al[5..0] <-- former xcptn_masks
+	xorq	$0x3f,%rax	# al[5..0] <-- NOT(former xcptn_masks)
 	addq	$8,%rsp
 	ret
 	.align	16
@@ -68,10 +68,10 @@
  * return the "or" of the previous FPSW bits 5-0 and MXCSR bits 5-0.
  */
 	ENTRY(__swapEX)
-	fstsw	%ax		/ ax = sw
+	fstsw	%ax		# ax = sw
 	andq	$0x3f,%rdi
 	jnz	.L1
-				/ input ex=0, clear all exception
+				# input ex=0, clear all exception
 	fnclex	
 	subq	$8,%rsp
 	stmxcsr	(%rsp)
@@ -84,13 +84,13 @@
 	addq	$8,%rsp
 	ret
 .L1:
-				/ input ex !=0, use fnstenv and fldenv
-	subq	$32,%rsp	/ only needed 28
+				# input ex !=0, use fnstenv and fldenv
+	subq	$32,%rsp	# only needed 28
 	fnstenv	(%rsp)
 	movw	%ax,%dx
 	andw	$0xffc0,%dx
 	orw	%cx,%dx
-	movw	%dx,4(%rsp)	/ replace old sw by new one
+	movw	%dx,4(%rsp)	# replace old sw by new one
 	fldenv	(%rsp)
 	stmxcsr	(%rsp)
 	movq	(%rsp),%rdx

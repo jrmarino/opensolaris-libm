@@ -33,28 +33,28 @@ LIBM_ANSI_PRAGMA_WEAK(fmod,function)
 #include "libm_protos.h"
 
 	ENTRY(fmod)
-	movl	16(%esp),%eax		/ eax <-- hi_32(y)
-	andl	$0x7fffffff,%eax	/ eax <-- hi_32(|y|)
-	orl	12(%esp),%eax		/ eax <-- lo_32(y)|hi_32(|y|)
+	movl	16(%esp),%eax		# eax <-- hi_32(y)
+	andl	$0x7fffffff,%eax	# eax <-- hi_32(|y|)
+	orl	12(%esp),%eax		# eax <-- lo_32(y)|hi_32(|y|)
 	je	.zero
 
-	fldl	12(%esp)		/ load arg y
-	fldl	4(%esp)			/ load arg x
+	fldl	12(%esp)		# load arg y
+	fldl	4(%esp)			# load arg x
 .mod_loop:
-	fprem				/ partial fmod
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check for incomplete reduction
-	jne	.mod_loop		/ while incomplete, do fprem again
+	fprem				# partial fmod
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check for incomplete reduction
+	jne	.mod_loop		# while incomplete, do fprem again
 	fstp	%st(1)
 	ret
 .zero:
 	pushl	%ebp
 	movl	%esp,%ebp
 	PIC_SETUP(1)
-	pushl	$27			/ case 27 in _SVID_libm_err
-	pushl	20(%ebp)		/ pass x
+	pushl	$27			# case 27 in _SVID_libm_err
+	pushl	20(%ebp)		# pass x
 	pushl	16(%ebp)
-	pushl	12(%ebp)		/ pass y
+	pushl	12(%ebp)		# pass y
 	pushl	8(%ebp)
 	call	PIC_F(_SVID_libm_err)
 	addl	$20,%esp

@@ -32,13 +32,13 @@ LIBM_ANSI_PRAGMA_WEAK(remainderf,function)
 #include "libm_synonyms.h"
 
 	ENTRY(remainderf)
-	flds	8(%esp)			/ load arg y
-	flds	4(%esp)			/ load arg x
+	flds	8(%esp)			# load arg y
+	flds	4(%esp)			# load arg x
 .rem_loop:
-	fprem1				/ partial remainder
-	fstsw	%ax			/ store status word
-	andw	$0x400,%ax		/ check whether reduction complete
-	jne	.rem_loop		/ while reduction incomplete, do fprem1
+	fprem1				# partial remainder
+	fstsw	%ax			# store status word
+	andw	$0x400,%ax		# check whether reduction complete
+	jne	.rem_loop		# while reduction incomplete, do fprem1
 	fstp	%st(1)
 	ret
 	.align	4

@@ -39,7 +39,7 @@ LIBM_ANSI_PRAGMA_WEAK(truncl,function)
 	movw	-8(%eax),%cx
 	orw	$0x0c00,%cx
 	movw	%cx,-4(%eax)
-	fldcw	-4(%eax)		/ set RD = to_zero
+	fldcw	-4(%eax)		# set RD = to_zero
 	frndint
 	fstcw	-4(%eax)
 	movw	-4(%eax),%dx
@@ -48,7 +48,7 @@ LIBM_ANSI_PRAGMA_WEAK(truncl,function)
 	andw	$0x0c00,%cx
 	orw	%dx,%cx
 	movw	%cx,-8(%eax)
-	fldcw	-8(%eax)		/ restore RD
+	fldcw	-8(%eax)		# restore RD
 	addl	$8,%esp
 	ret
 	.align	4
