@@ -26,8 +26,6 @@
 
 #pragma ident	"@(#)__vTBL_sqrtf.c	1.3	06/01/31 SMI"
 
-#pragma align 32 (__vlibm_TBL_sqrtf)
-
 /*
  i = [0,255]
  TBL[2*i+0] = 1.0 / (*(double*)&(0x3ff0000000000000LL + (i << 44)));
@@ -36,7 +34,7 @@
  TBL[512+2*i+1] = sqrt(*(double*)&(0x3ff0000000000000LL + (i << 44)));
 */
 
-const double __vlibm_TBL_sqrtf[] = {
+const double __vlibm_TBL_sqrtf[] __attribute__((aligned(32))) = {
  1.0000000000000000000, 0.7071067811865474617,
  0.9961089494163424263, 0.7084865030471646508,
  0.9922480620155038622, 0.7098635432250340882,

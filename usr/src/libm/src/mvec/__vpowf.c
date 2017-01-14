@@ -104,18 +104,17 @@
  *	results.
  */
 
-static void __vpowfx( int n, float * restrict px, float * restrict py,
+static void __attribute__ ((noinline))
+__vpowfx( int n, float * restrict px, float * restrict py,
 	int stridey, float * restrict pz, int stridez );
 
-static void __vpowf_n( int n, float * restrict px, int stridex, float * restrict py,
+static void __attribute__ ((noinline))
+__vpowf_n( int n, float * restrict px, int stridex, float * restrict py,
 	int stridey, float * restrict pz, int stridez );
 
-static void __vpowfx_n( int n, double yy, float * restrict py,
+static void __attribute__ ((noinline))
+__vpowfx_n( int n, double yy, float * restrict py,
 	int stridey, float * restrict pz, int stridez );
-
-#pragma no_inline(__vpowfx)
-#pragma no_inline(__vpowf_n)
-#pragma no_inline(__vpowfx_n)
 
 static const double __TBL_exp2f[] = {
 	/* 2^(i/256), i = [0, 255] */

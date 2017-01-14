@@ -26,15 +26,13 @@
 
 #pragma ident	"@(#)__vTBL_rsqrt.c	1.3	06/01/31 SMI"
 
-#pragma align 32 (__vlibm_TBL_rsqrt)
-
 /*
  i = [0,128]
  TBL[2*i  ] = (double)(1.0 / sqrtl(*(double*)&(0x3fe0000000000000LL + (i << 46))));
  TBL[2*i+1] = (double)(1.0 / sqrtl(*(double*)&(0x3fe0000000000000LL + (i << 46))) - TBL[2*i]);
 */
 
-const double __vlibm_TBL_rsqrt[] = {
+const double __vlibm_TBL_rsqrt[] __attribute__((aligned(32))) = {
  1.4142135623730951455e+00, -9.6672933134529134511e-17,
  1.4032928308912466786e+00,  6.4948026279769118919e-17,
  1.3926212476455828160e+00, -1.1055881989569260189e-16,

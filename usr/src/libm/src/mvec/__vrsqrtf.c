@@ -217,10 +217,8 @@ static const unsigned long long LCONST[] = {
 0xbfd400fc0bbb8e78ULL,	/* A3 =-3.12560092408808548438e-01	*/
 };
 
-static void
+static void __attribute__ ((noinline))
 __vrsqrtf_n( int n, float * restrict px, int stridex, float * restrict py, int stridey );
-
-#pragma no_inline(__vrsqrtf_n)
 
 #define RETURN(ret)						\
 {								\

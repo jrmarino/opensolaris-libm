@@ -26,8 +26,7 @@
 
 #pragma ident	"@(#)__vTBL_atan1.c	1.3	06/01/31 SMI"
 
-#pragma align 32 (__vlibm_TBL_atan1)
-const double __vlibm_TBL_atan1[] = {
+const double __vlibm_TBL_atan1[] __attribute__((aligned(32))) = {
 
 /* i=  -2 conup conlo = 0.0      */                    0.0 ,                     0.0 ,
 /* i=  -1 PI/2 upper, lower      */ 1.570796326794896558E+00, 6.123233995736765886e-17,

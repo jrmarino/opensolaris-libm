@@ -74,11 +74,9 @@ static const unsigned long long LCONST[] = {
 0x7fd0000000000000ULL	/* D2ONP1022 = 2 **  1022	*/
 };
 
-static void
+static void __attribute__ ((noinline))
 __vhypot_n( int n, double * restrict px, int stridex, double * restrict py,
 	int stridey, double * restrict pz, int stridez );
-
-#pragma no_inline(__vhypot_n)
 
 #define RETURN(ret)						\
 {								\

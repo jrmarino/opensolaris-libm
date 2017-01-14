@@ -76,9 +76,7 @@
  *	results.
  */
 
-#pragma align 32 (__vlibm_TBL_rhypotf)
-
-static const double __vlibm_TBL_rhypotf[] = {
+static const double __vlibm_TBL_rhypotf[] __attribute__((aligned(32))) = {
 /*
  i = [0,63]
  TBL[2*i+0] = 1.0 / (*(double*)&(0x3ff0000000000000LL + (i << 46)));
@@ -226,11 +224,9 @@ static const double
 	A2 = 3.75066768969515586277e-01,
 	A3 =-3.12560092408808548438e-01;
 
-static void
+static void __attribute__ ((noinline))
 __vrhypotf_n( int n, float * restrict px, int stridex, float * restrict py,
 	int stridey, float * restrict pz, int stridez );
-
-#pragma no_inline(__vrhypotf_n)
 
 #define RETURN(ret)						\
 {								\

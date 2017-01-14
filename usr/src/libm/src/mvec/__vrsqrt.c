@@ -85,10 +85,8 @@
 extern double sqrt ( double );
 extern const double __vlibm_TBL_rsqrt[];
 
-static void
+static void __attribute__ ((noinline))
 __vrsqrt_n( int n, double * restrict px, int stridex, double * restrict py, int stridey );
-
-#pragma no_inline(__vrsqrt_n)
 
 #define RETURN(ret)						\
 {								\
