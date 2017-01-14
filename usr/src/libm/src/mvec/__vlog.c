@@ -616,12 +616,12 @@ static const double C[] = {
 #define	PROCESS(N)							\
 	i##N = (i##N + 0x800) & ~0xfff;					\
 	e = (i##N & 0x7ff00000) - 0x3ff00000;				\
-	z##N##.i[HIWORD] -= e;						\
-	w##N##.i[HIWORD] = i##N - e;					\
-	w##N##.i[LOWORD] = 0;						\
+	z##N.i[HIWORD] -= e;						\
+	w##N.i[HIWORD] = i##N - e;					\
+	w##N.i[LOWORD] = 0;						\
 	n##N += (e >> 20);						\
 	i##N = (i##N >> 10) & 0x3fc;					\
-	d##N = z##N##.d - w##N##.d;					\
+	d##N = z##N.d - w##N.d;						\
 	h##N = d##N * TBL[i##N];					\
 	l##N = d##N * TBL[i##N+1];					\
 	s##N = h##N + l##N;						\
@@ -633,23 +633,23 @@ static const double C[] = {
 
 #define	PREPROCESS(N, index, label)					\
 	i##N = HI(*x);							\
-	z##N##.d = *x;							\
+	z##N.d = *x;							\
 	x += stridex;							\
 	n##N = 0;							\
 	if ((i##N & 0x7ff00000) == 0x7ff00000) { /* inf or NaN */	\
-		y[index] = z##N##.d * ((i##N < 0)? zero : z##N##.d);	\
+		y[index] = z##N.d * ((i##N < 0)? zero : z##N.d);	\
 		goto label;						\
 	} else if (i##N < 0x00100000) { /* subnormal, negative, zero */	\
-		if (((i##N << 1) | z##N##.i[LOWORD]) == 0) {		\
+		if (((i##N << 1) | z##N.i[LOWORD]) == 0) {		\
 			y[index] = mhalf / zero;			\
 			goto label;					\
 		} else if (i##N < 0) {					\
 			y[index] = zero / zero;				\
 			goto label;					\
 		}							\
-		z##N##.d *= two52;					\
+		z##N.d *= two52;					\
 		n##N = -52;						\
-		i##N = z##N##.i[HIWORD];				\
+		i##N = z##N.i[HIWORD];					\
 	}
 
 void
