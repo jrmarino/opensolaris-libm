@@ -328,20 +328,20 @@ static const union {
 	unsigned	i[2];
 	double		d;
 } C[] = {
-	{ DBLWORD(0x43380000, 0x00000000) },
-	{ DBLWORD(0x40771547, 0x652b82fe) },
-	{ DBLWORD(0x3f662e42, 0xfee00000) },
-	{ DBLWORD(0x3d6a39ef, 0x35793c76) },
-	{ DBLWORD(0x3ff00000, 0x00000000) },
-	{ DBLWORD(0x3fdfffff, 0xfffffff6) },
-	{ DBLWORD(0x3fc55555, 0x721a1d14) },
-	{ DBLWORD(0x3fa55555, 0x6e0896af) },
-	{ DBLWORD(0x01000000, 0x00000000) },
-	{ DBLWORD(0x7f000000, 0x00000000) },
-	{ DBLWORD(0x40862e42, 0xfefa39ef) },
-	{ DBLWORD(0xc0874910, 0xd52d3051) },
-	{ DBLWORD(0xfff00000, 0x00000000) },
-	{ DBLWORD(0x00000000, 0x00000000) }
+	{{ DBLWORD(0x43380000, 0x00000000) }},
+	{{ DBLWORD(0x40771547, 0x652b82fe) }},
+	{{ DBLWORD(0x3f662e42, 0xfee00000) }},
+	{{ DBLWORD(0x3d6a39ef, 0x35793c76) }},
+	{{ DBLWORD(0x3ff00000, 0x00000000) }},
+	{{ DBLWORD(0x3fdfffff, 0xfffffff6) }},
+	{{ DBLWORD(0x3fc55555, 0x721a1d14) }},
+	{{ DBLWORD(0x3fa55555, 0x6e0896af) }},
+	{{ DBLWORD(0x01000000, 0x00000000) }},
+	{{ DBLWORD(0x7f000000, 0x00000000) }},
+	{{ DBLWORD(0x40862e42, 0xfefa39ef) }},
+	{{ DBLWORD(0xc0874910, 0xd52d3051) }},
+	{{ DBLWORD(0xfff00000, 0x00000000) }},
+	{{ DBLWORD(0x00000000, 0x00000000) }}
 };
 
 #define	round		C[0].d
