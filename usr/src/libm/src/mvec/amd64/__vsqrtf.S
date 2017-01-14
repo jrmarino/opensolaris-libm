@@ -40,7 +40,7 @@
 /   %rcx = y
 /   %r8d = stridey
 
-	movslq	%edx,%rdx		/ sign extend and scale strides
+	movslq	%edx,%rdx		# sign extend and scale strides
 	shlq	$2,%rdx
 	movslq	%r8d,%r8
 	shlq	$2,%r8
@@ -59,7 +59,7 @@
 	movq	%r8,%r10
 	shlq	$2,%r10
 
-	.zalign	16,8
+	.align	16
 .loop:
 	movups	(%rsi),%xmm0
 	addq	%r9,%rsi
@@ -87,7 +87,7 @@
 	leave
 	ret
 
-	.zalign	16,8
+	.align	16
 .nonunit:
 	movss	(%rsi),%xmm0
 	addq	%rdx,%rsi
@@ -98,16 +98,16 @@
 	movss	(%rsi),%xmm3
 	addq	%rdx,%rsi
 
-	movlhps	%xmm1,%xmm0		/ xmm0:   0  x1   0  x0
-	movlhps	%xmm3,%xmm2		/ xmm2:   0  x3   0  x2
-	shufps	$0x88,%xmm2,%xmm0	/ xmm0:  x3  x2  x1  x0
+	movlhps	%xmm1,%xmm0		# xmm0:   0  x1   0  x0
+	movlhps	%xmm3,%xmm2		# xmm2:   0  x3   0  x2
+	shufps	$0x88,%xmm2,%xmm0	# xmm0:  x3  x2  x1  x0
 
-	sqrtps	%xmm0,%xmm0		/ xmm0:  y3  y2  y1  y0
+	sqrtps	%xmm0,%xmm0		# xmm0:  y3  y2  y1  y0
 
-	movaps	%xmm0,%xmm1		/ xmm1:  y3  y2  y1  y0
-	shufps	$0xf5,%xmm0,%xmm1	/ xmm1:  y3  y3  y1  y1
-	movhlps	%xmm0,%xmm2		/ xmm2:   0  x3  y3  y2
-	movhlps	%xmm1,%xmm3		/ xmm3:   0   0  y3  y3
+	movaps	%xmm0,%xmm1		# xmm1:  y3  y2  y1  y0
+	shufps	$0xf5,%xmm0,%xmm1	# xmm1:  y3  y3  y1  y1
+	movhlps	%xmm0,%xmm2		# xmm2:   0  x3  y3  y2
+	movhlps	%xmm1,%xmm3		# xmm3:   0   0  y3  y3
 
 	movss	%xmm0,(%rcx)
 	addq	%r8,%rcx
