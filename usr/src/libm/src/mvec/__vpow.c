@@ -661,11 +661,11 @@ if ( !exp )											\
 {												\
 	ax##I = (double) ull_y0;								\
 	ull_ax##I = *(unsigned long long*)&ax##I;						\
-	ull_x##I = ull_ax##I & LMMANT | LDONE;							\
+	ull_x##I = ((ull_ax##I & LMMANT) | LDONE);						\
 	x##I = *(double*)&ull_x##I;								\
 	exp##I = ((unsigned int*) & ull_ax##I)[0];						\
 	exp##I = (exp##I >> 20) - (2046 + 1023 + 51);						\
-	ull_ax##I = ull_x##I + LMROUND & LMHI20;						\
+	ull_ax##I = (ull_x##I + (LMROUND & LMHI20));						\
 	ax##I = *(double*)&ull_ax##I;								\
 	ux##I = x##I + ax##I;									\
 }												\
@@ -1154,10 +1154,10 @@ __vpowx( int n, double * restrict px, double * restrict py,
 	/* perform s_h + yr = 256*log2(x) */
 	ull_y0 = *(unsigned long long*)px;
 	hx = HI(px);
-	ull_x0 = ull_y0 & LMMANT | LDONE;
+	ull_x0 = (ull_y0 & LMMANT) | LDONE;
 	x0 = *(double*)&ull_x0;
 	exp0 = (hx >> 20) - 2046;
-	ull_ax0 = ull_x0 + LMROUND & LMHI20;
+	ull_ax0 = ull_x0 + (LMROUND & LMHI20);
 	ax0 = *(double*)&ull_ax0;
 	hx0 = HI(&ax0);
 	ux0 = x0 + ax0;
