@@ -29,11 +29,7 @@
 #ifndef _FLOATINGPOINT_H
 #define	_FLOATINGPOINT_H
 
-#pragma ident	"@(#)floatingpoint.h	2.10	05/10/06 SMI"
-
-#ifdef __STDC__
-#include <stdio_tag.h>
-#endif
+#include <stdio.h>
 #include <sys/ieeefp.h>
 
 #ifdef __cplusplus
@@ -55,11 +51,6 @@ extern "C" {
 #define	__P(p)	()
 #endif
 #endif	/* !defined(__P) */
-
-#if defined(__STDC__) && !defined(_FILEDEFED)
-#define	_FILEDEFED
-typedef	__FILE FILE;
-#endif
 
 #define	N_IEEE_EXCEPTION 5	/* Number of floating-point exceptions. */
 
