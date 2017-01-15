@@ -26,8 +26,6 @@
 #ifndef _ISO_MATH_ISO_H
 #define	_ISO_MATH_ISO_H
 
-#pragma ident	"@(#)math_iso.h	1.10	05/10/06 SMI"
-
 #include <sys/feature_tests.h>
 
 #ifdef __cplusplus
@@ -87,24 +85,6 @@ extern double ceil __P((double));
 extern double fabs __P((double));
 extern double floor __P((double));
 extern double fmod __P((double, double));
-
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(acos, asin, atan, atan2)
-#pragma does_not_read_global_data(cos, sin, tan, cosh, sinh, tanh)
-#pragma does_not_read_global_data(exp, log, log10, pow, sqrt)
-#pragma does_not_read_global_data(frexp, ldexp, modf)
-#pragma does_not_read_global_data(ceil, fabs, floor, fmod)
-#pragma does_not_write_global_data(acos, asin, atan, atan2)
-#pragma does_not_write_global_data(cos, sin, tan, cosh, sinh, tanh)
-#pragma does_not_write_global_data(exp, log, log10, pow, sqrt)
-#pragma does_not_write_global_data(ldexp)
-#pragma does_not_write_global_data(ceil, fabs, floor, fmod)
-#pragma no_side_effect(acos, asin, atan, atan2)
-#pragma no_side_effect(cos, sin, tan, cosh, sinh, tanh)
-#pragma no_side_effect(exp, log, log10, pow, sqrt)
-#pragma no_side_effect(ldexp)
-#pragma no_side_effect(ceil, fabs, floor, fmod)
-#endif
 
 #if __cplusplus >= 199711L
 extern float __acosf(float);

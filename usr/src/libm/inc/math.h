@@ -26,8 +26,6 @@
 #ifndef _MATH_H
 #define	_MATH_H
 
-#pragma ident	"@(#)math.h	2.25	05/10/06 SMI"
-
 #include <iso/math_iso.h>
 #include <iso/math_c99.h>
 
@@ -151,18 +149,8 @@ extern double erfc __P((double));
 extern double hypot __P((double, double));
 extern double lgamma __P((double));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(erf, erfc, hypot)
-#pragma does_not_write_global_data(erf, erfc, hypot)
-#pragma no_side_effect(erf, erfc, hypot)
-#endif
-
 #if !defined(_STDC_C99) && _XOPEN_SOURCE - 0 < 600 && !defined(__C99FEATURES__)
 extern int isnan __P((double));
-
-#pragma does_not_read_global_data(isnan)
-#pragma does_not_write_global_data(isnan)
-#pragma no_side_effect(isnan)
 #endif
 /* END adopted by C99 */
 
@@ -176,11 +164,6 @@ extern double y0 __P((double));
 extern double y1 __P((double));
 extern double yn __P((int, double));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(j0, j1, jn, y0, y1, yn)
-#pragma does_not_write_global_data(j0, j1, jn, y0, y1, yn)
-#pragma no_side_effect(j0, j1, jn, y0, y1, yn)
-#endif
 #if defined(__EXTENSIONS__) || !defined(_XOPEN_SOURCE) || \
 	_XOPEN_SOURCE - 0 >= 500 || \
 	defined(_XOPEN_SOURCE) && _XOPEN_SOURCE_EXTENDED - 0 == 1
@@ -188,12 +171,6 @@ extern double yn __P((int, double));
  * SVID & XPG 4.2/5
  */
 extern double scalb __P((double, double));
-
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(scalb)
-#pragma does_not_write_global_data(scalb)
-#pragma no_side_effect(scalb)
-#endif
 
 /* BEGIN adopted by C99 */
 extern double acosh __P((double));
@@ -212,17 +189,6 @@ extern int ilogb __P((double));
 extern double log1p __P((double));
 extern double rint __P((double));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(acosh, asinh, atanh, cbrt)
-#pragma does_not_read_global_data(logb, nextafter, remainder)
-#pragma does_not_read_global_data(expm1, ilogb, log1p, rint)
-#pragma does_not_write_global_data(acosh, asinh, atanh, cbrt)
-#pragma does_not_write_global_data(logb, nextafter, remainder)
-#pragma does_not_write_global_data(expm1, ilogb, log1p, rint)
-#pragma no_side_effect(acosh, asinh, atanh, cbrt)
-#pragma no_side_effect(logb, nextafter, remainder)
-#pragma no_side_effect(expm1, ilogb, log1p, rint)
-#endif
 /* END adopted by C99 */
 #endif	/* defined(__EXTENSIONS__) || !defined(_XOPEN_SOURCE) || ... */
 
@@ -236,12 +202,6 @@ extern int matherr __P((struct exception *));
  * IEEE Test Vector
  */
 extern double significand __P((double));
-
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(significand)
-#pragma does_not_write_global_data(significand)
-#pragma no_side_effect(significand)
-#endif
 
 extern int signgamf;				/* deprecated; use signgam */
 extern int signgaml;				/* deprecated; use signgam */
@@ -271,34 +231,12 @@ extern long double y0l __P((long double));
 extern long double y1l __P((long double));
 extern long double ynl __P((int, long double));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(isnanf, isnanl)
-#pragma does_not_write_global_data(isnanf, isnanl)
-#pragma no_side_effect(isnanf, isnanl)
-#pragma does_not_read_global_data(gammaf_r, j0f, j1f, jnf, lgammaf_r, scalbf)
-#pragma does_not_read_global_data(significandf, y0f, y1f, ynf)
-#pragma does_not_write_global_data(j0f, j1f, jnf, scalbf)
-#pragma does_not_write_global_data(significandf, y0f, y1f, ynf)
-#pragma no_side_effect(j0f, j1f, jnf, scalbf)
-#pragma no_side_effect(significandf, y0f, y1f, ynf)
-#pragma does_not_read_global_data(gammal_r, j0l, j1l, jnl, lgammal_r, scalbl)
-#pragma does_not_read_global_data(significandl, y0l, y1l, ynl)
-#pragma does_not_write_global_data(j0l, j1l, jnl, scalbl)
-#pragma does_not_write_global_data(significandl, y0l, y1l, ynl)
-#pragma no_side_effect(j0l, j1l, jnl, scalbl)
-#pragma no_side_effect(significandl, y0l, y1l, ynl)
-#endif
-
 /*
  * for sin+cos->sincos transformation
  */
 extern void sincos __P((double, double *, double *));
 extern void sincosf __P((float, float *, float *));
 extern void sincosl __P((long double, long double *, long double *));
-
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(sincos, sincosf, sincosl)
-#endif
 
 /* BEGIN adopted by C99 */
 /*
@@ -307,11 +245,6 @@ extern void sincosl __P((long double, long double *, long double *));
 extern double copysign __P((double, double));
 extern double scalbn __P((double, int));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(copysign, scalbn)
-#pragma does_not_write_global_data(copysign, scalbn)
-#pragma no_side_effect(copysign, scalbn)
-#endif
 /* END adopted by C99 */
 
 /*
@@ -321,16 +254,8 @@ extern double scalbn __P((double, int));
 extern double gamma_r __P((double, int *));	/* deprecated; use lgamma_r */
 extern double lgamma_r __P((double, int *));
 
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(gamma_r, lgamma_r)
-#endif
-
 /* BEGIN adopted by C99 */
 extern float modff __P((float, float *));
-
-#if defined(__MATHERR_ERRNO_DONTCARE)
-#pragma does_not_read_global_data(modff)
-#endif
 /* END adopted by C99 */
 
 #if defined(__EXTENSIONS__) || !defined(__cplusplus)
