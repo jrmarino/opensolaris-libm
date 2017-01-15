@@ -220,13 +220,14 @@ yn(int n, GENERIC x) {
 
 	ox = x; on = (GENERIC)n;
 	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
-	if (x <= zero)
-		if(x==zero)
+	if (x <= zero) {
+		if(x == zero)
 			/* return -one/zero; */
 			return _SVID_libm_err((GENERIC)n,x,12);
 		else
 			/* return zero/zero; */
 			return _SVID_libm_err((GENERIC)n,x,13);
+	}
 	if (!((int) _lib_version == libm_ieee ||
 		(__xpg6 & _C99SUSv3_math_errexcept) != 0)) {
 	    if(x > X_TLOSS) return _SVID_libm_err(on,ox,39);
