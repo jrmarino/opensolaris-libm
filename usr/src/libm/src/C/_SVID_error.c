@@ -31,10 +31,7 @@
 #include <float.h>		/* DBL_MAX, DBL_MIN */
 #include <unistd.h>		/* write */
 #if defined(__i386) || defined(i386)
-#include <ieeefp.h>
-#undef	fp_class
-#define	fp_class	fpclass
-#define	fp_quiet	FP_QNAN
+#include "libm_protos.h" //for fp_class and fp_quiet
 #endif
 #include <errno.h>
 #undef fflush
@@ -102,11 +99,11 @@ static const union {
 	double		d;
 } C[] = {
 #ifdef _LITTLE_ENDIAN
-	{ 0xffffffff, 0x7fffffff },
-	{ 0x54442d18, 0x400921fb },
+	{{ 0xffffffff, 0x7fffffff }},
+	{{ 0x54442d18, 0x400921fb }},
 #else
-	{ 0x7fffffff, 0xffffffff },
-	{ 0x400921fb, 0x54442d18 },
+	{{ 0x7fffffff, 0xffffffff }},
+	{{ 0x400921fb, 0x54442d18 }},
 #endif
 };
 
