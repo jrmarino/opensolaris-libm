@@ -126,8 +126,8 @@
 #define _FEXPLEN	8
 #define DSIGNIF	(BITS(double) - _DEXPLEN + _HIDDENBIT - 1)
 #define FSIGNIF	(BITS(float)  - _FEXPLEN + _HIDDENBIT - 1)
-#define DMAXPOWTWO	((double)(1L << (BITS(long) - 2)) * \
-				(1L << DSIGNIF - BITS(long) + 1))
+#define DMAXPOWTWO	((double)(1L << (BITS(int) - 2)) * \
+				(1L << (DSIGNIF - BITS(int) + 1)))
 #define FMAXPOWTWO	((float)(1L << FSIGNIF - 1))
 #define DMAXEXP	((1 << _DEXPLEN - 1) - 1 + _IEEE)
 #define FMAXEXP	((1 << _FEXPLEN - 1) - 1 + _IEEE)
