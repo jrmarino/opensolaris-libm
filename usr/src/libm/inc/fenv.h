@@ -190,13 +190,7 @@ extern int fex_set_handling __P((int, int, void (*)()));
 extern void fex_getexcepthandler __P((fex_handler_t *, int));
 extern void fex_setexcepthandler __P((const fex_handler_t *, int));
 
-#ifdef __STDC__
-#include <stdio_tag.h>
-#ifndef	_FILEDEFED
-#define	_FILEDEFED
-typedef	__FILE FILE;
-#endif
-#endif
+#include <stdio.h>
 extern FILE *fex_get_log __P((void));
 extern int fex_set_log __P((FILE *));
 extern int fex_get_log_depth __P((void));
