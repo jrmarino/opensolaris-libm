@@ -161,18 +161,12 @@ static GENERIC v0[8] = {
 
 GENERIC
 y0l(x) GENERIC x;{
-	GENERIC z, d, s, c, ss, cc, u, v;
+	GENERIC z, s, c, ss, cc, u, v;
 	int i;
 
 	if (isnanl(x))
 		return (x+x);
-	if(x <= zero){
-		if(x==zero) 
-		    d= -one/(x-x); 
-		else 
-		    d = zero/(x-x);
-	}
-	if(x > 1.28L){
+	if(x > 1.28L) {
 		if (!finitel(x))
 			return (zero);
 		s = sinl(x);
