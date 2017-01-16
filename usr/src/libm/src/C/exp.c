@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)exp.c	1.25	06/01/24 SMI"
 
 #pragma weak exp = __exp
 

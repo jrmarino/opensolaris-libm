@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)powf.c	1.19	06/01/23 SMI"
 
 #pragma weak powf = __powf
 

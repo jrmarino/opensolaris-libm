@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)k_cexp.c	1.3	06/01/31 SMI"
 
 /* INDENT OFF */
 /*

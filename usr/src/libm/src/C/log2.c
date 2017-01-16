@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)log2.c	1.16	06/01/31 SMI"
 
 #pragma weak log2 = __log2
 

@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vsincosf.c	1.4	06/01/23 SMI"
 
 /*
  * __vsincosf: single precision vector sincos

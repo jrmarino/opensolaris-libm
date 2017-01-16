@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)lgammal_r.c	1.5	06/01/31 SMI"
 
 /*
  * long double lgammal_r(long double x, int *signgamlp);

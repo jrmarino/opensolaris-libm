@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_expm1l.c	1.4	06/01/31 SMI"
 
 /*
  * Table of constants for expm1l.

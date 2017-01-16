@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sincos.c	1.13	06/01/23 SMI"
 
 #pragma weak sincos = __sincos
 

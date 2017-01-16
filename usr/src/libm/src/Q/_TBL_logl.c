@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_logl.c	1.8	06/01/31 SMI"
 
 /*
  * Table of constants for logl.

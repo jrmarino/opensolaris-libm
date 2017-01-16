@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vz_log_.c	1.5	06/01/31 SMI"
 
 extern void __vz_log( int, double *, int, double *, int );
 

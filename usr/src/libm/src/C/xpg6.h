@@ -26,7 +26,6 @@
 #ifndef _XPG6_H
 #define	_XPG6_H
 
-#pragma ident "@(#)xpg6.h 1.8 06/01/31 SMI"
 
 /*
  * The bits in lib/libc/inc/xpg6.h fpgroup may use as per PSARC/2003/486.

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)exp10f.c	1.8	06/01/31 SMI"
 
 #pragma weak exp10f = __exp10f
 

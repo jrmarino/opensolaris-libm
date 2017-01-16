@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)gamma_r.c	1.6	06/01/23 SMI"
 
 #pragma weak gamma_r = __gamma_r
 

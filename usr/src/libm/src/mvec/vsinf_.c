@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vsinf_.c	1.4	06/01/31 SMI"
 
 extern void __vsinf( int, float *, int, float *, int );
 

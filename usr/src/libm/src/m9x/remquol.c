@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)remquol.c	1.8	06/01/31 SMI"
 
 #pragma weak remquol = __remquol
 

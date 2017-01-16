@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_tanl.c	1.9	06/01/31 SMI"
 
 /*
  * For i = 0L, ..., 75 let x(i) be the extended precision number

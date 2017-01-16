@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vTBL_sincos.c	1.3	06/01/31 SMI"
 
 const double __vlibm_TBL_sincos_hi[] = {
  1.55614992773556032e-01, 9.87817783816471895e-01,

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vTBL_atan1.c	1.3	06/01/31 SMI"
 
 const double __vlibm_TBL_atan1[] __attribute__((aligned(32))) = {
 

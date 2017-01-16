@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vsqrtf_.c	1.5	06/01/31 SMI"
 
 extern void __vsqrtf( int, float *, int, float *, int );
 

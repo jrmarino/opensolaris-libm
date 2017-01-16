@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)isnan.c	1.10	06/01/25 SMI"
 
 #pragma weak isnan = __isnan
 #pragma weak _isnan = __isnan

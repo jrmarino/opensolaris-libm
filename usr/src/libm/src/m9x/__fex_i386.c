@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__fex_i386.c	1.15	06/01/31 SMI"
 
 #include "fenv_synonyms.h"
 #include <stdio.h>

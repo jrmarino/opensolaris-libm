@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__libx_errno.c	1.14	06/01/25 SMI"
 
 extern int *___errno(void);
 

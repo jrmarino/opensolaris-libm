@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)hypot.c	1.31	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak hypot = __hypot

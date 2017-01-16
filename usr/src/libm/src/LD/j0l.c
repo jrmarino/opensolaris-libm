@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)j0l.c	1.8	06/01/31 SMI"
 
 /*
  * Floating point Bessel's function of the first and second kinds

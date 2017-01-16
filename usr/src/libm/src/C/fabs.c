@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fabs.c	1.13	06/01/31 SMI"
 
 #pragma weak fabs = __fabs
 

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)libmv1.c	1.4	06/01/31 SMI"
 
 #pragma weak _lib_version = __libm_lib_version
 #pragma weak acos = __acos

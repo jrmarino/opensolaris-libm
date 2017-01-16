@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__lgamma.c	1.9	06/01/23 SMI"
 
 /*
  * double __k_lgamma(double x, int *signgamp);

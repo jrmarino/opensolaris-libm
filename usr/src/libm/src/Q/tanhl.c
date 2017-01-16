@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tanhl.c	1.8	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak tanhl = __tanhl

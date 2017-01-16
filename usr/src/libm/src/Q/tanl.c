@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tanl.c	1.7	06/01/31 SMI"
 
 /*
  * tanl(x)

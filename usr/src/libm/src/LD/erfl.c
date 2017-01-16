@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)erfl.c	1.8	06/01/31 SMI"
 
 /* long double function erf,erfc (long double x)
  * K.C. Ng, September, 1989.

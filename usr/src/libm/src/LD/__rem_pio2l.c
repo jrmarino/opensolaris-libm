@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__rem_pio2l.c	1.10	06/01/31 SMI"
 
 /* __rem_pio2l(x,y)
  *

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vTBL_sqrtf.c	1.3	06/01/31 SMI"
 
 /*
  i = [0,255]

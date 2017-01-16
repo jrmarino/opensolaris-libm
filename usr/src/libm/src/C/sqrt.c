@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sqrt.c	1.20	06/01/23 SMI"
 
 #pragma weak sqrt = __sqrt
 

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vpow.c	1.13	06/01/31 SMI"
 
 #include <sys/isa_defs.h>
 

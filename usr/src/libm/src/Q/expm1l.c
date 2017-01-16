@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)expm1l.c	1.16	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak expm1l = __expm1l

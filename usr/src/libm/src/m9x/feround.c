@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)feround.c	1.9	06/01/31 SMI"
 
 #pragma weak fegetround = __fegetround
 #pragma weak fesetround = __fesetround

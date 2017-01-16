@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vTBL_atan2.c	1.3	06/01/31 SMI"
 
 const double __vlibm_TBL_atan2[] = {
  7.8539816339744827900e-01,  3.0616169978683830179e-17,

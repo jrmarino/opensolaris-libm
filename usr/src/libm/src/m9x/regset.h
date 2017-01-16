@@ -31,7 +31,6 @@
 #ifndef	_SYS_REGSET_H
 #define	_SYS_REGSET_H
 
-#pragma ident	"@(#)regset.h	1.3	06/01/31 SMI"
 
 #include <sys/types.h>
 

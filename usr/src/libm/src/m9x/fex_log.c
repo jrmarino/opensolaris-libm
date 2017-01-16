@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fex_log.c	1.13	06/01/31 SMI"
 
 #pragma weak fex_get_log = __fex_get_log
 #pragma weak fex_set_log = __fex_set_log

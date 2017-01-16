@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vatan2f.c	1.7	06/01/31 SMI"
 
 #ifdef __RESTRICT
 #define restrict _Restrict

@@ -26,7 +26,6 @@
 #ifndef _TGMATH_H
 #define	_TGMATH_H
 
-#pragma ident	"@(#)tgmath.h	1.8	05/10/06 SMI"
 
 #if !defined(__cplusplus)
 

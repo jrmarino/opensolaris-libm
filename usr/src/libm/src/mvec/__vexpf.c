@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vexpf.c	1.9	06/01/31 SMI"
 
 #ifdef __RESTRICT
 #define restrict _Restrict

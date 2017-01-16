@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)rint.c	1.17	06/01/23 SMI"
 
 #pragma weak rint = __rint
 

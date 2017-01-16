@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vsin_.c	1.8	06/01/31 SMI"
 
 extern void __vsin( int, double *, int, double *, int );
 

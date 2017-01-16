@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fdim.c	1.6	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak fdim = __fdim

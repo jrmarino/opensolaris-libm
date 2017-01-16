@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_ipio2l.c	1.10	06/01/31 SMI"
 
 /*
  * Table of constants for 2/pi, used in __rem_pio2l (trigl) function.

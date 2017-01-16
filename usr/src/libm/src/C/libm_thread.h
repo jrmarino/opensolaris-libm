@@ -27,7 +27,6 @@
 #ifndef _LIBM_THREAD_H
 #define	_LIBM_THREAD_H
 
-#pragma ident	"@(#)libm_thread.h	1.6	06/01/31 SMI"
 
 #include <synch.h>
 #include <thread.h>

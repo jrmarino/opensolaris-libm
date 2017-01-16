@@ -26,7 +26,6 @@
 #ifndef _COMPLEX_H
 #define	_COMPLEX_H
 
-#pragma ident	"@(#)complex.h	1.10	05/10/06 SMI"
 
 #if !defined(__cplusplus)
 

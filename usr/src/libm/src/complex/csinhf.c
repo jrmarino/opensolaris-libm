@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)csinhf.c	1.4	06/01/23 SMI"
 
 #pragma weak csinhf = __csinhf
 

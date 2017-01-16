@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)atan2l.c	1.7	06/01/31 SMI"
 
 /*
  * atan2l(y,x)

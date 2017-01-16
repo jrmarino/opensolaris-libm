@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fmod.c	1.20	06/01/24 SMI"
 
 #pragma weak fmod = __fmod
 

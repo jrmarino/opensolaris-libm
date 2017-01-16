@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sqrtf.c	1.14	06/01/23 SMI"
 
 #pragma weak sqrtf = __sqrtf
 

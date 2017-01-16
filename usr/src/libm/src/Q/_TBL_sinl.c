@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_sinl.c	1.10	06/01/31 SMI"
 
 /*
  * table of sinl(x) where x is 0.15625 + i*0.03125, i=0,1,...,74.

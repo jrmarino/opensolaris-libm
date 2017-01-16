@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_ipio2.c	1.10	06/01/31 SMI"
 
 #include "libm_protos.h"
 

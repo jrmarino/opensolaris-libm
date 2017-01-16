@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__tanl.c	1.11	06/01/31 SMI"
 
 /*
  * long double __k_tanl(long double x; long double y, int k);

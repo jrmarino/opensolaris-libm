@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tgamma.c	1.13	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak tgamma = __tgamma

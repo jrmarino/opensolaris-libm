@@ -27,7 +27,6 @@
 #ifndef _LIBM_SYNONYMS_H
 #define	_LIBM_SYNONYMS_H
 
-#pragma ident	"@(#)libm_synonyms.h	1.37	06/01/31 SMI"
 
 #if defined(ELFOBJ) && !defined(lint)
 

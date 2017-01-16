@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vcos.c	1.6	06/01/31 SMI"
 
 #include <sys/isa_defs.h>
 

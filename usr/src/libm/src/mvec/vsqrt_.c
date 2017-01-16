@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vsqrt_.c	1.4	06/01/31 SMI"
 
 extern void __vsqrt( int, double *, int, double *, int );
 

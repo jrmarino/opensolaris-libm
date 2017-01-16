@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident "@(#)k_clog_rl.c 1.4 06/01/23 SMI"
 
 #include "libm.h"		/* __k_clog_rl */
 #include "complex_wrapper.h"

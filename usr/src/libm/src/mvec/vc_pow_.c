@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vc_pow_.c	1.4	06/01/31 SMI"
 
 extern void __vc_pow( int, float *, int, float *, int, float *, int,
 	float * );

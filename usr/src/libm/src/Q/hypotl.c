@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)hypotl.c	1.11	06/01/31 SMI"
 
 #pragma weak hypotl = __hypotl
 

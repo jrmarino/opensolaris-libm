@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__fex_sparc.c	1.7	06/01/31 SMI"
 
 #if defined(__sparc)
 #include "fenv_synonyms.h"

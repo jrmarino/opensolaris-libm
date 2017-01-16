@@ -26,7 +26,6 @@
 #ifndef _FENV_H
 #define	_FENV_H
 
-#pragma ident	"@(#)fenv.h	1.10	05/10/06 SMI"
 
 #include <sys/feature_tests.h>
 

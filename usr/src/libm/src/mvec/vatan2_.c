@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vatan2_.c	1.5	06/01/31 SMI"
 
 extern void __vatan2( int, double *, int, double *, int, double *, int );
 

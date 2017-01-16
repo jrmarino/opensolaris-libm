@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)gammal.c	1.6	06/01/31 SMI"
 #pragma weak gammal = __gammal
 
 /*

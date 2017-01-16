@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)signgaml.c	1.4	06/01/31 SMI"
 
 #pragma weak signgaml = __signgaml
 

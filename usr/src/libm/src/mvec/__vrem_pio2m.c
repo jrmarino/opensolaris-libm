@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vrem_pio2m.c	1.8	06/01/31 SMI"
 
 /*
  * Given X, __vlibm_rem_pio2m finds Y and an integer n such that

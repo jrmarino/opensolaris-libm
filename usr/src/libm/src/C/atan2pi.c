@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)atan2pi.c	1.6	06/01/23 SMI"
 
 #pragma weak atan2pi = __atan2pi
 

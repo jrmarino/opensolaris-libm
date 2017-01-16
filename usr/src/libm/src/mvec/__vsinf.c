@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vsinf.c	1.4	06/01/23 SMI"
 
 /*
  * __vsinf: single precision vector sin

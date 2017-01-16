@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__rem_pio2.c	1.13	06/01/23 SMI"
 
 /*
  * __rem_pio2(x, y) passes back a better-than-double-precision

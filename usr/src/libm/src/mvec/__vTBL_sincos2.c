@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vTBL_sincos2.c	1.3	06/01/31 SMI"
 
 /*
  * Let arg(x) denote a double precision number near x such that both

@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cosh.c	1.17	06/01/23 SMI"
 
 #pragma weak cosh = __cosh
 

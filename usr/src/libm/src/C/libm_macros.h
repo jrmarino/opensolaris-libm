@@ -26,7 +26,6 @@
 #ifndef _LIBM_MACROS_H
 #define	_LIBM_MACROS_H
 
-#pragma ident	"@(#)libm_macros.h	1.4	06/01/23 SMI"
 
 #if defined(__sparc)
 

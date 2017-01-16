@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)pow.c	1.44	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak pow = __pow

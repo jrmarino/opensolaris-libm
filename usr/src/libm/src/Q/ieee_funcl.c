@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)ieee_funcl.c	1.11	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak isinfl = __isinfl

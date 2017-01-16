@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__sincosl.c	1.8	06/01/31 SMI"
 
 /*
  * long double __k_sincos(long double x, long double y, long double *c);

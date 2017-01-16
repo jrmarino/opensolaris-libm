@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)log1pl.c	1.18	06/01/31 SMI"
 
 #ifdef __LITTLE_ENDIAN
 #define	H0(x)	*(3 + (int *) &x)

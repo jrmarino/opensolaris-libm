@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)carg.c	1.3	06/01/23 SMI"
 
 #pragma weak carg = __carg
 

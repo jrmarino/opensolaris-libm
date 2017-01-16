@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)scalbn.c	1.10	06/01/26 SMI"
 
 #pragma weak scalbn = __scalbn
 

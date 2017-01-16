@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)longdouble.h	1.8	06/01/31 SMI"
 
 #include <sys/ieeefp.h>
 

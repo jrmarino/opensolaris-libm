@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__poly_libmq.c	1.6	06/01/31 SMI"
 
 #include "libm.h"
 

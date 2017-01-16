@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vatan2.c	1.7	06/01/31 SMI"
 
 #include <sys/isa_defs.h>
 

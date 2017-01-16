@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)acosh.c	1.19	06/01/31 SMI"
 
 #pragma weak acosh = __acosh
 

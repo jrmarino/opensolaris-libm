@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__sincos.c	1.15	06/01/23 SMI"
 
 /* INDENT OFF */
 /*

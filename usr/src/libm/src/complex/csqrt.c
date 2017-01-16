@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)csqrt.c	1.4	06/01/31 SMI"
 
 #pragma weak csqrt = __csqrt
 

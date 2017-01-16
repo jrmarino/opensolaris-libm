@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)jn.c	1.23	06/01/31 SMI"
 
 #pragma weak jn = __jn
 #pragma weak yn = __yn

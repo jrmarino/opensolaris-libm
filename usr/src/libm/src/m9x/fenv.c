@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fenv.c	1.9	06/01/31 SMI"
 
 #pragma weak fex_merge_flags = __fex_merge_flags
 

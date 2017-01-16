@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)acosf.c	1.12	06/01/23 SMI"
 
 #pragma weak acosf = __acosf
 

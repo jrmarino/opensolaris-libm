@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vlog.c	1.5	06/01/23 SMI"
 
 /*
  * __vlog: double precision vector log

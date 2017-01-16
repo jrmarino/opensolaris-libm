@@ -27,7 +27,6 @@
 #ifndef _FMA_H
 #define	_FMA_H
 
-#pragma ident	"@(#)fma.h	1.3	06/01/31 SMI"
 
 #ifdef __cplusplus
 extern "C" {

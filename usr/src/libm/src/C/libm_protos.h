@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)libm_protos.h	1.41	06/01/23 SMI"
 
 #ifndef _LIBM_PROTOS_H
 #define	_LIBM_PROTOS_H

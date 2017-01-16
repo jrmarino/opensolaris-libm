@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__fex_hdlr.c	1.12	06/01/31 SMI"
 
 #include "fenv_synonyms.h"
 #undef lint

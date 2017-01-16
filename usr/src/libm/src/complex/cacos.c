@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cacos.c	1.6	06/01/31 SMI"
 
 #pragma weak cacos = __cacos
 

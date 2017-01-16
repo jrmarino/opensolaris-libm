@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vcosf.c	1.4	06/01/23 SMI"
 
 /*
  * __vcosf: single precision vector cos

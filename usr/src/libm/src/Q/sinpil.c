@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sinpil.c	1.9	06/01/31 SMI"
 
 #pragma weak sinpil = __sinpil
 

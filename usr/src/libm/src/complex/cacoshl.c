@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cacoshl.c	1.5	06/01/31 SMI"
 
 #pragma weak cacoshl = __cacoshl
 

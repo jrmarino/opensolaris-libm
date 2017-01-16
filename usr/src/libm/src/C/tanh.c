@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tanh.c	1.18	06/01/31 SMI"
 
 #pragma weak tanh = __tanh
 

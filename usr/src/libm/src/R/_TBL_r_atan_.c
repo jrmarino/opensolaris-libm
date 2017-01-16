@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_r_atan_.c	1.9	06/01/31 SMI"
 
 /*
  * Table of constants for r_atan_().

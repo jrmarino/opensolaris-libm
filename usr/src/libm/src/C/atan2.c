@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)atan2.c	1.22	06/01/23 SMI"
 
 #pragma weak atan2 = __atan2
 

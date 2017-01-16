@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)nextafter.c	1.21	06/01/23 SMI"
 
 #pragma weak nextafter = __nextafter
 #pragma weak _nextafter = __nextafter

@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)ceil.c	1.8	06/01/23 SMI"
 
 #pragma weak ceil = __ceil
 

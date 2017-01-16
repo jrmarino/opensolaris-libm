@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cbrt.c	1.16	06/01/31 SMI"
 
 /* INDENT OFF */
 

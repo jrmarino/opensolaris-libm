@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cpowl.c	1.7	06/01/31 SMI"
 
 #pragma weak cpowl = __cpowl
 

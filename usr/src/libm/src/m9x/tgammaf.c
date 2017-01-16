@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tgammaf.c	1.10	06/01/31 SMI"
 
 #pragma weak tgammaf = __tgammaf
 

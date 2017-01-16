@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__sinf.c	1.14	06/01/31 SMI"
 
 
 #include "libm.h"

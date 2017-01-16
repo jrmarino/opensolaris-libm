@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__vexp.c	1.7	06/01/23 SMI"
 
 /*
  * __vexp: double precision vector exp

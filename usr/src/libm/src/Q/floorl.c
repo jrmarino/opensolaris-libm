@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)floorl.c	1.6	06/01/31 SMI"
 
 /*
  * ceill(x)	return the biggest integral value below x

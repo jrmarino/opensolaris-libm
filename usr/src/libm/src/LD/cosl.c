@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cosl.c	1.9	06/01/31 SMI"
 
 #pragma weak cosl = __cosl
 

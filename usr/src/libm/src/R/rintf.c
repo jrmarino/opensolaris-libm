@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)rintf.c	1.10	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak aintf = __aintf

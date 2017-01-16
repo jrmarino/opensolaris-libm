@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fenv_synonyms.h	1.7	06/01/31 SMI"
 
 /* feexcept.c */
 #define feclearexcept	__feclearexcept

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_lib_version.c	1.8	06/01/31 SMI"
 
 /*
  * values-{X,x}?.o should define + initialize an *actual* symbol _lib_version.

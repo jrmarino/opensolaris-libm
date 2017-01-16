@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)asin.c	1.20	06/01/31 SMI"
 
 #pragma weak asin = __asin
 

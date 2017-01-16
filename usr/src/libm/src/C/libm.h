@@ -26,7 +26,6 @@
 #ifndef	_LIBM_H
 #define	_LIBM_H
 
-#pragma ident	"@(#)libm.h	1.54	06/01/23 SMI"
 
 #ifdef _ASM
 /* BEGIN CSTYLED */

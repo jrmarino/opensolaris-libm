@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)catanf.c	1.5	06/01/23 SMI"
 
 #pragma weak catanf = __catanf
 

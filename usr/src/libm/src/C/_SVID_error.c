@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_SVID_error.c	1.75	06/01/23 SMI"
 
 #include "libm.h"
 #include "xpg6.h"	/* __xpg6 */

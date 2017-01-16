@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__xpg6.c	1.3	06/01/31 SMI (lib/libc/port/gen/xpg6.c 1.1 02/09/24)"
 
 /*LINTLIBRARY*/
 

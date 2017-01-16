@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)log2l.c	1.6	06/01/31 SMI"
 
 /*
  * log2l(x)

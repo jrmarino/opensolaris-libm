@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)rndintl.c	1.10	06/01/23 SMI"
 
 #pragma weak aintl = __aintl
 #pragma weak anintl = __anintl

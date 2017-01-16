@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)nanf.c	1.4	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak nanf = __nanf

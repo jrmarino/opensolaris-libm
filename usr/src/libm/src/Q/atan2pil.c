@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)atan2pil.c	1.6	06/01/31 SMI"
 
 #pragma weak atan2pil = __atan2pil
 

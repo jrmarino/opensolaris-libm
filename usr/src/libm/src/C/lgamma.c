@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)lgamma.c	1.25	06/01/23 SMI"
 
 #pragma weak lgamma = __lgamma
 

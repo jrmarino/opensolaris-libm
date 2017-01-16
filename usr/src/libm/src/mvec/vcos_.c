@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)vcos_.c	1.8	06/01/31 SMI"
 
 extern void __vcos( int, double *, int, double *, int );
 

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fex_handler.c	1.5	06/01/31 SMI"
 
 #pragma weak fex_get_handling = __fex_get_handling
 #pragma weak fex_set_handling = __fex_set_handling

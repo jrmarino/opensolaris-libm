@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)clog.c	1.8	06/01/23 SMI"
 
 #pragma weak clog = __clog
 

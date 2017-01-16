@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)_TBL_tan.c	1.9	06/01/31 SMI"
 
 #include "libm_protos.h"
 

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fmin.c	1.6	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak fmin = __fmin

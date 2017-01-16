@@ -26,7 +26,6 @@
 #ifndef _SYS_IEEEFP_H
 #define	_SYS_IEEEFP_H
 
-#pragma ident	"@(#)ieeefp.h	2.13	05/10/06 SMI"
 
 #ifdef __cplusplus
 extern "C" {

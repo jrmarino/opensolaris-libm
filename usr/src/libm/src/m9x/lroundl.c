@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)lroundl.c	1.4	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak lroundl = __lroundl

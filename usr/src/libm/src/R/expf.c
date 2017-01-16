@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)expf.c	1.14	06/01/23 SMI"
 
 #pragma weak expf = __expf
 

@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)lgammal.c	1.12	06/01/31 SMI"
 
 #pragma weak lgammal = __lgammal
 

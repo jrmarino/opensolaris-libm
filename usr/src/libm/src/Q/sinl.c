@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sinl.c	1.7	06/01/31 SMI"
 
 /*
  * sinl(x)

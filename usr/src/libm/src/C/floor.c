@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)floor.c	1.10	06/01/23 SMI"
 
 #pragma weak floor = __floor
 

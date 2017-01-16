@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__cosl.c	1.8	06/01/31 SMI"
 
 /*
  * __k_cosl(long double x, long double y)

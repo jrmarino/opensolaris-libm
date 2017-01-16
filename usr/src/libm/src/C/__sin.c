@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__sin.c	1.10	06/01/23 SMI"
 
 /* INDENT OFF */
 /*

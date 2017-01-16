@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__tan.c	1.15	06/01/31 SMI"
 
 /* INDENT OFF */
 /*

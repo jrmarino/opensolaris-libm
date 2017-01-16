@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)erff.c	1.8	06/01/23 SMI"
 
 #pragma weak erff = __erff
 #pragma weak erfcf = __erfcf

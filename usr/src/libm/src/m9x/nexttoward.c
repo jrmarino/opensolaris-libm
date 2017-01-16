@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)nexttoward.c	1.4	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak nexttoward = __nexttoward

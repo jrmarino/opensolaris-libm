@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)fex_handler.h	1.8	06/01/31 SMI"
 
 /* the following enums must match the bit positions in fenv.h */
 enum fex_exception {

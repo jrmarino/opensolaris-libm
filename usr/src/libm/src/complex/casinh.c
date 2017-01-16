@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)casinh.c	1.3	06/01/31 SMI"
 
 #pragma weak casinh = __casinh
 

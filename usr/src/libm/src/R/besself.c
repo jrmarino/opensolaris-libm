@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)besself.c	1.9	06/01/23 SMI"
 
 #pragma weak j0f = __j0f
 #pragma weak j1f = __j1f

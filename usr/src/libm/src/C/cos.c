@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)cos.c	1.13	06/01/23 SMI"
 
 #pragma weak cos = __cos
 

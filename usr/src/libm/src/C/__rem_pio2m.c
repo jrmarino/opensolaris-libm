@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__rem_pio2m.c	1.19	06/01/23 SMI"
 
 /*
  * int __rem_pio2m(x,y,e0,nx,prec,ipio2)

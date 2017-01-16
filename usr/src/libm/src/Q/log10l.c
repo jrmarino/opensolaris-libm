@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)log10l.c	1.9	06/01/31 SMI"
 
 #if defined(ELFOBJ)
 #pragma weak log10l = __log10l

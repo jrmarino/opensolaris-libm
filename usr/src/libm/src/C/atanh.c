@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)atanh.c	1.17	06/01/31 SMI"
 
 #pragma weak atanh = __atanh
 

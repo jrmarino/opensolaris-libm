@@ -23,7 +23,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)remainder.c	1.24	06/01/25 SMI"
 
 #pragma weak remainder = __remainder
 

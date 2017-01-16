@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__sinl.c	1.11	06/01/31 SMI"
 
 /*
  * long double __k_sinl(long double x, long double y);

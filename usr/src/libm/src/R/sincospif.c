@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)sincospif.c	1.7	06/01/31 SMI"
 
 #pragma weak sincospif = __sincospif
 
