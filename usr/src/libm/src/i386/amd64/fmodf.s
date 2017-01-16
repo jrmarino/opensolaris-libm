@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)fmodf.s	1.2	06/01/23 SMI"
 
         .file "fmodf.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(fmodf,function)
-#include "libm_synonyms.h"
 
 	ENTRY(fmodf)
 	push	%rbp

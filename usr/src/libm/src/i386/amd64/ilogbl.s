@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)ilogbl.s	1.4	06/01/23 SMI"
 
         .file "ilogbl.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(ilogbl,function)
-#include "libm_synonyms.h"
 #include "xpg6.h"
 
 	.data

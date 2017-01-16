@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)log2l.s	1.3	06/01/23 SMI"
 
 	.file	"log2l.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(log2l,function)
-#include "libm_synonyms.h"
 
 	ENTRY(log2l)
 	fld1			# push 1.0

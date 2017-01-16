@@ -19,21 +19,16 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)ieee_funcl.s	1.3	06/01/23 SMI"
-
         .file "ieee_funcl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(isinfl,function)
-LIBM_ANSI_PRAGMA_WEAK(isnormall,function)
-LIBM_ANSI_PRAGMA_WEAK(issubnormall,function)
-LIBM_ANSI_PRAGMA_WEAK(iszerol,function)
-LIBM_ANSI_PRAGMA_WEAK(signbitl,function)
-#include "libm_synonyms.h"
 
 	ENTRY(isinfl)
 	movl	16(%rsp),%eax		# ax <-- sign and bexp of x 
