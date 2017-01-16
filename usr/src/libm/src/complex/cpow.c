@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak cpow = __cpow
+#pragma weak __cpow = cpow
 
 /* INDENT OFF */
 /*
@@ -90,6 +92,8 @@
 			/* atan2pi/exp2/sincos/sincospi/__k_clog_r/__k_atan2 */
 #include "complex_wrapper.h"
 
+extern void sincospi(double, double *, double *);
+
 static const double
 	huge = 1e300,
 	tiny = 1e-300,
@@ -100,6 +104,7 @@ static const double
 	zero = 0.0;
 
 static const int hiinf = 0x7ff00000;
+extern double atan2pi(double, double);
 
 /*
  * Assuming |t[0]| > |t[1]| and |t[2]| > |t[3]|, sum4fp subroutine

@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak catanl = __catanl
+#pragma weak __catanl = catanl
 
 /* INDENT OFF */
 /*
@@ -101,6 +103,7 @@
 
 #include "libm.h"	/* atan2l/atanl/fabsl/isinfl/iszerol/log1pl/logl */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 /* INDENT OFF */
 static const long double
@@ -110,7 +113,7 @@ two = 2.0L,
 half = 0.5L,
 ln2 = 6.931471805599453094172321214581765680755e-0001L,
 pi_2 = 1.570796326794896619231321691639751442098584699687552910487472L,
-#if defined(__i386)
+#if defined(__x86)
 E = 2.910383045673370361328125000000000000000e-11L,	/* 2**-35 */
 Einv = 3.435973836800000000000000000000000000000e+10L;	/* 2**+35 */
 #else

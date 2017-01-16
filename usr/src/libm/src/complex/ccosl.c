@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ccosl = __ccosl
+#pragma weak __ccosl = ccosl
 
 #include "libm.h"
 #include "complex_wrapper.h"

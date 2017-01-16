@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* INDENT OFF */
 /*
@@ -115,7 +117,7 @@ P5 = 4.13813679705723846039e-08;	/* 0x3E663769, 0x72BEA4D0 */
 
 double
 __k_cexp(double x, int *n) {
-	double hi, lo, c, t;
+	double hi = 0.0L, lo = 0.0L, c, t;
 	int k, xsb;
 	unsigned hx, lx;
 

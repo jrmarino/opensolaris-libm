@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ctanf = __ctanf
+#pragma weak __ctanf = ctanf
 
 #include "libm.h"
 #include "complex_wrapper.h"

@@ -20,15 +20,20 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak cexpl = __cexpl
+#pragma weak __cexpl = cexpl
 
 #include "libm.h"		/* expl/isinfl/iszerol/scalbnl/sincosl */
 #include "complex_wrapper.h"
+
+extern int isinfl(long double);
+extern int iszerol(long double);
 
 /* INDENT OFF */
 static const long double zero = 0.0L;

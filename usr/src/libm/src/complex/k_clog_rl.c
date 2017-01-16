@@ -19,13 +19,16 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #include "libm.h"		/* __k_clog_rl */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 /* INDENT OFF */
 /*
@@ -361,8 +364,11 @@ static long double k_log_NKzl(int N, int K, long double zh, long double *zt)
 {
 	long double y, r, w, s2, s2h, s2t, t, zk, v, P;
 	double dzk;
+
+#if !defined(__x86)
 	unsigned lx, ly;
 	int j;
+#endif
 
 	((int *)&dzk)[HIWORD] = 0x3ff00000 + (K << 13);
 	((int *)&dzk)[LOWORD] = 0;
@@ -371,9 +377,11 @@ static long double k_log_NKzl(int N, int K, long double zh, long double *zt)
 	r = two / (t + two * zk);
 	s2h = s2 = r * t;
 /* split s2 into correctly rounded half */
-#if defined(__i386)
+
+#if defined(__x86)
 		((unsigned *)&s2h)[0] = 0;	/* 32 bits chopped */
 #else
+
 		lx = ((unsigned *)&s2h)[2];	/* 56 bits rounded */
 		j  = ((lx >> 24) + 1) >> 1;
 		((unsigned *)&s2h)[2] = (j << 25);
@@ -383,6 +391,7 @@ static long double k_log_NKzl(int N, int K, long double zh, long double *zt)
 		((unsigned *)&s2h)[0] += (ly == 0 && lx != 0);
 		((unsigned *)&s2h)[3] = 0;
 #endif
+
 	v = half * s2h;
 	w = s2 * s2;
 	s2t = r * ((((zh - s2h * zk) - v * zh) + (*zt)) - v * (*zt));
@@ -400,9 +409,13 @@ long double
 __k_clog_rl(long double x, long double y, long double *er)
 {
 	long double t1, t2, t3, t4, tk, z, wh, w, zh, zk;
-	int n, k, ix, iy, iz, nx, ny, nz, i, j;
+	int n, k, ix, iy, iz, nx, ny, nz, i;
 	double dk;
+
+#if !defined(__x86)
+	int j;
 	unsigned lx, ly;
+#endif
 
 	ix = HI_XWORD(x) & ~0x80000000;
 	iy = HI_XWORD(y) & ~0x80000000;
@@ -427,17 +440,20 @@ __k_clog_rl(long double x, long double y, long double *er)
  *
  *	log(sqrt(1 + y**2)) =  y**2 / 2 - y**4 / 8 + ...  =  y**2 / 2
  */
-#if defined(__i386)
+#if defined(__x86)
 	if (x == 1.0L && ny < (0x3fff - 46)) {
 #else
 	if (x == 1.0L && ny < (0x3fff - 70)) {
 #endif
+
 		t2 = y * y;
 		if (ny >= 8305) {	/* compute er = tail of t2 */
 			dk = (double) y;
-#if defined(__i386)
+
+#if defined(__x86)
 			((unsigned *)&dk)[LOWORD] &= 0xfffe0000;
 #endif
+
 			wh = (long double) dk;
 			*er = half * ((y - wh) * (y + wh) - (t2 - wh * wh));
 		}
@@ -471,19 +487,23 @@ __k_clog_rl(long double x, long double y, long double *er)
  * EXTENDED, QUAD respectively,
  * log(x) = log(sqrt(x * x + y * y)) to 27 extra bits.
  */
-#if defined(__i386)
+
+#if defined(__x86)
 	if (n > 78 || y == 0.0L) {
 #else
 	if (n > 122 || y == 0.0L) {
 #endif
-		XFSCALE(x, 0x3fff - (ix >> 16));
+
+		XFSCALE(x, (0x3fff - (ix >> 16)));
 		i = ((ix & 0xffff) + 0x100) >> 9;  /* 7.5 bits of x */
 		zk = 1.0L + ((long double) i) * 0.0078125L;
 		z = x - zk;
 		dk = (double)z;
-#if defined(__i386)
+
+#if defined(__x86)
 		((unsigned *)&dk)[LOWORD] &= 0xfffe0000;
 #endif
+
 		zh = (long double)dk;
 		k = i & 0x7f;	/* index of zk */
 		n = nx - 0x3fff;
@@ -497,15 +517,16 @@ __k_clog_rl(long double x, long double y, long double *er)
 /*
  * compute z = x*x + y*y
  */
-		XFSCALE(x, 0x3fff - (ix >> 16));
-		XFSCALE(y, 0x3fff - n - (iy >> 16));
+		XFSCALE(x, (0x3fff - (ix >> 16)));
+		XFSCALE(y, (0x3fff - n - (iy >> 16)));
 		ix = (ix & 0xffff) | 0x3fff0000;
 		iy = (iy & 0xffff) | (0x3fff0000 - (n << 16));
 		nx -= 0x3fff;
 		t1 = x * x; t2 = y * y;
 		wh = x;
+
 /* split x into correctly rounded half */
-#if defined(__i386)
+#if defined(__x86)
 		((unsigned *)&wh)[0] = 0;	/* 32 bits chopped */
 #else
 		lx = ((unsigned *)&wh)[2];	/* 56 rounded */
@@ -517,6 +538,7 @@ __k_clog_rl(long double x, long double y, long double *er)
 		((unsigned *)&wh)[0] += (ly == 0 && lx != 0);
 		((unsigned *)&wh)[3] = 0;
 #endif
+
 		z = t1+t2;
 /*
  * higher precision simulation x*x = t1 + t3, y*y = t2 + t4
@@ -524,8 +546,9 @@ __k_clog_rl(long double x, long double y, long double *er)
 		tk = wh - x;
 		t3 = tk * tk - (two * wh * tk - (wh * wh - t1));
 		wh = y;
+
 /* split y into correctly rounded half */
-#if defined(__i386)
+#if defined(__x86)
 		((unsigned *)&wh)[0] = 0;	/* 32 bits chopped */
 #else
 		ly = ((unsigned *)&wh)[2];	/* 56 bits rounded */
@@ -537,6 +560,7 @@ __k_clog_rl(long double x, long double y, long double *er)
 		((unsigned *)&wh)[0] += (ly == 0 && lx != 0);
 		((unsigned *)&wh)[3] = 0;
 #endif
+
 		tk = wh - y;
 		t4 = tk * tk - (two * wh * tk - (wh * wh - t2));
 /*
@@ -566,8 +590,9 @@ __k_clog_rl(long double x, long double y, long double *er)
  */
 		tk = t1 - zk;
 		zh = ((tk + t2) + t3) + t4;
+
 /* split zh into correctly rounded half */
-#if defined(__i386)
+#if defined(__x86)
 		((unsigned *)&zh)[0] = 0;
 #else
 		ly = ((unsigned *)&zh)[2];
@@ -579,6 +604,7 @@ __k_clog_rl(long double x, long double y, long double *er)
 		((unsigned *)&zh)[0] += (ly == 0 && lx != 0);
 		((unsigned *)&zh)[3] = 0;
 #endif
+
 		w = fabsl(zh);
 		if (w >= fabsl(t2))
 {

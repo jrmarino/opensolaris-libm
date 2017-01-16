@@ -20,15 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak csqrtl = __csqrtl
+#pragma weak __csqrtl = csqrtl
 
 #include "libm.h"		/* fabsl/isinfl/sqrtl */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 /* INDENT OFF */
 static const long double
@@ -79,7 +82,7 @@ csqrtl(ldcomplex z) {
 		}
 	} else if (ix >= iy) {
 		n = (ix - iy) >> 16;
-#if defined(__i386)		/* 64 significant bits */
+#if defined(__x86)		/* 64 significant bits */
 		if (n >= 35)
 #else				/* 113 significant bits  */
 		if (n >= 60)
@@ -105,7 +108,7 @@ csqrtl(ldcomplex z) {
 		}
 	} else {
 		n = (iy - ix) >> 16;
-#if defined(__i386)		/* 64 significant bits */
+#if defined(__x86)		/* 64 significant bits */
 		if (n >= 35) {	/* } */
 #else				/* 113 significant bits  */
 		if (n >= 60) {

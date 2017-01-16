@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak cabsl = __cabsl
+#pragma weak __cabsl = cabsl
 
 #include "libm.h"
 #include "complex_wrapper.h"

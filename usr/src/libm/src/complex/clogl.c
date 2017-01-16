@@ -20,20 +20,23 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak clogl = __clogl
+#pragma weak __clogl = clogl
 
 #include "libm.h"	/* atan2l/fabsl/isinfl/log1pl/logl/__k_clog_rl */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 #if defined(__sparc)
 #define	SIGP7	120
 #define	HSIGP7	60
-#elif defined(__i386)
+#elif defined(__x86)
 #define	SIGP7	70
 #define	HSIGP7	35
 #endif

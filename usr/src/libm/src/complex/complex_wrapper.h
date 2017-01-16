@@ -20,6 +20,9 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -28,7 +31,19 @@
 #define	_COMPLEX_WRAPPER_H
 
 
-#if !defined(__cplusplus) && (__STDC_VERSION__ >= 199901L || defined(_STDC_C99))
+#if defined(__GNUC__)
+#define dcomplex double _Complex
+#define fcomplex float _Complex
+#define ldcomplex long double _Complex
+#define D_RE(x) __real__ x
+#define D_IM(x) __imag__ x
+#define F_RE(x) __real__ x
+#define F_IM(x) __imag__ x
+#define LD_RE(x) __real__ x
+#define LD_IM(x) __imag__ x
+
+#include <complex.h>
+#else
 
 #define	dcomplex	double complex
 #define	fcomplex	float complex
@@ -43,109 +58,7 @@
 #define	LD_IM(__z)	_X_IM(long double, __z)
 
 #include <complex.h>
-
-#else	/* !defined(__cplusplus) && (__STDC_VERSION__ >= 199901L || ...) */
-
-#ifdef __cplusplus
-extern "C" {
 #endif
-
-typedef struct {
-	double __re;
-	double __im;
-} dcomplex;
-
-typedef struct {
-	float __re;
-	float __im;
-} fcomplex;
-
-typedef struct {
-	long double __re;
-	long double __im;
-} ldcomplex;
-
-#define	D_RE(__z)	(__z).__re
-#define	D_IM(__z)	(__z).__im
-#define	F_RE(__z)	(__z).__re
-#define	F_IM(__z)	(__z).__im
-#define	LD_RE(__z)	(__z).__re
-#define	LD_IM(__z)	(__z).__im
-
-extern float cabsf(fcomplex);
-extern float cargf(fcomplex);
-extern float cimagf(fcomplex);
-extern float crealf(fcomplex);
-extern fcomplex cacosf(fcomplex);
-extern fcomplex cacoshf(fcomplex);
-extern fcomplex casinf(fcomplex);
-extern fcomplex casinhf(fcomplex);
-extern fcomplex catanf(fcomplex);
-extern fcomplex catanhf(fcomplex);
-extern fcomplex ccosf(fcomplex);
-extern fcomplex ccoshf(fcomplex);
-extern fcomplex cexpf(fcomplex);
-extern fcomplex clogf(fcomplex);
-extern fcomplex conjf(fcomplex);
-extern fcomplex cpowf(fcomplex, fcomplex);
-extern fcomplex cprojf(fcomplex);
-extern fcomplex csinf(fcomplex);
-extern fcomplex csinhf(fcomplex);
-extern fcomplex csqrtf(fcomplex);
-extern fcomplex ctanf(fcomplex);
-extern fcomplex ctanhf(fcomplex);
-
-extern double cabs(dcomplex);
-extern double carg(dcomplex);
-extern double cimag(dcomplex);
-extern double creal(dcomplex);
-extern dcomplex cacos(dcomplex);
-extern dcomplex cacosh(dcomplex);
-extern dcomplex casin(dcomplex);
-extern dcomplex casinh(dcomplex);
-extern dcomplex catan(dcomplex);
-extern dcomplex catanh(dcomplex);
-extern dcomplex ccos(dcomplex);
-extern dcomplex ccosh(dcomplex);
-extern dcomplex cexp(dcomplex);
-extern dcomplex clog(dcomplex);
-extern dcomplex conj(dcomplex);
-extern dcomplex cpow(dcomplex, dcomplex);
-extern dcomplex cproj(dcomplex);
-extern dcomplex csin(dcomplex);
-extern dcomplex csinh(dcomplex);
-extern dcomplex csqrt(dcomplex);
-extern dcomplex ctan(dcomplex);
-extern dcomplex ctanh(dcomplex);
-
-extern long double cabsl(ldcomplex);
-extern long double cargl(ldcomplex);
-extern long double cimagl(ldcomplex);
-extern long double creall(ldcomplex);
-extern ldcomplex cacoshl(ldcomplex);
-extern ldcomplex cacosl(ldcomplex);
-extern ldcomplex casinhl(ldcomplex);
-extern ldcomplex casinl(ldcomplex);
-extern ldcomplex catanhl(ldcomplex);
-extern ldcomplex catanl(ldcomplex);
-extern ldcomplex ccoshl(ldcomplex);
-extern ldcomplex ccosl(ldcomplex);
-extern ldcomplex cexpl(ldcomplex);
-extern ldcomplex clogl(ldcomplex);
-extern ldcomplex conjl(ldcomplex);
-extern ldcomplex cpowl(ldcomplex, ldcomplex);
-extern ldcomplex cprojl(ldcomplex);
-extern ldcomplex csinhl(ldcomplex);
-extern ldcomplex csinl(ldcomplex);
-extern ldcomplex csqrtl(ldcomplex);
-extern ldcomplex ctanhl(ldcomplex);
-extern ldcomplex ctanl(ldcomplex);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif	/* !defined(__cplusplus) && (__STDC_VERSION__ >= 199901L || ...) */
 
 #if defined(__sparc)
 #define	HIWORD	0
@@ -153,7 +66,7 @@ extern ldcomplex ctanl(ldcomplex);
 #define	HI_XWORD(x)	((unsigned *) &x)[0]
 #define	XFSCALE(x, n)	((unsigned *) &x)[0] += n << 16	/* signbitl(x) == 0 */
 #define	CHOPPED(x)	((long double) ((double) (x)))
-#elif defined(__i386) || defined(__LITTLE_ENDIAN)
+#elif defined(__x86)
 #define	HIWORD	1
 #define	LOWORD	0
 #define	HI_XWORD(x)	((((int *) &x)[2] << 16) | \

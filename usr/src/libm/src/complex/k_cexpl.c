@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* INDENT OFF */
 /*
@@ -71,7 +73,7 @@
 
 /* INDENT OFF */
 /* ln2/32 = 0.0216608493924982909192885037955680177523593791987579766912713 */
-#if defined(__i386)
+#if defined(__x86)
 static const long double
 			/* 43 significant bits, 21 trailing zeros */
 ln2_32hi = 2.166084939249657281834515742957592010498046875e-2L,

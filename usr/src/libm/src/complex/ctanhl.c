@@ -20,15 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ctanhl = __ctanhl
+#pragma weak __ctanhl = ctanhl
 
 #include "libm.h"	/* expl/expm1l/fabsl/isinfl/isnanl/sincosl/sinl/tanhl */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 /* INDENT OFF */
 static const long double four = 4.0L, two = 2.0L, one = 1.0L, zero = 0.0L;

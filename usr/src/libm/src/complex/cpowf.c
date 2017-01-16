@@ -19,15 +19,22 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak cpowf = __cpowf
+#pragma weak __cpowf = cpowf
 
 #include "libm.h"
 #include "complex_wrapper.h"
+
+extern void sincospi(double, double *, double *);
+extern void sincospif(float, float *, float *);
+extern double atan2pi(double, double);
+extern float atan2pif(float, float);
 
 #if defined(__i386) && !defined(__amd64)
 extern int __swapRP(int);

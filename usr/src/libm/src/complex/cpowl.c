@@ -20,21 +20,24 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak cpowl = __cpowl
+#pragma weak __cpowl = cpowl
 
 #include "libm.h"				/* __k_clog_rl/__k_atan2l */
 /* atan2l/atan2pil/exp2l/expl/fabsl/hypotl/isinfl/logl/powl/sincosl/sincospil */
 #include "complex_wrapper.h"
+#include "longdouble.h"
 
 #if defined(__sparc)
 #define	HALF(x)  ((int *) &x)[3] = 0; ((int *) &x)[2] &= 0xfe000000
 #define	LAST(x)  ((int *) &x)[3]
-#elif defined(__i386) || defined(__LITTLE_ENDIAN)
+#elif defined(__x86)
 #define	HALF(x)  ((int *) &x)[0] = 0
 #define	LAST(x)  ((int *) &x)[0]
 #endif
@@ -44,7 +47,7 @@ static const int hiinf = 0x7fff0000;
 static const long double
 	tiny = 1.0e-4000L,
 	huge = 1.0e4000L,
-#if defined(__i386)
+#if defined(__x86)
 		/* 43 significant bits, 21 trailing zeros */
 	ln2hil = 0.693147180559890330187045037746429443359375L,
 	ln2lol = 5.497923018708371174712471612513436025525412068e-14L,

@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ccoshl = __ccoshl
+#pragma weak __ccoshl = ccoshl
 
 #include "libm.h"	/* coshl/expl/fabsl/scalbnl/sincosl/sinhl/__k_cexpl */
 #include "complex_wrapper.h"
