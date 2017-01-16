@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-
 #include <sys/isa_defs.h>
 
 #ifdef _LITTLE_ENDIAN
@@ -69,7 +68,7 @@ __vlibm_vcos_bigf( int n, float * restrict x, int stridex, float * restrict y,
 	{
 		double		tx, tt[3], ty[2], t, w, z, a;
 		unsigned	hx, xsb;
-		int			e0, nx, i, j;
+		int			e0, nx, j;
 
 		tx = *x;
 		hx = HI(&tx);

@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 #ifdef __RESTRICT
 #define restrict _Restrict
@@ -31,7 +33,7 @@
 #define restrict
 #endif
 
-#define sqrtf __sqrtf
+#include "libm_inlines.h"
 
 extern float sqrtf( float );
 
@@ -45,4 +47,3 @@ __vsqrtf( int n, float * restrict x, int stridex, float * restrict y, int stride
 		y += stridey;
 	}
 }
-

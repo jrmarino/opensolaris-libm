@@ -69,7 +69,7 @@ __vlibm_vsincos_bigf( int n, float * restrict x, int stridex,
 	{
 		double		ts, tc, tx, tt[3], ty[2], t, w, z, c, s;
 		unsigned	hx, xsb;
-		int			e0, nx, i, j;
+		int			e0, nx, j;
 
 		tx = *x;
 		hx = HI(&tx);

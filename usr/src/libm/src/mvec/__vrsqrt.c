@@ -20,12 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #include <sys/isa_defs.h>
+#include "libm_inlines.h"
 
 #ifdef _LITTLE_ENDIAN
 #define HI(x)	*(1+(int*)x)
@@ -78,8 +81,6 @@
  *	Maximum error observed: less than 0.563 ulp after 1.500.000.000
  *	results.
  */
-
-#define sqrt __sqrt
 
 extern double sqrt ( double );
 extern const double __vlibm_TBL_rsqrt[];

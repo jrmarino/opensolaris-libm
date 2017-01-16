@@ -20,10 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#include "libm_inlines.h"
 
 const double __vlibm_TBL_atan2[] = {
  7.8539816339744827900e-01,  3.0616169978683830179e-17,

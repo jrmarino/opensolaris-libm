@@ -19,10 +19,12 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /*
  * __vsinf: single precision vector sin
@@ -150,7 +152,7 @@ __vsinf(int n, float *restrict x, int stridex, float *restrict y,
 	double		y0, y1, y2, y3;
 	double		z0, z1, z2, z3;
 	float		f0, f1, f2, f3, t;
-	int		n0, n1, n2, n3, hx, ix, medium;
+	int		n0 = 0, n1 = 0, n2 = 0, n3, hx, ix, medium;
 
 	y -= stridey;
 

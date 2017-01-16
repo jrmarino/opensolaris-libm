@@ -20,12 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #include <sys/isa_defs.h>
+#include "libm_inlines.h"
 
 #ifdef _LITTLE_ENDIAN
 #define HI(x)	*(1+(int*)x)
@@ -61,8 +64,6 @@
  *	Maximum error observed: less than 0.872 ulp after 16.777.216.000
  *	results.
  */
-
-#define sqrt __sqrt
 
 extern double sqrt( double );
 extern double fabs( double );
@@ -388,4 +389,3 @@ __vhypot_n( int n, double * restrict px, int stridex, double * restrict py,
 		pz += stridez;
 	}
 }
-

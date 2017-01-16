@@ -20,12 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #include <sys/isa_defs.h>
+#include "libm_inlines.h"
 
 #ifdef _LITTLE_ENDIAN
 #define HI(x)	*(1+(int*)x)
@@ -212,8 +215,6 @@ static const double __vlibm_TBL_rhypotf[] __attribute__((aligned(32))) = {
  5.0793650793650790831e-01, 1.7817416127494958844e-01,
  5.0393700787401574104e-01, 1.7747130188322274291e-01,
 };
-
-#define	fabsf	__fabsf
 
 extern float fabsf( float );
 
@@ -454,4 +455,3 @@ __vrhypotf_n( int n, float * restrict px, int stridex, float * restrict py,
 		pz += stridez;
 	}
 }
-

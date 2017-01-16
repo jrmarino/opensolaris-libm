@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 #include <sys/isa_defs.h>
 
@@ -96,7 +98,7 @@ __vsincos( int n, double * restrict x, int stridex,
 				*xsave, *ysave, *csave;
 	unsigned	hx0, hx1, hx2, xsb0, xsb1, xsb2;
 	int			i, biguns, nsave, sxsave, sysave, scsave;
-
+	volatile int v __attribute__((unused))
 	nsave = n;
 	xsave = x;
 	sxsave = stridex;
@@ -126,7 +128,7 @@ LOOP0:  /* Find first arg in right range. */
 		}
 		if ( hx0 < 0x3e400000 ) {
 			/* Too small.  cos x ~ 1, sin x ~ x. */
-			volatile int v = *x;
+			v = *x;
 			*c = 1.0;
 			*y = *x;
 			x += stridex;
@@ -163,7 +165,7 @@ LOOP1: /* Get second arg, same as above. */
 		}
 		if ( hx1 < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*c = 1.0;
 			*y = *x;
 			x += stridex;
@@ -200,7 +202,7 @@ LOOP2: /* Get third arg, same as above. */
 		}
 		if ( hx2 < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*c = 1.0;
 			*y = *x;
 			x += stridex;
@@ -1418,7 +1420,7 @@ loop2:
 		double		t0, t1, t1_0, t1_1, t2_0, t2_1;
 		double		fn0, fn1, a0, a1, w0, w1, y0, y1;
 		double		z0, z1;
-		unsigned	hx, j0, j1;
+		unsigned	j0, j1;
 		int			n0, n1;
 
 		if ( i > 1 )

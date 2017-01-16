@@ -20,12 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #include <sys/isa_defs.h>
+#include "libm_inlines.h"
 
 #ifdef _LITTLE_ENDIAN
 #define HI(x)	*(1+(int*)x)
@@ -63,10 +66,7 @@
  *	results.
  */
 
-#define sqrt __sqrt
-
 extern double sqrt( double );
-
 extern double fabs( double );
 
 static const int __vlibm_TBL_rhypot[] = {
@@ -213,7 +213,7 @@ __vrhypot( int n, double * restrict px, int stridex, double * restrict py,
 	double		x0, y0, res0, dd0;
 	double		res0_hi,res0_lo, dres0;
 	double		x_hi1, x_lo1, y_hi1, y_lo1, scl1 = 0;
-	double		x1, y1, res1, dd1;
+	double		x1 = 0.0L, y1 = 0.0L, res1, dd1;
 	double		res1_hi,res1_lo, dres1;
 	double		x_hi2, x_lo2, y_hi2, y_lo2, scl2 = 0;
 	double		x2, y2, res2, dd2;
@@ -234,7 +234,7 @@ __vrhypot( int n, double * restrict px, int stridex, double * restrict py,
 	double		D2ON1022 = ((double*)LCONST)[3];
 	double		D2ONM52 = ((double*)LCONST)[4];
 
-	double		*pz0, *pz1, *pz2;
+	double		*pz0, *pz1 = 0, *pz2;
 
 	do
 	{
@@ -424,4 +424,3 @@ start2:
 		}
 	}
 }
-

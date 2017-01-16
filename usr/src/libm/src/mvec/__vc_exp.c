@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-
 #ifdef __RESTRICT
 #define restrict _Restrict
 #else
@@ -38,7 +37,7 @@ void
 __vc_exp( int n, float * restrict x, int stridex, float * restrict y,
 	int stridey, float * restrict tmp )
 {
-	int		i, j, k;
+	int		i, j;
 
 	stridex <<= 1;
 	stridey <<= 1;

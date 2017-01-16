@@ -20,10 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#include "libm_inlines.h"
 
 #ifdef __RESTRICT
 #define restrict _Restrict
@@ -65,8 +69,6 @@
  *	Maximum error observed: less than 0.534 ulp for the
  *	whole float type range.
  */
-
-#define sqrtf __sqrtf
 
 extern float sqrtf( float );
 
@@ -402,14 +404,16 @@ __vrsqrtf_n( int n, float * restrict px, int stridex, float * restrict py, int s
 	double		A2 = ((double*)LCONST)[2];	/*  3.75066768969515586277e-01	*/
 	double		A3 = ((double*)LCONST)[3];	/* -3.12560092408808548438e-01	*/
 	double		res0, xx0, tbl_div0, tbl_sqrt0;
+	float		fres0;
+	int			iax0, ax0, si0, iexp0;
+
+#if defined(ARCH_v7) || defined(ARCH_v8)
 	double		res1, xx1, tbl_div1, tbl_sqrt1;
 	double		res2, xx2, tbl_div2, tbl_sqrt2;
-	float		fres0, fres1, fres2;
-	int		iax0, ax0, si0, iexp0;
+	float		fres1, fres2;
 	int		iax1, ax1, si1, iexp1;
 	int		iax2, ax2, si2, iexp2;
 
-#if defined(ARCH_v7) || defined(ARCH_v8)
 	for( ; n > 2 ; n -= 3 )
 	{
 		ax0 = *(int*)px;
@@ -494,4 +498,3 @@ __vrsqrtf_n( int n, float * restrict px, int stridex, float * restrict py, int s
 		py += stridey;
 	}
 }
-

@@ -23,8 +23,6 @@
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)__vsqrtf.S	1.2	06/01/23 SMI"
-
 	.file	"__vsqrtf.S"
 
 #include "libm.h"

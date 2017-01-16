@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 #include <sys/isa_defs.h>
 
@@ -76,10 +78,10 @@ __vsin( int n, double * restrict x, int stridex, double * restrict y,
 {
 	double		x0_or_one[4], x1_or_one[4], x2_or_one[4];
 	double		y0_or_zero[4], y1_or_zero[4], y2_or_zero[4];
-	double		x0, x1, x2, *py0, *py1, *py2, *xsave, *ysave;
-	unsigned	hx0, hx1, hx2, xsb0, xsb1, xsb2;
+	double		x0, x1, x2, *py0 = 0, *py1 = 0, *py2, *xsave, *ysave;
+	unsigned	hx0, hx1, hx2, xsb0, xsb1 = 0, xsb2;
 	int			i, biguns, nsave, sxsave, sysave;
-
+	volatile int v __attribute__((unused));
 	nsave = n;
 	xsave = x;
 	sxsave = stridex;
@@ -99,7 +101,7 @@ LOOP0:
 		}
 		if ( hx0 < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -126,7 +128,7 @@ LOOP1:
 		}
 		if ( hx1 < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -153,7 +155,7 @@ LOOP2:
 		}
 		if ( hx2 < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -516,7 +518,7 @@ loop0:
 		hx &= ~0x80000000;
 		if ( hx < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -555,7 +557,7 @@ loop1:
 		hx &= ~0x80000000;
 		if ( hx < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -594,7 +596,7 @@ loop2:
 		hx &= ~0x80000000;
 		if ( hx < 0x3e400000 )
 		{
-			volatile int v = *x;
+			v = *x;
 			*y = *x;
 			x += stridex;
 			y += stridey;
@@ -1000,7 +1002,7 @@ loop2:
 	{
 		double		fn0, fn1, a0, a1, w0, w1, y0, y1;
 		double		t0, t1, z0, z1;
-		unsigned	hx, j0, j1;
+		unsigned	j0, j1;
 		int			n0, n1;
 
 		if ( i > 1 )

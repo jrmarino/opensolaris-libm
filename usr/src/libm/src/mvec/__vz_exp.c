@@ -24,7 +24,6 @@
  * Use is subject to license terms.
  */
 
-
 #ifdef __RESTRICT
 #define restrict _Restrict
 #else
@@ -38,7 +37,7 @@ void
 __vz_exp( int n, double * restrict x, int stridex, double * restrict y,
 	int stridey, double * restrict tmp )
 {
-	int		i, j, k;
+	int		i, j;
 
 	stridex <<= 1;
 	stridey <<= 1;
