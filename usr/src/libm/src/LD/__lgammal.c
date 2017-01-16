@@ -312,6 +312,7 @@ primary(long double s) {	/* assume |s|<=0.5 */
 	case 7:	return ch*s+s*poly(s,ap4,19);
 	}
 	/* NOTREACHED */
+	return (0.0L);
 }
 
 static long double

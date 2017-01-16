@@ -102,4 +102,5 @@ cosl(long double x) {
 		/* NOTREACHED */
 		}
 	}
+	return 0.0L;
 }
