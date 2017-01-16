@@ -19,11 +19,12 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)isnanf.s	1.8	06/01/23 SMI"
 
         .file "isnanf.s"
 
@@ -32,7 +33,6 @@ LIBM_ANSI_PRAGMA_WEAK(isnanf,function)
 	.weak _isnanf
 	.type _isnanf,@function
 _isnanf	= __isnanf
-#include "libm_synonyms.h"
 
 	ENTRY(isnanf)
 	movl    4(%esp),%eax		# eax <-- x

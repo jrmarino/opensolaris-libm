@@ -19,27 +19,27 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)__reduction.s	1.16	06/01/23 SMI"
-
 	.file	"__reduction.s"
 
-#    After argument reduction which returns n:
-#       n mod 4     sin(x)      cos(x)        tan(x)
-#     ----------------------------------------------------------
-#          0          S           C             S/C
-#          1          C          -S            -C/S
-#          2         -S          -C             S/C
-#          3         -C           S            -C/S
-#     ----------------------------------------------------------
+	#
+	#    After argument reduction which returns n:
+	#       n mod 4     sin(x)      cos(x)        tan(x)
+	#     ----------------------------------------------------------
+	#          0          S           C             S/C
+	#          1          C          -S            -C/S
+	#          2         -S          -C             S/C
+	#          3         -C           S            -C/S
+	#     ----------------------------------------------------------
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
-#undef fabs
 
 	ENTRY(__reduction)
 #ifndef PIC

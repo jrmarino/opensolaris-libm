@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)nextafterl.s	1.14	06/01/23 SMI"
 
 	.file	"nextafterl.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(nextafterl,function)
-#include "libm_synonyms.h"
 
 	.section .rodata
 	.align	4
@@ -52,9 +52,9 @@ LIBM_ANSI_PRAGMA_WEAK(nextafterl,function)
 	ja	.Lbigger
 	# x < y
 	ftst
-	movl	$1,-12(%ebp)	//# -12(%ebp) contains Fminl
+	movl	$1,-12(%ebp)	# -12(%ebp) contains Fminl
 	movl	$0,-8(%ebp)
-	movl	$0,%ecx			//# final needs this
+	movl	$0,%ecx			# final needs this
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf
@@ -64,9 +64,9 @@ LIBM_ANSI_PRAGMA_WEAK(nextafterl,function)
 .Lbigger:
 	# x > y
 	ftst
-	movl	$1,-12(%ebp)	//# -12(%ebp) contains -Fminl
+	movl	$1,-12(%ebp)	# -12(%ebp) contains -Fminl
 	movl	$0,-8(%ebp)
-	movl	$0x00008000,%ecx	//# final needs this
+	movl	$0x00008000,%ecx	# final needs this
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf

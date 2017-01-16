@@ -19,21 +19,16 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)rndintl.s	1.12	06/01/23 SMI"
-
         .file "rndintl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(aintl,function)
-LIBM_ANSI_PRAGMA_WEAK(irintl,function)
-LIBM_ANSI_PRAGMA_WEAK(anintl,function)
-LIBM_ANSI_PRAGMA_WEAK(nintl,function)
-#include "libm_synonyms.h"
-#undef fabs
 
 	ENTRY(aintl)
 	movl	%esp,%eax
@@ -139,7 +134,7 @@ half:	.float	0.5
 	pushl	16(%ebp)
 	pushl	12(%ebp)
 	pushl	8(%ebp)
-	call	.Lanintl		//# LOCAL
+	call	.Lanintl		# LOCAL
 	fistpl	-8(%ebp)
 	fwait
 	movl	-8(%ebp),%eax

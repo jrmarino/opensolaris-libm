@@ -19,50 +19,48 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)pow.s	1.14	06/01/23 SMI"
-
         .file "pow.s"
 
-# Note: 0^NaN should not signal "invalid" but this implementation
-# does because y is placed on the NPX stack.
+	# Note: 0^NaN should not signal "invalid" but this implementation
+	# does because y is placed on the NPX stack.
 
-# Special cases:
-/
-# x ** 0 is 1				_SVID_libm_err if x is 0 or NaN
-# 1 ** y is 1				(C99)
-# x ** NaN is NaN
-# NaN ** y (except 0) is NaN
-# x ** 1 is x
-# +-(|x| > 1) **  +inf is +inf
-# +-(|x| > 1) **  -inf is +0
-# +-(|x| < 1) **  +inf is +0
-# +-(|x| < 1) **  -inf is +inf
-# (-1) ** +-inf is +1			(C99)
-# +0 ** +y (except 0, NaN)		is +0
-# -0 ** +y (except 0, NaN, odd int)	is +0
-# -0 ** +y (odd int)			is -0
-# +-0 ** -y (except 0, NaN)		_SVID_libm_err
-# +inf ** +y (except 0, NaN)		is +inf
-# +inf ** -y (except 0, NaN)		is +0
-# -inf ** +-y (except 0, NaN)		is -0 ** -+y (NO z flag)
-# x ** -1 is 1/x
-# x ** 2 is x*x
-# -x ** y (an integer) is (-1)**(y) * (+x)**(y)
-# x ** y (x negative & y not integer)	_SVID_libm_err
-# .if x and y are finite and x**y = 0	_SVID_libm_err (underflow)
-# .if x and y are finite and x**y = inf	_SVID_libm_err (overflow)
+	# Special cases:
+	#
+	# x ** 0 is 1				_SVID_libm_err if x is 0 or NaN
+	# 1 ** y is 1				(C99)
+	# x ** NaN is NaN
+	# NaN ** y (except 0) is NaN
+	# x ** 1 is x
+	# +-(|x| > 1) **  +inf is +inf
+	# +-(|x| > 1) **  -inf is +0
+	# +-(|x| < 1) **  +inf is +0
+	# +-(|x| < 1) **  -inf is +inf
+	# (-1) ** +-inf is +1			(C99)
+	# +0 ** +y (except 0, NaN)		is +0
+	# -0 ** +y (except 0, NaN, odd int)	is +0
+	# -0 ** +y (odd int)			is -0
+	# +-0 ** -y (except 0, NaN)		_SVID_libm_err
+	# +inf ** +y (except 0, NaN)		is +inf
+	# +inf ** -y (except 0, NaN)		is +0
+	# -inf ** +-y (except 0, NaN)		is -0 ** -+y (NO z flag)
+	# x ** -1 is 1/x
+	# x ** 2 is x*x
+	# -x ** y (an integer) is (-1)**(y) * (+x)**(y)
+	# x ** y (x negative & y not integer)	_SVID_libm_err
+	# .if x and y are finite and x**y = 0	_SVID_libm_err (underflow)
+	# .if x and y are finite and x**y = inf	_SVID_libm_err (overflow)
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(pow,function)
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include "xpg6.h"
-
-#undef fabs
 
 	.data
 	.align	4
@@ -97,7 +95,7 @@ ninfinity:
 	fnstsw	%ax			# store status in %ax
 	movb	%ah,%dl			# %dl <- condition code of y
 
-	call	.pow_main		//# LOCAL
+	call	.pow_main		# LOCAL
 	PIC_WRAPUP
 	leave
 	ret
@@ -116,7 +114,7 @@ ninfinity:
 	pushl	$20
 	jmp	.SVIDerr		# SVID error handler
 2:
-	cmpb	$0x01,%cl		//# C3=0 C2=0 C1=? C0=1 when +-NaN
+	cmpb	$0x01,%cl		# C3=0 C2=0 C1=? C0=1 when +-NaN
 	jne	2f
 	# NaN^0
 	pushl	$42
@@ -310,7 +308,7 @@ ninfinity:
 	fstp	%st(0)			# x**y
 	ret
 
-# ------------------------------------------------------------------------
+	# ------------------------------------------------------------------------
 
 .xispinf:
 	ftst				# compare %st(0) with 0
@@ -436,9 +434,9 @@ ninfinity:
 	addl	$20,%esp
 	ret
 
-# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,
-# 0 otherwise.  Assume y is not zero.  Do not raise inexact or modify
-# %edx.
+	# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,
+	# 0 otherwise.  Assume y is not zero.  Do not raise inexact or modify
+	# %edx.
 .y_is_int:
 	movl	20(%ebp),%eax
 	andl	$0x7fffffff,%eax	# |y|

@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)llrintf.s	1.4	06/01/23 SMI"
 
 	.file	"llrintf.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(llrintf,function)
-#include "libm_synonyms.h"
 
 	ENTRY(llrintf)
 	movl	%esp,%ecx

@@ -19,17 +19,16 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)exp10.s	1.7	06/01/23 SMI"
-
         .file "exp10.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(exp10,function)
-#include "libm_synonyms.h"
 
 	ENTRY(exp10)
 	movl	8(%esp),%ecx		# ecx <-- hi_32(x)

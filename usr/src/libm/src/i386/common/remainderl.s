@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)remainderl.s	1.7	06/01/23 SMI"
 
         .file "remainderl.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(remainderl,function)
-#include "libm_synonyms.h"
 
 	ENTRY(remainderl)
 	fldt	16(%esp)		# load arg y

@@ -19,11 +19,12 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)nextafter.s	1.12	06/01/23 SMI"
 
         .file "nextafter.s"
 
@@ -32,13 +33,12 @@ LIBM_ANSI_PRAGMA_WEAK(nextafter,function)
 	.weak _nextafter
 	.type _nextafter,@function
 _nextafter	= __nextafter
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 
 	.data
 	.align	8
 Fmin:	.long	0x1,0x0
-ftmp:	.long	0,0		//# WILL WRITE INTO
+ftmp:	.long	0,0		# WILL WRITE INTO
 
 
 	ENTRY(nextafter)
@@ -56,9 +56,9 @@ ftmp:	.long	0,0		//# WILL WRITE INTO
 	ja	.bigger
 	# x < y
 	ftst
-	movl	$1,%ecx		//# Fmin
+	movl	$1,%ecx		# Fmin
 	movl	%ecx,-8(%ebp)
-	movl	$0,%ecx		//# Fmin+4
+	movl	$0,%ecx		# Fmin+4
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax
 	sahf
@@ -68,9 +68,9 @@ ftmp:	.long	0,0		//# WILL WRITE INTO
 .bigger:
 	# x > y
 	ftst
-	movl	$1,%ecx		//# Fmin
+	movl	$1,%ecx		# Fmin
 	movl	%ecx,-8(%ebp)
-	movl	$0,%ecx		//# Fmin+4
+	movl	$0,%ecx		# Fmin+4
 	xorl	$0x80000000,%ecx
 	movl	%ecx,-4(%ebp)
 	fnstsw	%ax

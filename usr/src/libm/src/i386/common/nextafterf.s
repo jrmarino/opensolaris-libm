@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)nextafterf.s	1.10	06/01/23 SMI"
 
         .file "nextafterf.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(nextafterf,function)
-#include "libm_synonyms.h"
 
 	.data
 	.align	4
@@ -41,7 +41,7 @@ ftmpf:	.long	0
 	ENTRY(nextafterf)
 	pushl	%ebp
 	movl	%esp,%ebp
-	movl	$0,%eax		//# upper half of %eax must be initialized
+	movl	$0,%eax		# upper half of %eax must be initialized
 	flds	12(%ebp)	# y
 	subl	$4,%esp
 	flds	8(%ebp)		# x, y

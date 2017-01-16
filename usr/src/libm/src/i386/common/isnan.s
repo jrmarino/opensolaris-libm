@@ -19,11 +19,12 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)isnan.s	1.9	06/01/23 SMI"
 
         .file "isnan.s"
 
@@ -38,7 +39,6 @@ _isnand	= __isnan
 	.weak isnand
 	.type isnand,@function
 isnand	= __isnan
-#include "libm_synonyms.h"
 
 	ENTRY(isnan)
 	movl    8(%esp),%eax		# eax <-- hi_32(x)

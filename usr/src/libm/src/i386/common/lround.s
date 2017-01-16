@@ -19,18 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)lround.s	1.3	06/01/23 SMI"
 
 	.file	"lround.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(lround,function)
-#include "libm_synonyms.h"
-#undef fabs
 
 	.section .rodata
 	.align	4

@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)scalbn.s	1.6	06/01/23 SMI"
 
 	.file	"scalbn.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(scalbn,function)
-#include "libm_synonyms.h"
 
 	ENTRY(scalbn)
 	fildl	12(%esp)		# convert N to extended

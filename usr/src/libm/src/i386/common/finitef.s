@@ -19,17 +19,16 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)finitef.s	1.6	06/01/23 SMI"
-
         .file "finitef.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(finitef,function)
-#include "libm_synonyms.h"
 
 	ENTRY(finitef)
         movl    4(%esp),%eax		# eax <-- x

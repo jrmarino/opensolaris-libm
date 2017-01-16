@@ -19,45 +19,43 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)powl.s	1.14	06/01/23 SMI"
-
         .file "powl.s"
 
-# Special cases:
-/
-# x ** 0 is 1
-# 1 ** y is 1				(C99)
-# x ** NaN is NaN
-# NaN ** y (except 0) is NaN
-# x ** 1 is x
-# +-(|x| > 1) **  +inf is +inf
-# +-(|x| > 1) **  -inf is +0
-# +-(|x| < 1) **  +inf is +0
-# +-(|x| < 1) **  -inf is +inf
-# (-1) ** +-inf is +1			(C99)
-# +0 ** +y (except 0, NaN)              is +0
-# -0 ** +y (except 0, NaN, odd int)     is +0
-# +0 ** -y (except 0, NaN)              is +inf (z flag)
-# -0 ** -y (except 0, NaN, odd int)     is +inf (z flag)
-# -0 ** y (odd int)			is - (+0 ** x)
-# +inf ** +y (except 0, NaN)    	is +inf
-# +inf ** -y (except 0, NaN)    	is +0
-# -inf ** +-y (except 0, NaN)   	is -0 ** -+y (NO z flag)
-# x ** -1 is 1/x
-# x ** 2 is x*x
-# -x ** y (an integer) is (-1)**(y) * (+x)**(y)
-# x ** y (x negative & y not integer) is NaN (i flag)
+	# Special cases:
+	#
+	# x ** 0 is 1
+	# 1 ** y is 1				(C99)
+	# x ** NaN is NaN
+	# NaN ** y (except 0) is NaN
+	# x ** 1 is x
+	# +-(|x| > 1) **  +inf is +inf
+	# +-(|x| > 1) **  -inf is +0
+	# +-(|x| < 1) **  +inf is +0
+	# +-(|x| < 1) **  -inf is +inf
+	# (-1) ** +-inf is +1			(C99)
+	# +0 ** +y (except 0, NaN)              is +0
+	# -0 ** +y (except 0, NaN, odd int)     is +0
+	# +0 ** -y (except 0, NaN)              is +inf (z flag)
+	# -0 ** -y (except 0, NaN, odd int)     is +inf (z flag)
+	# -0 ** y (odd int)			is - (+0 ** x)
+	# +inf ** +y (except 0, NaN)    	is +inf
+	# +inf ** -y (except 0, NaN)    	is +0
+	# -inf ** +-y (except 0, NaN)   	is -0 ** -+y (NO z flag)
+	# x ** -1 is 1/x
+	# x ** 2 is x*x
+	# -x ** y (an integer) is (-1)**(y) * (+x)**(y)
+	# x ** y (x negative & y not integer) is NaN (i flag)
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(powl,function)
-#include "libm_synonyms.h"
 #include "xpg6.h"
-
-#undef fabs
 
 	.data
 	.align	4
@@ -94,7 +92,7 @@ ninfinity:
 	fnstsw	%ax			# store status in %ax
 	movb	%ah,%dl			# %dl <- condition code of y
 
-	call	.pow_main		//# LOCAL
+	call	.pow_main		# LOCAL
 	PIC_WRAPUP
 	leave
 	ret
@@ -281,7 +279,7 @@ ninfinity:
 	fstp	%st(0)			# x**y
 	ret
 
-# ------------------------------------------------------------------------
+	# ------------------------------------------------------------------------
 
 .xispinf:
 	ftst				# compare %st(0) with 0
@@ -404,9 +402,9 @@ ninfinity:
 	fdivrs	PIC_L(one)		# 1/0
 	ret
 
-# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,
-# 0 otherwise.  Assume y is not zero.  Do not raise inexact or modify
-# %edx.
+	# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,
+	# 0 otherwise.  Assume y is not zero.  Do not raise inexact or modify
+	# %edx.
 .y_is_int:
 	movl	28(%ebp),%eax
 	andl	$0x7fff,%eax		# exponent of y

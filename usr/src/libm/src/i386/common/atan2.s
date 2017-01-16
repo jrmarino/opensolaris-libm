@@ -19,17 +19,17 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-	.ident	"@(#)atan2.s	1.8	06/01/23 SMI"
 
         .file "atan2.s"
 
 #include "libm.h"
 LIBM_ANSI_PRAGMA_WEAK(atan2,function)
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 
 	ENTRY(atan2)
