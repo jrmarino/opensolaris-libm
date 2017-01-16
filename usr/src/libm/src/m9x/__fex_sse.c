@@ -29,7 +29,11 @@
 
 #include <ucontext.h>
 #include <fenv.h>
+#if defined(__SUNPRO_C)
+#include <sunmath.h>
+#else
 #include <sys/ieeefp.h>
+#endif
 #include "fex_handler.h"
 #include "fenv_inlines.h"
 

@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak lrintl = __lrintl
-#endif
+#pragma weak __lrintl = lrintl
 
 #include <sys/isa_defs.h>	/* _ILP32 */
 #include "libm.h"
@@ -36,18 +36,19 @@
 #if defined(__sparc)
 
 #include "fma.h"
+#include "fenv_inlines.h"
 
 long
 lrintl(long double x) {
 	union {
-		unsigned i[4];
+		unsigned int i[4];
 		long double q;
 	} xx;
 	union {
-		unsigned i;
+		unsigned int i;
 		float f;
 	} tt;
-	unsigned hx, sx, frac, fsr, l;
+	unsigned int hx, sx, frac, l, fsr;
 	int rm, j;
 	volatile float dummy;
 
@@ -64,7 +65,7 @@ lrintl(long double x) {
 		return (0L);
 
 	/* get the rounding mode */
-	__fenv_getfsr(&fsr);
+	__fenv_getfsr32(&fsr);
 	rm = fsr >> 30;
 
 	/* flip the sense of directed roundings if x is negative */
@@ -118,7 +119,7 @@ lrintl(long double x) {
 		l = -l;
 	return ((long) l);
 }
-#elif defined(__i386)
+#elif defined(__x86)
 long
 lrintl(long double x) {
 	/*
@@ -147,7 +148,7 @@ lrintl(long double x) {
 }
 #else
 #error Unknown architecture
-#endif	/* defined(__sparc) || defined(__i386) */
+#endif	/* defined(__sparc) || defined(__x86) */
 #else
 #error Unsupported architecture
 #endif	/* defined(_ILP32) */

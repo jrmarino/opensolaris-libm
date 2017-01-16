@@ -20,10 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#ifndef	_M9X_FEX_HANDLER_H
+#define	_M9X_FEX_HANDLER_H
 
 /* the following enums must match the bit positions in fenv.h */
 enum fex_exception {
@@ -60,10 +65,6 @@ extern void __fex_get_op(siginfo_t *, ucontext_t *, fex_info_t *);
 extern void __fex_st_result(siginfo_t *, ucontext_t *, fex_info_t *);
 
 /* inline templates and macros for accessing fp state */
-#ifdef __sparcv9
-#define __fenv_getfsr	__fenv_getfsrx
-#define __fenv_setfsr	__fenv_setfsrx
-#endif
 extern void __fenv_getfsr(unsigned long *);
 extern void __fenv_setfsr(const unsigned long *);
 
@@ -78,7 +79,7 @@ extern void __fenv_setfsr(const unsigned long *);
 #define __fenv_get_ex(X)	((X>>5)&0x1f)
 #define __fenv_set_ex(X,Y)	X=(X&~0x000003e0ul)|((Y)<<5)
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 extern void __fenv_getcwsw(unsigned int *);
 extern void __fenv_setcwsw(const unsigned int *);
@@ -212,3 +213,5 @@ extern void __fex_st_simd_result(ucontext_t *, sseinst_t *,
 #else
 #error Unknown architecture
 #endif
+
+#endif	/* _M9X_FEX_HANDLER_H */

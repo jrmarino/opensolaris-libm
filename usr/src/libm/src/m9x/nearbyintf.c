@@ -20,17 +20,16 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak nearbyintf = __nearbyintf
-#endif
 
 #include "libm.h"
-#include "fenv_synonyms.h"
 #include <fenv.h>
 
 float
@@ -78,7 +77,7 @@ __nearbyintf(float x) {
 
 	hx &= ~(i - 1);
 	if (rm == FE_UPWARD || (rm == FE_TONEAREST && (frac > (i >> 1) ||
-		(frac == (i >> 1)) && (hx & i))))
+		((frac == (i >> 1)) && (hx & i)))))
 		xx.i = sx | (hx + i);
 	else
 		xx.i = sx | hx;
@@ -148,7 +147,7 @@ __nearbyintf(float x) {
 	return (z);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 /* inline template */
 extern long double frndint(long double);

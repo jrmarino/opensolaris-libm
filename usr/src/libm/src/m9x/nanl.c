@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak nanl = __nanl
-#endif
 
 #include "libm.h"
 
@@ -38,7 +38,7 @@ static const union {
 	long double ld;
 } __nanl_union = { 0x7fffffff, 0xffffffff, 0xffffffff, 0xffffffff };
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 static const union {
 	unsigned i[3];

@@ -20,17 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fmaf = __fmaf
-#endif
 
 #include "libm.h"
 #include "fma.h"
+#include "fenv_inlines.h"
 
 #if defined(__sparc)
 
@@ -112,7 +113,7 @@ __fmaf(float x, float y, float z) {
 	return ((float) (xy.d + zz.d));
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 #if defined(__amd64)
 #define	NI	4

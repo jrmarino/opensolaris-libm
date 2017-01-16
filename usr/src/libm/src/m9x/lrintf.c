@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak lrintf = __lrintf
-#endif
+#pragma weak __lrintf = lrintf
 
 #include <sys/isa_defs.h>	/* _ILP32 */
 #include "libm.h"
@@ -52,7 +52,7 @@ lrintf(float x) {
 		/* add and subtract a power of two to round x to an integer */
 #if defined(__sparc)
 		yy.i = (xx.i & 0x80000000) | 0x4b000000;
-#elif defined(__i386)
+#elif defined(__x86)
 		/* assume 64-bit precision */
 		yy.i = (xx.i & 0x80000000) | 0x5f000000;
 #else

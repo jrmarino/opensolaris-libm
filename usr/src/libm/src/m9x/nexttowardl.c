@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak nexttowardl = __nexttowardl
-#endif
+#pragma weak __nexttowardl = nexttowardl
 
 #include "libm.h"
 #include <float.h>		/* LDBL_MAX, LDBL_MIN */
@@ -50,7 +50,7 @@
 					if (--px[n1] == 0xffffffff) \
 						--px[n0]; \
 		}
-#elif defined(__i386)
+#elif defined(__x86)
 #define	n0	2
 #define	n1	1
 #define	n2	0

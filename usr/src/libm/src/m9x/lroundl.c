@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak lroundl = __lroundl
-#endif
+#pragma weak __lroundl = lroundl
 
 #include <sys/isa_defs.h>	/* _ILP32 */
 #include "libm.h"
@@ -95,7 +95,7 @@ lroundl(long double x) {
 		l = -l;
 	return ((long) l);
 }
-#elif defined(__i386)
+#elif defined(__x86)
 long
 lroundl(long double x) {
 	union {
@@ -137,7 +137,7 @@ lroundl(long double x) {
 }
 #else
 #error Unknown architecture
-#endif	/* defined(__sparc) || defined(__i386) */
+#endif	/* defined(__sparc) || defined(__x86) */
 #else
 #error Unsupported architecture
 #endif	/* defined(_ILP32) */

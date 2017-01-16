@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak nexttowardf = __nexttowardf
-#endif
 
 #include "libm.h"
 
@@ -127,7 +127,7 @@ __nexttowardf(float x, long double y) {
 	return (xx.f);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 float
 __nexttowardf(float x, long double y) {

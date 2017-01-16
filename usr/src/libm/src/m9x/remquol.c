@@ -20,16 +20,19 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak remquol = __remquol
+#pragma weak __remquol = remquol
 
 #include "libm.h"
-#include "libm_synonyms.h"
+#if defined(__SUNPRO_C)
 #include <sunmath.h>			/* fabsl */
+#endif
 /* INDENT OFF */
 static const int
 	is = -0x7fffffff - 1,

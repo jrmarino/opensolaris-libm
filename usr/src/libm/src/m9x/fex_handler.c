@@ -20,17 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#pragma weak __fex_get_handling = fex_get_handling
+#pragma weak __fex_set_handling = fex_set_handling
+#pragma weak __fex_getexcepthandler = fex_getexcepthandler
+#pragma weak __fex_setexcepthandler = fex_setexcepthandler
 
-#pragma weak fex_get_handling = __fex_get_handling
-#pragma weak fex_set_handling = __fex_set_handling
-#pragma weak fex_getexcepthandler = __fex_getexcepthandler
-#pragma weak fex_setexcepthandler = __fex_setexcepthandler
-
-#include "fenv_synonyms.h"
 #include <fenv.h>
 #include <ucontext.h>
 #include <thread.h>

@@ -18,10 +18,11 @@
 !
 ! CDDL HEADER END
 !
+! Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+!
 ! Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
 ! Use is subject to license terms.
 !
-! @(#)__fenv_sparc.il	1.5	06/01/31 SMI
 !
 	.inline	__fenv_getfsr,1
 	st	%fsr,[%o0]
@@ -31,10 +32,10 @@
 	ld	[%o0],%fsr
 	.end
 
-	.inline	__fenv_getfsrx,1
-	stx	%fsr,[%o0]
+	.inline	__fenv_getfsr32,1
+	st	%fsr,[%o0]
 	.end
 
-	.inline	__fenv_setfsrx,1
-	ldx	[%o0],%fsr
+	.inline	__fenv_setfsr32,1
+	ld	[%o0],%fsr
 	.end

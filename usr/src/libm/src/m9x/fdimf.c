@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fdimf = __fdimf
-#endif
 
 #include "libm.h"	/* for islessequal macro */
 
@@ -45,11 +45,7 @@ __fdimf(float x, float y) {
 	 * fmovsle	%fcc0,%f3,%f1
 	 * fsubs	%f0,%f1,%f0
 	 */
-#if defined(COMPARISON_MACRO_BUG)
-	if (x == x && y == y && x <= y) {	/* } */
-#else
 	if (islessequal(x, y)) {
-#endif
 		x = 0.0f;
 		y = -x;
 	}

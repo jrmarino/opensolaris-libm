@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak nan = __nan
-#endif
 
 /*
  *  nan(c) returns a NaN.  This implementation ignores c.
@@ -42,7 +42,7 @@ static const union {
 	double d;
 } __nan_union = { 0x7fffffff, 0xffffffff };
 
-#elif defined(__i386)
+#elif defined(__i386) || defined(__amd64)
 
 static const union {
 	unsigned i[2];

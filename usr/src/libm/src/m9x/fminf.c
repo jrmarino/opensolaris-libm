@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fminf = __fminf
-#endif
 
 #include "libm.h"	/* for islessequal macro */
 
@@ -80,17 +80,16 @@ __fminf(float x, float y) {
 	if (y != y)
 		y = x;
 
-	/* if x is greater than y or x and y are unordered, replace x by y */
-#if defined(COMPARISON_MACRO_BUG)
-	if (x != x || x > y)
-#else
-	if (!islessequal(x, y))
-#endif
+	/* if x is nan, replace it by y */
+	if (x != x)
+		x = y;
+
+	/* At this point, x and y are either both numeric, or both NaN */
+	if (!isnan(x) && !islessequal(x, y))
 		x = y;
 
 	/*
-	 * now x and y are either both NaN or both numeric; set the
-	 * sign of the result if either x or y has its sign set
+	 * set the sign of the result if either x or y has its sign set
 	 */
 	xx.f = x;
 	yy.f = y;

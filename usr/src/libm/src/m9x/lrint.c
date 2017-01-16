@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak lrint = __lrint
-#endif
+#pragma weak __lrint = lrint
 
 /*
  * lrint(x) rounds its argument to the nearest integer according
@@ -62,7 +62,7 @@ lrint(double x) {
 		/* add and subtract a power of two to round x to an integer */
 #if defined(__sparc)
 		yy.i[HIWORD] = (xx.i[HIWORD] & 0x80000000) | 0x43300000;
-#elif defined(__i386)
+#elif defined(__x86)
 		yy.i[HIWORD] = (xx.i[HIWORD] & 0x80000000) | 0x43e00000;
 #else
 #error Unknown architecture

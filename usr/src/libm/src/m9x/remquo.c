@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak remquo = __remquo
+#pragma weak __remquo = remquo
 
 /* INDENT OFF */
 /*
@@ -38,18 +40,15 @@
 /* INDENT ON */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include <math.h>		/* fabs() */
 
-#if defined(__sparc)
+#if defined(_BIG_ENDIAN)
 #define	HIWORD	0
 #define	LOWORD	1
-#elif defined(__i386)
+#else
 #define	HIWORD	1
 #define	LOWORD	0
-#else
-#error Unknown architecture
 #endif
 #define	__HI(x)	((int *) &x)[HIWORD]
 #define	__LO(x)	((int *) &x)[LOWORD]

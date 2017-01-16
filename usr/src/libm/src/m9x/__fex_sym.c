@@ -20,12 +20,13 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#include "fenv_synonyms.h"
 #include <elf.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -195,13 +196,13 @@ __fex_read_syms(int fd)
 			sh[sh[i].sh_link].sh_size)
 	{
 		free(sh);
-		return -1;
+		return (-1);
 	}
 	nsyms = (int) (sh[i].sh_size / sh[i].sh_entsize);
 	stoffset = (int) sh[i].sh_size;
 
 	free(sh);
-	return 0;
+	return (0);
 }
 
 /* find the symbol corresponding to the given text address;

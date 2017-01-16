@@ -20,17 +20,17 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak llroundl = __llroundl
+#pragma weak __llroundl = llroundl
 #if defined(__sparcv9) || defined(__amd64)
-#pragma weak lroundl = __llroundl
-#pragma weak __lroundl = __llroundl
-#endif
+#pragma weak lroundl = llroundl
+#pragma weak __lroundl = llroundl
 #endif
 
 #include "libm.h"
@@ -117,7 +117,7 @@ llroundl(long double x) {
 
 	return (zz.l);
 }
-#elif defined(__i386) || defined(__amd64)
+#elif defined(__x86)
 long long
 llroundl(long double x) {
 	union {

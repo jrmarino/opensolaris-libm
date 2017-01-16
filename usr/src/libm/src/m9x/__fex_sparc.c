@@ -20,13 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
 #if defined(__sparc)
-#include "fenv_synonyms.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -35,8 +36,13 @@
 #include <thread.h>
 #include <ucontext.h>
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 #include <fenv.h>
+
+#include "fenv_inlines.h"
+#include "libm_inlines.h"
 
 #ifdef __sparcv9
 
@@ -655,6 +661,9 @@ stuff:
 			case fex_ldouble:
 				info->res.val.i = (int) info->res.val.q;
 				break;
+
+			default:
+				break;
 			}
 			*(int*)FPreg(rd) = info->res.val.i;
 			return;
@@ -678,6 +687,9 @@ stuff:
 			case fex_ldouble:
 				info->res.val.l = (long long) info->res.val.q;
 				break;
+
+			default:
+				break;
 			}
 			*(long long*)FPREG(rd) = info->res.val.l;
 			break;
@@ -698,6 +710,9 @@ stuff:
 
 			case fex_ldouble:
 				info->res.val.f = (float) info->res.val.q;
+				break;
+
+			default:
 				break;
 			}
 			*(float*)FPreg(rd) = info->res.val.f;
@@ -720,6 +735,9 @@ stuff:
 			case fex_ldouble:
 				info->res.val.d = (double) info->res.val.q;
 				break;
+
+			default:
+				break;
 			}
 			*(double*)FPREG(rd) = info->res.val.d;
 			break;
@@ -740,6 +758,9 @@ stuff:
 
 			case fex_double:
 				info->res.val.q = (long double) info->res.val.d;
+				break;
+
+			default:
 				break;
 			}
 			*(long double*)FPREG(rd) = info->res.val.q;
@@ -767,6 +788,9 @@ stuff:
 			case fex_ldouble:
 				info->res.val.d = (double) info->res.val.q;
 				break;
+
+			default:
+				break;
 			}
 			*(double*)FPREG(rd) = info->res.val.d;
 			break;
@@ -787,6 +811,9 @@ stuff:
 
 			case fex_double:
 				info->res.val.q = (long double) info->res.val.d;
+				break;
+
+			default:
 				break;
 			}
 			*(long double*)FPREG(rd) = info->res.val.q;
@@ -813,6 +840,9 @@ stuff:
 		case fex_ldouble:
 			info->res.val.f = (float) info->res.val.q;
 			break;
+
+		default:
+			break;
 		}
 		*(float*)FPreg(rd) = info->res.val.f;
 		break;
@@ -834,6 +864,9 @@ stuff:
 		case fex_ldouble:
 			info->res.val.d = (double) info->res.val.q;
 			break;
+
+		default:
+			break;
 		}
 		*(double*)FPREG(rd) = info->res.val.d;
 		break;
@@ -854,6 +887,9 @@ stuff:
 
 		case fex_double:
 			info->res.val.q = (long double) info->res.val.d;
+			break;
+
+		default:
 			break;
 		}
 		*(long double*)FPREG(rd) = info->res.val.q;

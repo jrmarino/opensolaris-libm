@@ -20,29 +20,32 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#pragma weak __feclearexcept = feclearexcept
+#pragma weak __feraiseexcept = feraiseexcept
+#pragma weak __fetestexcept = fetestexcept
+#pragma weak __fegetexceptflag = fegetexceptflag
+#pragma weak __fesetexceptflag = fesetexceptflag
 
-#pragma weak feclearexcept = __feclearexcept
-#pragma weak feraiseexcept = __feraiseexcept
-#pragma weak fetestexcept = __fetestexcept
-#pragma weak fegetexceptflag = __fegetexceptflag
-#pragma weak fesetexceptflag = __fesetexceptflag
+#pragma weak feclearexcept96 = feclearexcept
+#pragma weak feraiseexcept96 = feraiseexcept
+#pragma weak fetestexcept96 = fetestexcept
+#pragma weak fegetexceptflag96 = fegetexceptflag
+#pragma weak fesetexceptflag96 = fesetexceptflag
 
-#pragma weak feclearexcept96 = __feclearexcept
-#pragma weak feraiseexcept96 = __feraiseexcept
-#pragma weak fetestexcept96 = __fetestexcept
-#pragma weak fegetexceptflag96 = __fegetexceptflag
-#pragma weak fesetexceptflag96 = __fesetexceptflag
-
-#include "fenv_synonyms.h"
 #include <fenv.h>
 #include <sys/ieeefp.h>
 #include <ucontext.h>
 #include <thread.h>
 #include "fex_handler.h"
+#include "fenv_inlines.h"
+
 
 int feclearexcept(int e)
 {

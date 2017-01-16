@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fdim = __fdim
-#endif
 
 /*
  * fdim(x,y) returns x - y if x > y, +0 if x <= y, and NaN if x and
@@ -42,11 +42,7 @@
 
 double
 __fdim(double x, double y) {
-#if defined(COMPARISON_MACRO_BUG)
-	if (x == x && y == y && x <= y) {	/* } */
-#else
 	if (islessequal(x, y)) {
-#endif
 		x = 0.0;
 		y = -x;
 	}

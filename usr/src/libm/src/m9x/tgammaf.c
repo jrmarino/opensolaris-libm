@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak tgammaf = __tgammaf
+#pragma weak __tgammaf = tgammaf
 
 /*
  * True gamma function
@@ -38,18 +40,17 @@
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 
-#if defined(__sparc)
+#if defined(_BIG_ENDIAN)
 #define	HIWORD	0
 #define	LOWORD	1
-#elif defined(__i386)
+#else
 #define	HIWORD	1
 #define	LOWORD	0
-#else
-#error Unknown architecture
 #endif
 #define	__HI(x)	((int *) &x)[HIWORD]
 #define	__LO(x)	((unsigned *) &x)[LOWORD]
@@ -397,7 +398,7 @@ t0z3 = 0.819773101100500601787868704921606996312;
  */
 static double
 gam_n(int i, double x) {
-	double rr, yy;
+	double rr = 0.0L, yy;
 	double z1, z2;
 
 	/* compute yy = gamma(x+1) */
@@ -469,7 +470,7 @@ tgammaf(float xf) {
 	if (hx >= 0x41000000)	/* x >= 8 */
 		return ((float) large_gam(x));
 
-	if (hx > 0) {		/* x from 0 to 8 */
+	if (hx > 0) {		/* 0 < x < 8 */
 		i = (int) xf;
 		return ((float) gam_n(i, x - (double) i));
 	}

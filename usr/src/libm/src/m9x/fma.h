@@ -20,13 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
 #ifndef _FMA_H
 #define	_FMA_H
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,13 +71,13 @@ extern "C" {
 #define	FSR_RM		3
 
 /* inline templates */
-extern void __fenv_getfsr(unsigned int *);
-extern void __fenv_setfsr(const unsigned int *);
+extern void __fenv_getfsr32(unsigned int *);
+extern void __fenv_setfsr32(const unsigned int *);
 
 #endif /* __sparc */
 
 
-#ifdef __i386
+#if defined(__x86)
 
 /*
  * Common definitions for fma routines (x86)
@@ -115,7 +117,7 @@ extern void __fenv_setfsr(const unsigned int *);
 extern void __fenv_getcwsw(unsigned int *);
 extern void __fenv_setcwsw(const unsigned int *);
 
-#endif /* __i386 */
+#endif /* __x86 */
 
 #ifdef __cplusplus
 }

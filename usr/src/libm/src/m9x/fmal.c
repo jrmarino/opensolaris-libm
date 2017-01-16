@@ -20,17 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fmal = __fmal
-#endif
 
 #include "libm.h"
 #include "fma.h"
+#include "fenv_inlines.h"
 
 #if defined(__sparc)
 
@@ -73,7 +74,7 @@ static const union {
 #define	inf	C[14].d
 #define	snan	C[15].d
 
-static const unsigned fsr_rm = 0xc0000000u;
+static const unsigned int fsr_rm = 0xc0000000u;
 
 /*
  * fmal for SPARC: 128-bit quad precision, big-endian
@@ -81,17 +82,18 @@ static const unsigned fsr_rm = 0xc0000000u;
 long double
 __fmal(long double x, long double y, long double z) {
 	union {
-		unsigned i[4];
+		unsigned int i[4];
 		long double q;
 	} xx, yy, zz;
 	union {
-		unsigned i[2];
+		unsigned int i[2];
 		double d;
 	} u;
 	double dx[5], dy[5], dxy[9], c, s;
-	unsigned xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7;
-	unsigned z0, z1, z2, z3, z4, z5, z6, z7;
-	unsigned fsr, rm, sticky;
+	unsigned int xy0, xy1, xy2, xy3, xy4, xy5, xy6, xy7;
+	unsigned int z0, z1, z2, z3, z4, z5, z6, z7;
+	unsigned int rm, sticky;
+	unsigned int fsr;
 	int hx, hy, hz, ex, ey, ez, exy, sxy, sz, e, ibit;
 	int cx, cy, cz;
 	volatile double	dummy;
@@ -159,18 +161,18 @@ __fmal(long double x, long double y, long double z) {
 		cz = 1;
 
 	/* get the fsr and clear current exceptions */
-	__fenv_getfsr(&fsr);
+	__fenv_getfsr32(&fsr);
 	fsr &= ~FSR_CEXC;
 
 	/* handle all other zero, inf, and nan cases */
 	if (cx != 1 || cy != 1 || cz != 1) {
 		/* if x or y is a quiet nan, return it */
 		if (cx == 3) {
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (x);
 		}
 		if (cy == 3) {
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (y);
 		}
 
@@ -185,7 +187,7 @@ __fmal(long double x, long double y, long double z) {
 
 		/* if z is a quiet nan, return it */
 		if (cz == 3) {
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (z);
 		}
 
@@ -207,7 +209,7 @@ __fmal(long double x, long double y, long double z) {
 						0xffffffff;
 					return (zz.q);
 				}
-				__fenv_setfsr(&fsr);
+				__fenv_setfsr32(&fsr);
 				return (z);
 			}
 
@@ -215,13 +217,13 @@ __fmal(long double x, long double y, long double z) {
 			zz.i[0] = ((xx.i[0] ^ yy.i[0]) & 0x80000000) |
 				0x7fff0000;
 			zz.i[1] = zz.i[2] = zz.i[3] = 0;
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (zz.q);
 		}
 
 		/* if z is inf, return it */
 		if (cz == 2) {
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (z);
 		}
 
@@ -235,10 +237,10 @@ __fmal(long double x, long double y, long double z) {
 				0) {
 				zz.i[0] = (fsr >> 30) == FSR_RM ? 0x80000000 :
 					0;
-				__fenv_setfsr(&fsr);
+				__fenv_setfsr32(&fsr);
 				return (zz.q);
 			}
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (z);
 		}
 
@@ -250,7 +252,7 @@ __fmal(long double x, long double y, long double z) {
 	 * now x, y, and z are all finite and nonzero; set round-to-
 	 * negative-infinity mode
 	 */
-	__fenv_setfsr(&fsr_rm);
+	__fenv_setfsr32(&fsr_rm);
 
 	/*
 	 * get the signs and exponents and normalize the significands
@@ -751,7 +753,7 @@ __fmal(long double x, long double y, long double z) {
 		if (!(z0 | z1 | z2 | z3 | z4)) { /* exact zero */
 			zz.i[0] = rm == FSR_RM ? 0x80000000 : 0;
 			zz.i[1] = zz.i[2] = zz.i[3] = 0;
-			__fenv_setfsr(&fsr);
+			__fenv_setfsr32(&fsr);
 			return (zz.q);
 		}
 	}
@@ -811,7 +813,7 @@ __fmal(long double x, long double y, long double z) {
 
 	/* restore the fsr and emulate exceptions as needed */
 	if ((fsr & FSR_CEXC) & (fsr >> 23)) {
-		__fenv_setfsr(&fsr);
+		__fenv_setfsr32(&fsr);
 		if (fsr & FSR_OFC) {
 			dummy = huge;
 			dummy *= huge;
@@ -827,12 +829,12 @@ __fmal(long double x, long double y, long double z) {
 		}
 	} else {
 		fsr |= (fsr & 0x1f) << 5;
-		__fenv_setfsr(&fsr);
+		__fenv_setfsr32(&fsr);
 	}
 	return (zz.q);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 static const union {
 	unsigned i[2];

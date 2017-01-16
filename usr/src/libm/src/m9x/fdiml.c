@@ -20,24 +20,20 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fdiml = __fdiml
-#endif
 
 #include "libm.h"	/* for islessequal macro */
 
 long double
 __fdiml(long double x, long double y) {
-#if defined(COMPARISON_MACRO_BUG)
-	if (x == x && y == y && x <= y) {
-#else
 	if (islessequal(x, y)) {
-#endif
 		x = 0.0l;
 		y = -x;
 	}

@@ -18,10 +18,10 @@
 /
 / CDDL HEADER END
 /
+/ Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+/
 / Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
 / Use is subject to license terms.
-/
-/ @(#)__fenv_i386.il	1.8	06/01/31 SMI
 /
 	.inline	__fenv_getcwsw,1
 	movl	(%esp),%eax
@@ -261,14 +261,14 @@
 	movl	(%esp),%eax
 	movl	4(%esp),%edx
 	cvttss2si	(%eax),%ecx
-	movw	%ecx,(%edx)
+	movl	%ecx,(%edx)
 	.end
 
 	.inline	sse_cvtss2si,2
 	movl	(%esp),%eax
 	movl	4(%esp),%edx
 	cvtss2si	(%eax),%ecx
-	movw	%ecx,(%edx)
+	movl	%ecx,(%edx)
 	.end
 
 	.inline	sse_cmpeqsd,3
@@ -400,12 +400,12 @@
 	movl	(%esp),%eax
 	movl	4(%esp),%edx
 	cvttsd2si	(%eax),%ecx
-	movw	%ecx,(%edx)
+	movl	%ecx,(%edx)
 	.end
 
 	.inline	sse_cvtsd2si,2
 	movl	(%esp),%eax
 	movl	4(%esp),%edx
 	cvtsd2si	(%eax),%ecx
-	movw	%ecx,(%edx)
+	movl	%ecx,(%edx)
 	.end

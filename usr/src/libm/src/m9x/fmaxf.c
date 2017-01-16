@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fmaxf = __fmaxf
-#endif
 
 /*
  * fmax(x,y) returns the larger of x and y.  If just one of the
@@ -121,17 +121,16 @@ __fmaxf(float x, float y) {
 	if (y != y)
 		y = x;
 
-	/* if x is less than y or x and y are unordered, replace x by y */
-#if defined(COMPARISON_MACRO_BUG)
-	if (x != x || x < y)
-#else
-	if (!isgreaterequal(x, y))
-#endif
+	/* if x is nan, replace it by y */
+	if (x != x)
+		x = y;
+
+	/* At this point, x and y are either both numeric, or both NaN */
+	if (!isnan(x) && !isgreaterequal(x, y))
 		x = y;
 
 	/*
-	 * now x and y are either both NaN or both numeric; clear the
-	 * sign of the result if either x or y has its sign clear
+	 * clear the sign of the result if either x or y has its sign clear
 	 */
 	xx.f = x;
 	yy.f = y;

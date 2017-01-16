@@ -20,17 +20,17 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak llround = __llround
+#pragma weak __llround = llround
 #if defined(__sparcv9) || defined(__amd64)
-#pragma weak lround = __llround
-#pragma weak __lround = __llround
-#endif
+#pragma weak lround = llround
+#pragma weak __lround = llround
 #endif
 
 /*

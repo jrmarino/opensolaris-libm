@@ -20,22 +20,23 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak fegetround = __fegetround
-#pragma weak fesetround = __fesetround
+#pragma weak __fegetround = fegetround
+#pragma weak __fesetround = fesetround
 
 #pragma weak fegetround96 = __fegetround
-#pragma weak fesetround96 = __fesetround96
 
-#include "fenv_synonyms.h"
 #include <fenv.h>
 #include <ucontext.h>
 #include <thread.h>
 #include "fex_handler.h"
+#include "fenv_inlines.h"
 
 #if defined(__i386) && !defined(__amd64)
 #include <float.h>

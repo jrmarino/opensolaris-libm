@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak scalblnl = __scalblnl
-#endif
+#pragma weak __scalblnl = scalblnl
 
 #include "libm.h"
 #include <float.h>		/* LDBL_MAX, LDBL_MIN */
@@ -40,11 +40,11 @@
 static const long double xtwot = 10384593717069655257060992658440192.0L,
 								/* 2^113 */
 	twomtm1 = 4.814824860968089632639944856462318296E-35L;	/* 2^-114 */
-#elif defined(__i386)
+#elif defined(__x86)
 #define	XSET_EXP(k, x)	((int *) &x)[2] = (((int *) &x)[2] & ~0x7fff) | k
 #if defined(HANDLE_UNSUPPORTED)
-#define	ISINFNANL(k, x)	(k == 0x7fff || k != 0 && \
-				(((int *) &x)[1] & 0x80000000) == 0)
+#define      ISINFNANL(k, x) (k == 0x7fff || \
+                        (k != 0 && (((int *) &x)[1] & 0x80000000) == 0))
 #else
 #define	ISINFNANL(k, x)	(k == 0x7fff)
 #endif

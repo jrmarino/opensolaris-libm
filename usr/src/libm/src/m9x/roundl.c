@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak roundl = __roundl
-#endif
+#pragma weak __roundl = roundl
 
 #include "libm.h"
 
@@ -118,7 +118,7 @@ roundl(long double x) {
 		xx.i[0] |= 0x80000000;
 	return (xx.q);
 }
-#elif defined(__i386)
+#elif defined(__x86)
 long double
 roundl(long double x) {
 	union {
@@ -161,4 +161,4 @@ roundl(long double x) {
 }
 #else
 #error Unknown architecture
-#endif	/* defined(__sparc) || defined(__i386) */
+#endif	/* defined(__sparc) || defined(__x86) */

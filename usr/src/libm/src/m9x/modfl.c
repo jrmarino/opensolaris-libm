@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak modfl = __modfl
-#endif
 
 #include "libm.h"
 
@@ -93,7 +93,7 @@ __modfl(long double x, long double *iptr) {
 	return (xx.q);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 long double
 __modfl(long double x, long double *iptr) {

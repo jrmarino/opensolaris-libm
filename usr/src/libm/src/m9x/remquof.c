@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak remquof = __remquof
+#pragma weak __remquof = remquof
 
 /* INDENT OFF */
 /*
@@ -37,7 +39,6 @@
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include <math.h>
 extern float fabsf(float);

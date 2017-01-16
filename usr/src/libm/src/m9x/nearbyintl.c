@@ -20,17 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak nearbyintl = __nearbyintl
-#endif
 
 #include "libm.h"
 #include "fma.h"
+#include "fenv_inlines.h"
 
 #if defined(__sparc)
 
@@ -45,7 +46,8 @@ __nearbyintl(long double x) {
 		unsigned i[4];
 		long double q;
 	} xx;
-	unsigned hx, sx, i, frac, fsr;
+	unsigned hx, sx, i, frac;
+	unsigned int fsr;
 	int rm, j;
 	volatile float	dummy;
 
@@ -67,7 +69,7 @@ __nearbyintl(long double x) {
 		return (x);
 
 	/* get the rounding mode */
-	__fenv_getfsr(&fsr);
+	__fenv_getfsr32(&fsr);
 	rm = fsr >> 30;
 
 	/* flip the sense of directed roundings if x is negative */
@@ -149,7 +151,7 @@ __nearbyintl(long double x) {
 	return (xx.q);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 /* inline template */
 extern long double frndint(long double);

@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak tgamma = __tgamma
-#endif
+#pragma weak __tgamma = tgamma
 
 /* INDENT OFF */
 /*
@@ -1404,7 +1404,7 @@ static const double
 /* gamma(x+i) for 0 <= x < 1  */
 static struct Double
 gam_n(int i, double x) {
-	struct Double rr, yy;
+	struct Double rr = {0.0L, 0.0L}, yy;
 	double r1, r2, t2, z, xh, xl, yh, yl, zh, z1, z2, zl, x5, wh, wl;
 
 	/* compute yy = gamma(x+1) */
@@ -1556,7 +1556,7 @@ tgamma(double x) {
 		__HI(w) += m << 20;
 		return (w);
 	}
-	if (hx > 0) {		/* x from 0 to 8 */
+	if (hx > 0) {		/* 0 < x < 8 */
 		i = (int) x;
 		ww = gam_n(i, x - (double) i);
 		return (ww.h + ww.l);

@@ -24,11 +24,7 @@ extern "C" {
 
 #include <sys/types.h>
 
-#ifndef __GNU_INLINE
-#define __GNU_INLINE inline __attribute__((gnu_inline))
-#endif
-
-#if defined(__amd64)
+#if defined(__x86)
 
 /*
  * Floating point Control Word and Status Word
@@ -393,6 +389,7 @@ sse_cvtss2si(float *f1, int *i1)
 	    : "m" (*f1));
 }
 
+#if defined(__amd64)
 extern __GNU_INLINE void
 sse_cvtsi2ssq(long long *ll1, float *f1)
 {
@@ -428,6 +425,8 @@ sse_cvtss2siq(float *f1, long long *ll1)
 	    : "=m" (*ll1), "=r" (tmp)
 	    : "m" (*f1));
 }
+
+#endif
 
 extern __GNU_INLINE void
 sse_cmpeqsd(double *d1, double *d2, long long *ll1)

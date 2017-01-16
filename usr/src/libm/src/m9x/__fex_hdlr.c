@@ -20,29 +20,28 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#include "fenv_synonyms.h"
 #undef lint
 #include <signal.h>
 #include <siginfo.h>
-#if defined(__i386) && !defined(__amd64)
-/* for now, pick up local copy of Solaris 10 sys/regset.h; we can get rid
-   of this once we no longer need to build on Solaris 8 */
-#include "regset.h"
-#endif
 #include <ucontext.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <thread.h>
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 #include <fenv.h>
 #include "fex_handler.h"
+#include "fenv_inlines.h"
 
 #if defined(__sparc) && !defined(__sparcv9)
 #include <sys/procfs.h>
@@ -57,10 +56,8 @@ extern int sigismember(const sigset_t *, int);
 void (*__mt_fex_sync)() = NULL; /* for synchronization with libmtsk */
 #pragma weak __mt_fex_sync
 
-#ifdef LIBM_MT_FEX_SYNC
 void (*__libm_mt_fex_sync)() = NULL; /* new, improved version of above */
 #pragma weak __libm_mt_fex_sync
-#endif
 
 /* private variables */
 static fex_handler_t main_handlers;
@@ -145,7 +142,6 @@ __fex_sync_with_libmtsk(int begin, int master)
 		__fex_update_te();
 }
 
-#ifdef LIBM_MT_FEX_SYNC
 /*
 *  The following function may be used for synchronization with any
 *  internal project that manages multiple threads
@@ -183,7 +179,7 @@ __fex_sync_with_threads(enum __libm_mt_fex_sync_actions action,
 		break;
 
 	case __libm_mt_fex_finish_master:
-#ifdef __i386
+#if defined(__x86)
 		__fex_update_te();
 #else
 		if (fex_get_log())
@@ -192,7 +188,7 @@ __fex_sync_with_threads(enum __libm_mt_fex_sync_actions action,
 		break;
 
 	case __libm_mt_fex_finish_slave:
-#ifdef __i386
+#if defined(__x86)
 		/* clear traps, making all accrued flags visible in status word */
 		{
 			unsigned long   fsr;
@@ -204,7 +200,6 @@ __fex_sync_with_threads(enum __libm_mt_fex_sync_actions action,
 		break;
 	}
 }
-#endif
 
 #if defined(__sparc)
 
@@ -372,13 +367,13 @@ not_ieee:
 	}
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 #if defined(__amd64)
 #define test_sse_hw	1
 #else
 extern int _sse_hw;
-#define test_sse_hw	&_sse_hw && _sse_hw
+#define test_sse_hw	_sse_hw
 #endif
 
 #if !defined(REG_PC)
@@ -394,7 +389,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 {
 	struct fex_handler_data	*thr_handlers;
 	struct sigaction	act;
-	void			(*handler)(), (*simd_handler[4])();
+	void			(*handler)() = NULL, (*simd_handler[4])();
 	int			mode, simd_mode[4], i, len, accrued, *ap;
 	unsigned int		cwsw, oldcwsw, mxcsr, oldmxcsr;
 	enum fex_exception	e, simd_e[4];
@@ -582,7 +577,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 			__fex_st_sse_result(uap, &inst, e, &info);
 			accrued |= info.flags;
 
-#ifdef __amd64
+#if defined(__amd64)
 			/*
 			 * In 64-bit mode, the 32-bit convert-to-integer
 			 * instructions zero the upper 32 bits of the
@@ -842,8 +837,6 @@ __fex_update_te()
 	/* synchronize with libmtsk */
 	__mt_fex_sync = __fex_sync_with_libmtsk;
 
-#ifdef LIBM_MT_FEX_SYNC
 	/* synchronize with other projects */
 	__libm_mt_fex_sync = __fex_sync_with_threads;
-#endif
 }

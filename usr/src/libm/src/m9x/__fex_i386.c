@@ -20,12 +20,13 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#include "fenv_synonyms.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -35,9 +36,12 @@
 #include <ucontext.h>
 #include <thread.h>
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 #include <fenv.h>
 #include "fex_handler.h"
+#include "fenv_inlines.h"
 
 #if defined(__amd64)
 #define test_sse_hw	1
@@ -46,9 +50,8 @@
  * The following variable lives in libc on Solaris 10, where it
  * gets set to a nonzero value at startup time on systems with SSE.
  */
-int _sse_hw = 0;
-#pragma weak _sse_hw
-#define test_sse_hw	&_sse_hw && _sse_hw
+extern int _sse_hw;
+#define test_sse_hw	_sse_hw
 #endif
 
 static int accrued = 0;
@@ -1235,7 +1238,7 @@ void
 __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 {
 	fex_numeric_t	r;
-	unsigned		ex, op, ea, stack;
+	unsigned long		ex, op, ea, stack;
 
 	/* get the exception type, opcode, and data address */
 	ex = sip->si_code;
@@ -1423,6 +1426,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case fex_ldouble:
 			*(float *)ea = (float) r.val.q;
 			break;
+
+		default:
+			break;
 		}
 		if (ex != FPE_FLTRES && (op & 8) != 0)
 			pop(uap);
@@ -1455,6 +1461,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 		case fex_ldouble:
 			*(int *)ea = (int) r.val.q;
+			break;
+
+		default:
 			break;
 		}
 		if (ex != FPE_FLTRES && (op & 8) != 0)
@@ -1489,6 +1498,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case fex_ldouble:
 			*(double *)ea = (double) r.val.q;
 			break;
+
+		default:
+			break;
 		}
 		if (ex != FPE_FLTRES && (op & 8) != 0)
 			pop(uap);
@@ -1521,6 +1533,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 		case fex_ldouble:
 			*(short *)ea = (short) r.val.q;
+			break;
+
+		default:
 			break;
 		}
 		if (ex != FPE_FLTRES && (op & 8) != 0)
@@ -1560,6 +1575,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case fex_ldouble:
 			*(long long *)ea = (long long) r.val.q;
 			break;
+
+		default:
+			break;
 		}
 		if (ex != FPE_FLTRES)
 			pop(uap);
@@ -1582,6 +1600,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case fex_double:
 		r.val.q = (long double) r.val.d;
+		break;
+
+	default:
 		break;
 	}
 

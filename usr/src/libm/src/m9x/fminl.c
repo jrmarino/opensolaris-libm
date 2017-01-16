@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fminl = __fminl
-#endif
 
 #include "libm.h"	/* for islessequal macro */
 
@@ -36,7 +36,7 @@ __fminl(long double x, long double y) {
 	union {
 #if defined(__sparc)
 		unsigned i[4];
-#elif defined(__i386)
+#elif defined(__x86)
 		unsigned i[3];
 #else
 #error Unknown architecture
@@ -49,24 +49,23 @@ __fminl(long double x, long double y) {
 	if (y != y)
 		y = x;
 
-	/* if x is greater than y or x and y are unordered, replace x by y */
-#if defined(COMPARISON_MACRO_BUG)
-	if (x != x || x > y)
-#else
-	if (!islessequal(x, y))
-#endif
+	/* if x is nan, replace it by y */
+	if (x != x)
+		x = y;
+
+	/* At this point, x and y are either both numeric, or both NaN */
+	if (!isnan(x) && !islessequal(x, y))
 		x = y;
 
 	/*
-	 * now x and y are either both NaN or both numeric; set the
-	 * sign of the result if either x or y has its sign set
+	 * set the sign of the result if either x or y has its sign set
 	 */
 	xx.ld = x;
 	yy.ld = y;
 #if defined(__sparc)
 	s = (xx.i[0] | yy.i[0]) & 0x80000000;
 	xx.i[0] |= s;
-#elif defined(__i386)
+#elif defined(__x86)
 	s = (xx.i[2] | yy.i[2]) & 0x8000;
 	xx.i[2] |= s;
 #else

@@ -20,17 +20,17 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak llrintl = __llrintl
+#pragma weak __llrintl = llrintl
 #if defined(__sparcv9) || defined(__amd64)
-#pragma weak lrintl = __llrintl
-#pragma weak __lrintl = __llrintl
-#endif
+#pragma weak lrintl = llrintl
+#pragma weak __lrintl = llrintl
 #endif
 
 #include "libm.h"
@@ -38,6 +38,7 @@
 #if defined(__sparc)
 
 #include "fma.h"
+#include "fenv_inlines.h"
 
 long long
 llrintl(long double x) {
@@ -70,7 +71,7 @@ llrintl(long double x) {
 		return (0LL);
 
 	/* get the rounding mode */
-	__fenv_getfsr(&fsr);
+	__fenv_getfsr32(&fsr);
 	rm = fsr >> 30;
 
 	/* flip the sense of directed roundings if x is negative */
@@ -139,7 +140,7 @@ llrintl(long double x) {
 	}
 	return (zz.l);
 }
-#elif defined(__i386) || defined(__amd64)
+#elif defined(__x86)
 long long
 llrintl(long double x) {
 	/*

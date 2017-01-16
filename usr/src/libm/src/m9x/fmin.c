@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak fmin = __fmin
-#endif
 
 /*
  * fmin(x,y) returns the smaller of x and y.  If just one of the
@@ -38,6 +38,10 @@
  */
 
 #include "libm.h"	/* for islessequal macro */
+
+#include "fenv_inlines.h"
+#include <stdio.h>
+#include <sys/isa_defs.h>
 
 double
 __fmin(double x, double y) {
@@ -51,28 +55,25 @@ __fmin(double x, double y) {
 	if (y != y)
 		y = x;
 
-	/* if x is greater than y or x and y are unordered, replace x by y */
-#if defined(COMPARISON_MACRO_BUG)
-	if (x != x || x > y)
-#else
-	if (!islessequal(x, y))
-#endif
+	/* if x is nan, replace it by y */
+	if (x != x)
+		x = y;
+
+	/* At this point, x and y are either both numeric, or both NaN */
+	if (!isnan(x) && !islessequal(x, y))
 		x = y;
 
 	/*
-	 * now x and y are either both NaN or both numeric; set the
-	 * sign of the result if either x or y has its sign set
+	 * set the sign of the result if either x or y has its sign set
 	 */
 	xx.d = x;
 	yy.d = y;
-#if defined(__sparc)
+#if defined(_BIG_ENDIAN)
 	s = (xx.i[0] | yy.i[0]) & 0x80000000;
 	xx.i[0] |= s;
-#elif defined(__i386)
+#else
 	s = (xx.i[1] | yy.i[1]) & 0x80000000;
 	xx.i[1] |= s;
-#else
-#error Unknown architecture
 #endif
 
 	return (xx.d);

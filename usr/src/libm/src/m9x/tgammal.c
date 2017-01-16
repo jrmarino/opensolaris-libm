@@ -20,28 +20,26 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak tgammal = __tgammal
-#endif
+#pragma weak __tgammal = tgammal
 
 #include "libm.h"
 
-#if defined(__sparc)
+#if defined(_BIG_ENDIAN)
 #define	H0_WORD(x)	((unsigned *) &x)[0]
 #define	H3_WORD(x)	((unsigned *) &x)[3]
 #define	CHOPPED(x)	(long double) ((double) (x))
-#elif defined(__i386)
+#else
 #define	H0_WORD(x)	((((int *) &x)[2] << 16) | \
 			(0x0000ffff & (((unsigned *) &x)[1] >> 15)))
 #define	H3_WORD(x)	((unsigned *) &x)[0]
 #define	CHOPPED(x)	(long double) ((float) (x))
-#else
-#error Unknown architecture
 #endif
 
 struct LDouble {
@@ -123,7 +121,7 @@ static const long double Q3[] = {
 };
 
 static const long double
-#if defined(__i386)
+#if defined(__x86)
 GZ1_h 	=  0.938204627909682449364570100414084663498215377L,
 GZ1_l   =  4.518346116624229420055327632718530617227944106e-20L,
 GZ2_h 	=  0.885603194410888700264725126309883762587560340L,
@@ -264,7 +262,7 @@ static const long double c[] = {
 2.16608493865351192653179168701171875e-02L,			/* ln2_32hi */
 5.96317165397058692545083025235937919875797669127130e-12L,	/* ln2_32lo */
 46.16624130844682903551758979206054839765267053289554989233L,	/* invln2_32 */
-#if defined(__i386)
+#if defined(__x86)
 1.7555483429044629170023839037639845628291e+03L,		/* overflow */
 #else
 1.7555483429044629170038892160702032034177e+03L,		/* overflow */
@@ -477,7 +475,7 @@ static const long double T2[] = {
  * S[j],S_trail[j] = 2**(j/32.) for the final computation of exp(t+w)
  */
 static const long double S[] = {
-#if defined(__i386)
+#if defined(__x86)
 	+1.0000000000000000000000000e+00L,
 	+1.0218971486541166782081522e+00L,
 	+1.0442737824274138402382006e+00L,
@@ -546,7 +544,7 @@ static const long double S[] = {
 #endif
 };
 static const long double S_trail[] = {
-#if defined(__i386)
+#if defined(__x86)
 	+0.0000000000000000000000000e+00L,
 	+2.6327965667180882569382524e-20L,
 	+8.3765863521895191129661899e-20L,
@@ -799,7 +797,7 @@ kpsin(long double x) {
  */
 
 static const long double
-#if defined(__i386)
+#if defined(__x86)
 one_pi_h = 0.3183098861481994390487670898437500L,	/* 31 bits */
 one_pi_l = 3.559123248900043690127872406891929148e-11L,
 #else
@@ -849,7 +847,7 @@ kpcos(long double x) {
 /* INDENT OFF */
 static const long double
 	/* 0.13486180573279076968979393577465291700642511139552429398233 */
-#if defined(__i386)
+#if defined(__x86)
 t0z1   =  0.1348618057327907696779385054997035808810L,
 t0z1_l =  1.1855430274949336125392717150257379614654e-20L,
 #else
@@ -857,7 +855,7 @@ t0z1   =  0.1348618057327907696897939357746529168654L,
 t0z1_l =  1.4102088588676879418739164486159514674310e-37L,
 #endif
 	/* 0.46163214496836234126265954232572132846819620400644635129599 */
-#if defined(__i386)
+#if defined(__x86)
 t0z2   =  0.4616321449683623412538115843295472018326L,
 t0z2_l =  8.84795799617412663558532305039261747030640e-21L,
 #else
@@ -865,7 +863,7 @@ t0z2   =  0.46163214496836234126265954232572132343318L,
 t0z2_l =  5.03501162329616380465302666480916271611101e-36L,
 #endif
 	/* 0.81977310110050060178786870492160699631174407846245179119586 */
-#if defined(__i386)
+#if defined(__x86)
 t0z3   =  0.81977310110050060178773362329351925836817L,
 t0z3_l =  1.350816280877379435658077052534574556256230e-22L
 #else
@@ -880,7 +878,7 @@ t0z3_l =  4.461599916947014419045492615933551648857380e-35L
  */
 static struct LDouble
 gam_n(int i, long double x) {
-	struct LDouble rr, yy;
+	struct LDouble rr = {0.0L, 0.0L}, yy;
 	long double r1, r2, t2, z, xh, xl, yh, yl, zh, z1, z2, zl, x5, wh, wl;
 
 	/* compute yy = gamma(x+1) */
@@ -1031,7 +1029,7 @@ tgammal(long double x) {
 		return (scalbnl(w, m));
 	}
 
-	if (hx > 0) {		/* x from 0 to 8 */
+	if (hx > 0) {		/* 0 < x < 8 */
 		i = (int) x;
 		ww = gam_n(i, x - (long double) i);
 		return (ww.h + ww.l);
@@ -1047,7 +1045,7 @@ tgammal(long double x) {
 	 */
 	/* INDENT ON */
 	xk = 0;
-#if defined(__i386)
+#if defined(__x86)
 	if (ix >= 0x403e0000) {	/* x >= 2**63 } */
 		if (ix >= 0x403f0000)
 			xk = -2;

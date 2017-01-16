@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
 #pragma weak frexpl = __frexpl
-#endif
 
 #include "libm.h"
 
@@ -82,7 +82,7 @@ __frexpl(long double x, int *exp) {
 	return (xx.q);
 }
 
-#elif defined(__i386)
+#elif defined(__x86)
 
 long double
 __frexpl(long double x, int *exp) {
