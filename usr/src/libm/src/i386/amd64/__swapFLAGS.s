@@ -23,12 +23,9 @@
  * Use is subject to license terms.
  */
 
-	.ident	"@(#)__swapFLAGS.s	1.3	06/01/23 SMI"
-
 	.file	"__swapFLAGS.s"
 
 #include "libm.h"
-#include "libm_synonyms.h"
 
 /*
  * swap exception masks
