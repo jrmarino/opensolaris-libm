@@ -20,22 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)__fex_sse.c	1.3	06/01/31 SMI"
-
-#include "fenv_synonyms.h"
-#if defined(__i386) && !defined(__amd64)
-/* for now, pick up local copy of Solaris 10 sys/regset.h; we can get rid
-   of this once we no longer need to build on Solaris 8 */
-#include "regset.h"
-#endif
 #include <ucontext.h>
 #include <fenv.h>
-#include <sunmath.h>
+#include <sys/ieeefp.h>
 #include "fex_handler.h"
+#include "fenv_inlines.h"
 
 #if !defined(REG_PC)
 #define REG_PC	EIP
@@ -261,7 +257,7 @@ __fex_parse_sse(ucontext_t *uap, sseinst_t *inst)
 			sib = ip[i++];
 			if ((sib & 7) == 5 && (modrm >> 6) == 0) {
 				/* start with absolute address */
-				addr = (char *)(*(int *)(ip + i));
+				addr = (char *)(uintptr_t)(*(int *)(ip + i));
 				i += 4;
 			} else {
 				/* start with base */
@@ -369,6 +365,8 @@ __fex_get_sse_invalid_type(sseinst_t *inst)
 	case cvttss2siq:
 	case cvttsd2siq:
 		return fex_inv_int;
+	default:
+		break;
 	}
 
 	/* check op1 for signaling nan */
@@ -410,6 +408,8 @@ __fex_get_sse_invalid_type(sseinst_t *inst)
 			return fex_inv_zdz;
 		if (t1 == fp_infinity && t2 == fp_infinity)
 			return fex_inv_idi;
+	default:
+		break;
 	}
 
 	return (enum fex_exception)-1;
@@ -637,6 +637,8 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			info->res.type = fex_nodata;
 			sse_comisd(&info->op1.val.d, &info->op2.val.d);
 			break;
+		default:
+			break;
 		}
 	} else {
 		if (inst->op == cvtsi2ss) {
@@ -789,6 +791,8 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			info->op = fex_cmp;
 			info->res.type = fex_nodata;
 			sse_comiss(&info->op1.val.f, &info->op2.val.f);
+			break;
+		default:
 			break;
 		}
 	}
@@ -1082,6 +1086,8 @@ __fex_get_simd_op(ucontext_t *uap, sseinst_t *inst, enum fex_exception *e,
 			dummy.op2 = (sseoperand_t *)&inst->op2->d[i];
 			e[i] = __fex_get_sse_op(uap, &dummy, &info[i]);
 		}
+	default:
+		break;
 	}
 }
 
@@ -1097,10 +1103,10 @@ void
 __fex_st_sse_result(ucontext_t *uap, sseinst_t *inst, enum fex_exception e,
     fex_info_t *info)
 {
-	int		i;
-	long long	l;
-	float		f, fscl;
-	double		d, dscl;
+	int		i = 0;
+	long long	l = 0L;;
+	float		f = 0.0, fscl;
+	double		d = 0.0L, dscl;
 
 	/* for compares that write eflags, just set the flags
 	   to indicate "unordered" */
@@ -1227,6 +1233,9 @@ stuff:
 		case fex_ldouble:
 			i = info->res.val.q;
 			break;
+
+		default:
+			break;
 		}
 		inst->op1->i[0] = i;
 	} else if (inst->op == cmpsd || inst->op == cvttss2siq ||
@@ -1252,6 +1261,9 @@ stuff:
 		case fex_ldouble:
 			l = info->res.val.q;
 			break;
+
+		default:
+			break;
 		}
 		inst->op1->l[0] = l;
 	} else if ((((int)inst->op & DOUBLE) && inst->op != cvtsd2ss) ||
@@ -1276,6 +1288,9 @@ stuff:
 		case fex_ldouble:
 			d = info->res.val.q;
 			break;
+
+		default:
+			break;
 		}
 		inst->op1->d[0] = d;
 	} else {
@@ -1298,6 +1313,9 @@ stuff:
 
 		case fex_ldouble:
 			f = info->res.val.q;
+			break;
+
+		default:
 			break;
 		}
 		inst->op1->f[0] = f;
@@ -1577,5 +1595,8 @@ __fex_st_simd_result(ucontext_t *uap, sseinst_t *inst, enum fex_exception *e,
 		}
 		/* zero the high 64 bits of the destination */
 		inst->op1->l[1] = 0ll;
+
+	default:
+		break;
 	}
 }
