@@ -19,6 +19,9 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -26,6 +29,7 @@
 #ifndef _LIBM_MACROS_H
 #define	_LIBM_MACROS_H
 
+#include <sys/isa_defs.h>
 
 #if defined(__sparc)
 
@@ -37,7 +41,7 @@
 #define	ISZEROL(x)	(((((int *)&x)[0] & ~XSGNMSK) | ((int *)&x)[1] | \
 				((int *)&x)[2] | ((int *)&x)[3]) == 0)
 
-#elif defined(__i386) || defined(__amd64)
+#elif defined(__x86)
 
 #define	HIWORD		1
 #define	LOWORD		0
@@ -72,4 +76,4 @@
 #error Unknown architecture
 #endif
 
-#endif	/* !defined(_LIBM_MACROS_H) */
+#endif	/* _LIBM_MACROS_H */

@@ -23,18 +23,16 @@
  * Use is subject to license terms.
  */
 
-
 #include "libm.h"
 #include "xpg6.h"	/* __xpg6 */
 #include <stdio.h>
 #include <float.h>		/* DBL_MAX, DBL_MIN */
 #include <unistd.h>		/* write */
-#if defined(__i386) || defined(i386)
+#if defined(__x86)
 #include "libm_protos.h" //for fp_class and fp_quiet
 #endif
 #include <errno.h>
 #undef fflush
-#include <sys/isa_defs.h>
 
 /* INDENT OFF */
 /*
@@ -117,7 +115,7 @@ static const union {
 double
 _SVID_libm_err(double x, double y, int type) {
 	struct exception	exc;
-	double			t, w, ieee_retval;
+	double			t, w, ieee_retval = 0;
 	enum version		lib_version = _lib_version;
 	int			iy;
 

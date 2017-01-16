@@ -20,10 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#include "libm_macros.h"
 
 /* INDENT OFF */
 
@@ -211,20 +215,6 @@ static const double C[] = {
 #define two54		C[6]
 
 /* INDENT ON */
-
-#if defined(__sparc)
-
-#define HIWORD	0
-#define LOWORD	1
-
-#elif defined(__i386)
-
-#define HIWORD	1
-#define LOWORD	0
-
-#else
-#error Unknown architecture
-#endif
 
 #pragma weak cbrt = __cbrt
 

@@ -20,12 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-
-#pragma weak sincospi = __sincospi
 
 /* INDENT OFF */
 /*
@@ -70,26 +70,18 @@
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
+#include "libm_macros.h"
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 
 static const double
 	pi 	= 3.14159265358979323846,	/* 400921FB,54442D18 */
 	sqrth_h = 0.70710678118654757273731092936941422522068023681640625,
 	sqrth_l = -4.8336466567264565185935844299127932213411660131004e-17;
 /* INDENT ON */
-
-#if defined(__sparc)
-#define	HIWORD	0
-#define	LOWORD	1
-#elif defined(__i386)
-#define	HIWORD	1
-#define	LOWORD	0
-#else
-#error Unknown architecture
-#endif
 
 void
 sincospi(double x, double *s, double *c) {

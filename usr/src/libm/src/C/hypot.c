@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak hypot = __hypot
-#endif
+#pragma weak __hypot = hypot
 
 /* INDENT OFF */
 /*

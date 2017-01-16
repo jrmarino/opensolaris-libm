@@ -20,14 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
+#pragma weak __signgam = signgam
 
-#pragma weak signgam = __signgam
-
-#include "libm_synonyms.h"
 #include <math.h>
 
 int signgam = 0;

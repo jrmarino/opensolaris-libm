@@ -20,15 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak acosh = __acosh
+#pragma weak __acosh = acosh
 
 /* INDENT OFF */
-/* acosh(x)
+/*
+ * acosh(x)
  * Method :
  *	Based on
  *		acosh(x) = log [ x + sqrt(x*x-1) ]
@@ -43,23 +46,13 @@
  */
 /* INDENT ON */
 
-#include "libm_synonyms.h"	/* __acosh, __log, __log1p */
 #include "libm_protos.h"	/* _SVID_libm_error */
+#include "libm_macros.h"
 #include <math.h>
 
 static const double
 	one = 1.0,
 	ln2 = 6.93147180559945286227e-01;	/* 3FE62E42, FEFA39EF */
-
-#if defined(__sparc)
-#define	HIWORD	0
-#define	LOWORD	1
-#elif defined(__i386)
-#define	HIWORD	1
-#define	LOWORD	0
-#else
-#error Unknown architecture
-#endif
 
 double
 acosh(double x) {
@@ -70,35 +63,33 @@ acosh(double x) {
 	if (hx < 0x3ff00000) {	/* x < 1 */
 		if (isnan(x))
 #if defined(FPADD_TRAPS_INCOMPLETE_ON_NAN)
-			return hx >= 0xfff80000 ? x : (x - x) / (x - x);
+			return (hx >= 0xfff80000 ? x : (x - x) / (x - x));
 			/* assumes sparc-like QNaN */
 #else
 			return (x - x) / (x - x);
 #endif
 		else
-			return _SVID_libm_err(x, x, 29);
-	}
-	else if (hx >= 0x41b00000) {	/* x > 2**28 */
+			return (_SVID_libm_err(x, x, 29));
+	} else if (hx >= 0x41b00000) {
+		/* x > 2**28 */
 		if (hx >= 0x7ff00000) {	/* x is inf of NaN */
 #if defined(FPADD_TRAPS_INCOMPLETE_ON_NAN)
-			return hx >= 0x7ff80000 ? x : x + x;
+			return (hx >= 0x7ff80000 ? x : x + x);
 			/* assumes sparc-like QNaN */
 #else
-			return x + x;
+			return (x + x);
 #endif
-		}
-		else	/* acosh(huge)=log(2x) */
-			return log(x) + ln2;
-	}
-	else if (((hx - 0x3ff00000) | ((int *) &x)[LOWORD]) == 0) {
-		return 0.0;	/* acosh(1) = 0 */
-	}
-	else if (hx > 0x40000000) {	/* 2**28 > x > 2 */
+		} else	/* acosh(huge)=log(2x) */
+			return (log(x) + ln2);
+	} else if (((hx - 0x3ff00000) | ((int *) &x)[LOWORD]) == 0) {
+		return (0.0);	/* acosh(1) = 0 */
+	} else if (hx > 0x40000000) {
+		/* 2**28 > x > 2 */
 		t = x * x;
-		return log(2.0 * x - one / (x + sqrt(t - one)));
-	}
-	else {			/* 1 < x < 2 */
+		return (log(2.0 * x - one / (x + sqrt(t - one))));
+	} else {
+		/* 1 < x < 2 */
 		t = x - one;
-		return log1p(t + sqrt(2.0 * t + t * t));
+		return (log1p(t + sqrt(2.0 * t + t * t)));
 	}
 }

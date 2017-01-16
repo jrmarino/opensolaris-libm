@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /*
  * Floating point Bessel's function of the first and second kinds
@@ -34,11 +36,10 @@
  *	y0(-ve)=y1(-ve)=yn(n,-ve) are NaN with invalid signal.
  */
 
-#pragma weak j0 = __j0
-#pragma weak y0 = __y0
+#pragma weak __j0 = j0
+#pragma weak __y0 = y0
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include <math.h>
 #include <values.h>
@@ -94,14 +95,17 @@ j0(GENERIC x) {
 	GENERIC z, s,c,ss,cc,r,u,v,ox;
 	int i;
 
-	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
+	if (isnan(x))
+		return (x*x);	/* + -> * for Cheetah */
 	ox= x;
 	x = fabs(x);
 	if(x > 8.0){
-		if(!finite(x)) return zero;
+		if (!finite(x))
+			return (zero);
 		s = sin(x);
 		c = cos(x);
-	/* j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
+	/*
+	 * j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
 	 * where x0 = x-pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
@@ -133,19 +137,21 @@ j0(GENERIC x) {
 		}
 	/* force to pass SVR4 even the result is wrong (sign) */
 		if (x > X_TLOSS)
-		    return _SVID_libm_err(ox,z,34);
+		    return (_SVID_libm_err(ox, z, 34));
 		else
-		    return z;
+		    return (z);
 	}
 	if(x<=small) {
-	    if(x<=tiny) return one-x;
-	    else return one-x*x*0.25;
+	    if (x <= tiny)
+			return (one-x);
+	    else
+			return (one-x*x*0.25);
 	}
 	z = x*x;
 	if(x<=1.28) {
 	    r =  r0[0]+z*(r0[1]+z*(r0[2]+z*r0[3]));
 	    s =  s0[0]+z*(s0[1]+z*(s0[2]+z*s0[3]));
-	    return one + z*(r/s);
+	    return (one + z*(r/s));
 	} else {
 	    for(r=r1[8],s=s1[8],i=7;i>=0;i--) {
 		r = r*z + r1[i];
@@ -183,20 +189,23 @@ y0(GENERIC x) {
 	GENERIC z, /* d, */ s,c,ss,cc,u,v;
 	int i;
 
-	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
+	if (isnan(x))
+		return (x*x);	/* + -> * for Cheetah */
 	if(x <= zero){
 		if(x==zero)
 		    /* d= -one/(x-x); */
-		    return _SVID_libm_err(x,x,8);
+		    return (_SVID_libm_err(x, x, 8));
 		else
 		    /* d = zero/(x-x); */
-		    return _SVID_libm_err(x,x,9);
+		    return (_SVID_libm_err(x, x, 9));
 	}
 	if(x > 8.0){
-		if(!finite(x)) return zero;
+		if (!finite(x))
+			return (zero);
 		s = sin(x);
 		c = cos(x);
-	/* j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
+	/*
+	 * j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
 	 * where x0 = x-pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
@@ -226,9 +235,9 @@ y0(GENERIC x) {
 		else
 		    z =  invsqrtpi*(pzero(x)*ss+qzero(x)*cc)/sqrt(x);
 		if (x > X_TLOSS)
-		    return _SVID_libm_err(x,z,35);
+		    return (_SVID_libm_err(x, z, 35));
 		else
-		    return z;
+		    return (z);
 
 	}
 	if(x<=tiny) {
@@ -264,7 +273,8 @@ static GENERIC
 pzero(GENERIC x) {
 	GENERIC s,r,t,z;
 	int i;
-	if(x>huge) return one;
+	if (x > huge)
+		return (one);
 	t = eight/x; z = t*t;
 	r = pr[5]+z*pr[6];
 	s = ps[5]+z;
@@ -272,7 +282,7 @@ pzero(GENERIC x) {
 	    r = r*z + pr[i];
 	    s = s*z + ps[i];
 	}
-	return r/s;
+	return (r/s);
 }
 
 static const GENERIC qr[7] = {	/* [8 -- inf]  qzero 6950 */
@@ -298,7 +308,8 @@ static GENERIC
 qzero(GENERIC x) {
 	GENERIC s,r,t,z;
 	int i;
-	if(x>huge) return -0.125/x;
+	if (x > huge)
+		return (-0.125/x);
 	t = eight/x; z = t*t;
 	r = qr[5]+z*qr[6];
 	s = qs[5]+z;
@@ -306,5 +317,5 @@ qzero(GENERIC x) {
 	    r = r*z + qr[i];
 	    s = s*z + qs[i];
 	}
-	return t*(r/s);
+	return (t*(r/s));
 }

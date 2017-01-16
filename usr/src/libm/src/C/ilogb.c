@@ -20,19 +20,19 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak ilogb = __ilogb
-#endif
+#pragma weak __ilogb = ilogb
 
 #include "libm.h"
 #include "xpg6.h"	/* __xpg6 */
 
-#if defined(USE_FPSCALE) || defined(__i386)
+#if defined(__x86)
 static const double two52 = 4503599627370496.0;
 #else
 /*
@@ -55,7 +55,7 @@ ilogb_subnormal(unsigned v, unsigned w) {
 	v <<= 1;
 	return (r + ((0xffffaa50 >> v) & 0x3));
 }
-#endif	/* defined(USE_FPSCALE) */
+#endif	/* defined(__x86) */
 
 static int
 raise_invalid(int v) {	/* SUSv3 requires ilogb(0,+/-Inf,NaN) raise invalid */
@@ -78,7 +78,7 @@ ilogb(double x) {
 		if ((px[LOWORD] | k) == 0)
 			return (raise_invalid(0x80000001));
 		else {
-#if defined(USE_FPSCALE) || defined(__i386)
+#if defined(__x86)
 			x *= two52;
 			return (((px[HIWORD] & 0x7ff00000) >> 20) - 1075);
 #else

@@ -9,6 +9,10 @@
 #define	_LITTLE_ENDIAN
 #endif
 
+#ifndef __x86
+#define	__x86
+#endif
+
 #elif defined(__sparc) || defined(__sparcv9) || defined(__sparc__)
 
 #ifndef _BIG_ENDIAN

@@ -20,13 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak jn = __jn
-#pragma weak yn = __yn
+#pragma weak __jn = jn
+#pragma weak __yn = yn
 
 /*
  * floating point Bessel's function of the 1st and 2nd kind
@@ -69,10 +71,11 @@ static const GENERIC
 GENERIC
 jn(int n, GENERIC x) {
 	int i, sgn;
-	GENERIC a, b, temp;
+	GENERIC a, b, temp = 0;
 	GENERIC z, w, ox, on;
 
-    /* J(-n,x) = (-1)^n * J(n, x), J(n, -x) = (-1)^n * J(n, x)
+	/*
+	 * J(-n,x) = (-1)^n * J(n, x), J(n, -x) = (-1)^n * J(n, x)
      * Thus, J(-n,x) = J(n,-x)
      */
 	ox = x; on = (GENERIC)n;
@@ -80,34 +83,42 @@ jn(int n, GENERIC x) {
 		n = -n;
 		x = -x;
 	}
-	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
+	if (isnan(x))
+		return (x*x);	/* + -> * for Cheetah */
 	if (!((int) _lib_version == libm_ieee ||
 		(__xpg6 & _C99SUSv3_math_errexcept) != 0)) {
-	    if(fabs(x) > X_TLOSS) return _SVID_libm_err(on,ox,38);
+	    if (fabs(x) > X_TLOSS)
+			return (_SVID_libm_err(on, ox, 38));
 	}
-	if(n==0) return(j0(x));
-	if(n==1) return(j1(x));
+	if (n == 0)
+		return (j0(x));
+	if (n == 1)
+		return (j1(x));
 	if((n&1)==0)
 		sgn=0; 			/* even n */
 	else
 		sgn = signbit(x);	/* old n  */
 	x = fabs(x);
 	if(x == zero||!finite(x)) b = zero;
-	else if((GENERIC)n<=x) {   	/* Safe to use
-					   J(n+1,x)=2n/x *J(n,x)-J(n-1,x)
+	else if ((GENERIC)n <= x) {
+					/*
+					 * Safe to use
+					 *  J(n+1,x)=2n/x *J(n,x)-J(n-1,x)
 					 */
-	    if(x>1.0e91) {	/* x >> n**2
-				    Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Let s=sin(x), c=cos(x),
-					xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
-
-					   n	sin(xn)*sqt2	cos(xn)*sqt2
-					----------------------------------
-					   0	 s-c		 c+s
-					   1	-s-c 		-c+s
-					   2	-s+c		-c-s
-					   3	 s+c		 c-s
+	    if (x > 1.0e91) {
+				/*
+				 * x >> n**2
+				 *    Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *   Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *   Let s=sin(x), c=cos(x),
+				 *	xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
+				 *
+				 *	   n	sin(xn)*sqt2	cos(xn)*sqt2
+				 *	----------------------------------
+				 *	   0	 s-c		 c+s
+				 *	   1	-s-c 		-c+s
+				 *	   2	-s+c		-c-s
+				 *	   3	 s+c		 c-s
 				 */
 		switch(n&3) {
 		    case 0: temp =  cos(x)+sin(x); break;
@@ -133,8 +144,9 @@ jn(int n, GENERIC x) {
 		    b = b/a;
 		}
 	    } else {
-		/* use backward recurrence */
-		/* 			x      x^2      x^2
+		/*
+		 * use backward recurrence
+		 * 			x	  x^2	  x^2
 		 *  J(n,x)/J(n-1,x) =  ----   ------   ------   .....
 		 *			2n  - 2(n+1) - 2(n+2)
 		 *
@@ -176,13 +188,14 @@ jn(int n, GENERIC x) {
 		for(t=zero, i = 2*(n+k); i>=m; i -= 2) t = one/(i/x-t);
 		a = t;
 		b = one;
-		/* estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
-		   hence, if n*(log(2n/x)) > ...
-		    single 8.8722839355e+01
-		    double 7.09782712893383973096e+02
-		    long double 1.1356523406294143949491931077970765006170e+04
-		    then recurrent value may overflow and the result is
-		    likely underflow to zero
+		/*
+		 * estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
+		 *  hence, if n*(log(2n/x)) > ...
+		 *  single 8.8722839355e+01
+		 *  double 7.09782712893383973096e+02
+		 *  long double 1.1356523406294143949491931077970765006170e+04
+		 *  then recurrent value may overflow and the result is
+		 *  likely underflow to zero
 		 */
 		tmp = n;
 		v = two/x;
@@ -208,50 +221,61 @@ jn(int n, GENERIC x) {
 	    	b = (t*j0(x)/b);
 	    }
 	}
-	if(sgn==1) return -b; else return b;
+	if (sgn == 1)
+		return (-b);
+	else
+		return (b);
 }
 
 GENERIC
 yn(int n, GENERIC x) {
 	int i;
 	int sign;
-	GENERIC a, b, temp, ox, on;
+	GENERIC a, b, temp = 0, ox, on;
 
 	ox = x; on = (GENERIC)n;
-	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
+	if (isnan(x))
+		return (x*x);	/* + -> * for Cheetah */
 	if (x <= zero) {
-		if(x == zero)
+		if (x == zero) {
 			/* return -one/zero; */
-			return _SVID_libm_err((GENERIC)n,x,12);
-		else
+			return (_SVID_libm_err((GENERIC)n, x, 12));
+		} else {
 			/* return zero/zero; */
-			return _SVID_libm_err((GENERIC)n,x,13);
+			return (_SVID_libm_err((GENERIC)n, x, 13));
+		}
 	}
 	if (!((int) _lib_version == libm_ieee ||
 		(__xpg6 & _C99SUSv3_math_errexcept) != 0)) {
-	    if(x > X_TLOSS) return _SVID_libm_err(on,ox,39);
+	    if (x > X_TLOSS)
+			return (_SVID_libm_err(on, ox, 39));
 	}
 	sign = 1;
 	if(n<0){
 		n = -n;
 		if((n&1) == 1) sign = -1;
 	}
-	if(n==0) return(y0(x));
-	if(n==1) return(sign*y1(x));
-	if(!finite(x)) return zero;
+	if (n == 0)
+		return (y0(x));
+	if (n == 1)
+		return (sign*y1(x));
+	if (!finite(x))
+		return (zero);
 
-	if(x>1.0e91) {	/* x >> n**2
-				    Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Let s=sin(x), c=cos(x),
-					xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
-
-					   n	sin(xn)*sqt2	cos(xn)*sqt2
-					----------------------------------
-					   0	 s-c		 c+s
-					   1	-s-c 		-c+s
-					   2	-s+c		-c-s
-					   3	 s+c		 c-s
+	if (x > 1.0e91) {
+				/*
+				 * x >> n**2
+				 *  Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *  Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *  Let s = sin(x), c = cos(x),
+				 *  xn = x-(2n+1)*pi/4, sqt2 = sqrt(2), then
+				 *
+				 *    n	sin(xn)*sqt2	cos(xn)*sqt2
+				 *	----------------------------------
+				 *	 0	 s-c		 c+s
+				 *	 1	-s-c 		-c+s
+				 *	 2	-s+c		-c-s
+				 *	 3	 s+c		 c-s
 				 */
 		switch(n&3) {
 		    case 0: temp =  sin(x)-cos(x); break;
@@ -275,5 +299,8 @@ yn(int n, GENERIC x) {
 			a = temp;
 		}
 	}
-	if(sign>0) return b; else return -b;
+	if (sign > 0)
+		return (b);
+	else
+		return (-b);
 }

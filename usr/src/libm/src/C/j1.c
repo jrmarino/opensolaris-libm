@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /*
  * floating point Bessel's function of the first and second kinds
@@ -34,11 +36,10 @@
  *	y0(-ve)=y1(-ve)=yn(n,-ve) are NaN with invalid signal.
  */
 
-#pragma weak j1 = __j1
-#pragma weak y1 = __y1
+#pragma weak __j1 = j1
+#pragma weak __y1 = y1
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include <math.h>
 #include <values.h>
@@ -92,13 +93,15 @@ j1(GENERIC x) {
 	GENERIC z, d, s,c,ss,cc,r;
 	int i, sgn;
 
-	if(!finite(x)) return one/x;
+	if (!finite(x))
+		return (one/x);
 	sgn = signbit(x);
 	x = fabs(x);
 	if(x > 8.00){
 		s = sin(x);
 		c = cos(x);
-	/* j1(x) = sqrt(2/(pi*x))*(p1(x)*cos(x0)-q1(x)*sin(x0))
+	/*
+	 * j1(x) = sqrt(2/(pi*x))*(p1(x)*cos(x0)-q1(x)*sin(x0))
 	 * where x0 = x-3pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
@@ -127,16 +130,25 @@ j1(GENERIC x) {
 		    d = (invsqrtpi*cc)/sqrt(x);
 		else
                     d =  invsqrtpi*(pone(x)*cc-qone(x)*ss)/sqrt(x);
+
                 if (x > X_TLOSS) {
 		    if(sgn!=0) {d = -d; x = -x;}
-                    return _SVID_libm_err(x,d,36);
+			return (_SVID_libm_err(x, d, 36));
                 } else
-		    if(sgn==0) return d; else return -d;
+		    if (sgn == 0)
+				return (d);
+			else
+				return (-d);
 	}
 	if(x<=small) {
-            if(x<=tiny) d = 0.5*x;
-            else d =  x*(0.5-x*x*0.125);
-	    if(sgn==0) return d; else return -d;
+		if (x <= tiny)
+			d = 0.5*x;
+		else
+			d =  x*(0.5-x*x*0.125);
+		if (sgn == 0)
+			return (d);
+		else
+			return (-d);
         }
 	z = x*x;
 	if(x<1.28) {
@@ -153,7 +165,10 @@ j1(GENERIC x) {
 	    s = s1[0]+z*(s1[1]+z*(s1[2]+z*(s1[3]+z*s1[4])));
 	    d = x*(r/s);
 	}
-	if(sgn==0) return d; else return -d;
+	if (sgn == 0)
+		return (d);
+	else
+		return (-d);
 }
 
 static const GENERIC u0[4] = {
@@ -197,20 +212,23 @@ y1(GENERIC x) {
 	GENERIC z, d, s,c,ss,cc,u,v;
 	int i;
 
-	if(isnan(x)) return x*x;	/* + -> * for Cheetah */
+	if (isnan(x))
+		return (x*x);	/* + -> * for Cheetah */
 	if(x <= zero){
 		if(x==zero)
 		    /* return -one/zero;  */
-		    return _SVID_libm_err(x,x,10);
+		    return (_SVID_libm_err(x, x, 10));
 		else
 		    /* return zero/zero; */
-		    return _SVID_libm_err(x,x,11);
+		    return (_SVID_libm_err(x, x, 11));
 	}
 	if(x > 8.0){
-		if(!finite(x)) return zero;
+		if (!finite(x))
+			return (zero);
 		s = sin(x);
 		c = cos(x);
-	/* j1(x) = sqrt(2/(pi*x))*(p1(x)*cos(x0)-q1(x)*sin(x0))
+	/*
+	 * j1(x) = sqrt(2/(pi*x))*(p1(x)*cos(x0)-q1(x)*sin(x0))
 	 * where x0 = x-3pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(3pi/4)+sin(x)sin(3pi/4)
@@ -239,10 +257,11 @@ y1(GENERIC x) {
 		    d =  (invsqrtpi*ss)/sqrt(x);
 		else
                     d = invsqrtpi*(pone(x)*ss+qone(x)*cc)/sqrt(x);
+
                 if (x > X_TLOSS)
-                    return _SVID_libm_err(x,d,37);
+			return (_SVID_libm_err(x, d, 37));
                 else
-                    return d;
+			return (d);
 	}
         if(x<=tiny) {
             return(-tpi/x);
@@ -284,14 +303,16 @@ pone(GENERIC x) {
 	GENERIC s,r,t,z;
 	int i;
         /* assume x > 8 */
-	if(x>huge) return one;
+	if (x > huge)
+		return (one);
+
 	t = 8.0/x; z = t*t;
             r = pr0[5]; s = ps0[5]+z;
             for(i=4;i>=0;i--) {
                 r = z*r + pr0[i];
                 s = z*s + ps0[i];
             }
-	return r/s;
+	return (r/s);
 }
 
 
@@ -316,7 +337,9 @@ static GENERIC
 qone(GENERIC x) {
 	GENERIC s,r,t,z;
 	int i;
-	if(x>huge) return 0.375/x;
+	if (x > huge)
+		return (0.375/x);
+
 	t = 8.0/x; z = t*t;
         /* assume x > 8 */
             r = qr0[5]; s = qs0[5]+z;
@@ -324,5 +347,5 @@ qone(GENERIC x) {
                 r = z*r + qr0[i];
                 s = z*s + qs0[i];
             }
-	return t*(r/s);
+	return (t*(r/s));
 }

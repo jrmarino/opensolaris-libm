@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak remainder = __remainder
+#pragma weak __remainder = remainder
 
 /*
  * remainder(x,p)

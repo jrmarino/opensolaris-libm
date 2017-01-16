@@ -19,13 +19,15 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak nextafter = __nextafter
-#pragma weak _nextafter = __nextafter
+#pragma weak __nextafter = nextafter
+#pragma weak _nextafter = nextafter
 
 #include "libm.h"
 #include <float.h>		/* DBL_MIN */
@@ -35,6 +37,7 @@ nextafter(double x, double y) {
 	int		hx, hy, k;
 	double		ans;
 	unsigned	lx;
+	volatile double dummy;
 
 	hx = ((int *)&x)[HIWORD];
 	lx = ((int *)&x)[LOWORD];
@@ -77,7 +80,7 @@ nextafter(double x, double y) {
 #if !defined(__lint)
 	} else if (k == 0) {
 		/* underflow */
-		volatile double dummy = DBL_MIN * copysign(DBL_MIN, x);
+		dummy = DBL_MIN * copysign(DBL_MIN, x);
 #endif
 	}
 	return (ans);

@@ -20,15 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak atanh = __atanh
+#pragma weak __atanh = atanh
 
 /* INDENT OFF */
-/* atanh(x)
+/*
+ * atanh(x)
  * Code originated from 4.3bsd.
  * Modified by K.C. Ng for SUN 4.0 libm.
  * Method :
@@ -48,7 +51,6 @@
 /* INDENT ON */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
 #include <math.h>
 
@@ -57,12 +59,12 @@ atanh(double x) {
 	double t;
 
 	if (isnan(x))
-		return x * x;		/* switched from x + x for Cheetah */
+		return (x * x);		/* switched from x + x for Cheetah */
 	t = fabs(x);
 	if (t > 1.0)
-		return _SVID_libm_err(x, x, 30);	/* sNaN */
+		return (_SVID_libm_err(x, x, 30));	/* sNaN */
 	if (t == 1.0)
-		return _SVID_libm_err(x, x, 31);	/* x/0; */
+		return (_SVID_libm_err(x, x, 31));	/* x/0; */
 	t = t / (1.0 - t);
-	return copysign(0.5, x) * log1p(t + t);
+	return (copysign(0.5, x) * log1p(t + t));
 }

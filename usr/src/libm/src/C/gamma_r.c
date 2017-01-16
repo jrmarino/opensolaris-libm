@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak gamma_r = __gamma_r
+#pragma weak __gamma_r = gamma_r
 
 #include "libm.h"
 

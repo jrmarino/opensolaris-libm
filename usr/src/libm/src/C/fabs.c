@@ -20,31 +20,23 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak fabs = __fabs
+#pragma weak __fabs = fabs
 
 #include "libm.h"
-#include "libm_synonyms.h"
+#include "libm_macros.h"
 #include <math.h>
-
-#if defined(__sparc)
-#define	HIWORD	0
-#define	LOWORD	1
-#elif defined(__i386)
-#define	HIWORD	1
-#define	LOWORD	0
-#else
-#error Unknown architecture
-#endif
 
 double
 fabs(double x) {
 	int *px = (int *) &x;
 
 	px[HIWORD] &= ~0x80000000;
-	return x;
+	return (x);
 }

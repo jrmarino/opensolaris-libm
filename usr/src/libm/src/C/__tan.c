@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* INDENT OFF */
 /*
@@ -119,14 +121,14 @@ static const double q[] = {
 
 double
 __k_tan(double x, double y, int k) {
-	double a, t, z, w, s, c, r, rh, xh, xl;
+	double a, t, z, w = 0.0L, s, c, r, rh, xh, xl;
 	int i, j, hx, ix;
 
 	t = one;
 	hx = ((int *) &x)[HIWORD];
 	ix = hx & 0x7fffffff;
-	if (ix < 0x3fc40000) {
-		if (ix < 0x3e400000) {
+	if (ix < 0x3fc40000) {		/* 0.15625 */
+		if (ix < 0x3e400000) {	/* 2^-27 */
 			if ((i = (int) x) == 0)		/* generate inexact */
 				w = x;
 			t = y;

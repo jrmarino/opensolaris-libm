@@ -20,15 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak expm1 = __expm1
+#pragma weak __expm1 = expm1
 
 /* INDENT OFF */
-/* expm1(x)
+/*
+ * expm1(x)
  * Returns exp(x)-1, the exponential of x minus 1.
  *
  * Method
@@ -124,7 +127,7 @@
  */
 /* INDENT ON */
 
-#include "libm_synonyms.h"	/* __expm1 */
+#include "libm_macros.h"
 #include <math.h>
 
 static const double xxx[] = {
@@ -155,19 +158,9 @@ static const double xxx[] = {
 #define	Q4		xxx[10]
 #define	Q5		xxx[11]
 
-#if defined(__sparc)
-#define	HIWORD	0
-#define	LOWORD	1
-#elif defined(__i386)
-#define	HIWORD	1
-#define	LOWORD	0
-#else
-#error Unknown architecture
-#endif
-
 double
 expm1(double x) {
-	double y, hi, lo, c, t, e, hxs, hfx, r1;
+	double y, hi, lo, c = 0.0L, t, e, hxs, hfx, r1;
 	int k, xsb;
 	unsigned hx;
 
@@ -179,53 +172,56 @@ expm1(double x) {
 		y = -x;				/* y = |x| */
 	hx &= 0x7fffffff;			/* high word of |x| */
 
-	/* filter out huge and non-finite arugment */
-	if (hx >= 0x4043687A) {			/* if |x|>=56*ln2 */
-		if (hx >= 0x40862E42) {		/* if |x|>=709.78... */
+	/* filter out huge and non-finite argument */
+	/* for example exp(38)-1 is approximately 3.1855932e+16 */
+	if (hx >= 0x4043687A) {
+		/* if |x|>=56*ln2 (~38.8162...) */
+		if (hx >= 0x40862E42) {		/* if |x|>=709.78... -> inf */
 			if (hx >= 0x7ff00000) {
 				if (((hx & 0xfffff) | ((int *) &x)[LOWORD])
 					!= 0)
-					return x * x;	/* + -> * for Cheetah */
+					return (x * x);	/* + -> * for Cheetah */
 				else
-					return xsb == 0 ? x : -1.0;	/* exp(+-inf)={inf,-1} */
+					/* exp(+-inf)={inf,-1} */
+					return (xsb == 0 ? x : -1.0);
 			}
 			if (x > o_threshold)
-				return huge * huge;	/* overflow */
+				return (huge * huge);	/* overflow */
 		}
 		if (xsb != 0) {		/* x < -56*ln2, return -1.0 w/inexact */
 			if (x + tiny < 0.0)		/* raise inexact */
-				return tiny - one;	/* return -1 */
+				return (tiny - one);	/* return -1 */
 		}
 	}
 
 	/* argument reduction */
 	if (hx > 0x3fd62e42) {			/* if  |x| > 0.5 ln2 */
 		if (hx < 0x3FF0A2B2) {		/* and |x| < 1.5 ln2 */
-			if (xsb == 0) {
+			if (xsb == 0) {		/* positive number */
 				hi = x - ln2_hi;
 				lo = ln2_lo;
 				k = 1;
-			}
-			else {
+			} else {
+				/* negative number */
 				hi = x + ln2_hi;
 				lo = -ln2_lo;
 				k = -1;
 			}
-		}
-		else {
+		} else {
+			/* |x| > 1.5 ln2 */
 			k = (int) (invln2 * x + (xsb == 0 ? 0.5 : -0.5));
 			t = k;
 			hi = x - t * ln2_hi;	/* t*ln2_hi is exact here */
 			lo = t * ln2_lo;
 		}
 		x = hi - lo;
-		c = (hi - x) - lo;
-	}
-	else if (hx < 0x3c900000) {		/* when |x|<2**-54, return x */
+		c = (hi - x) - lo; /* still at |x| > 0.5 ln2 */
+	} else if (hx < 0x3c900000) {
+		/* when |x|<2**-54, return x */
 		t = huge + x;		/* return x w/inexact when x != 0 */
-		return x - (t - (huge + x));
-	}
-	else
+		return (x - (t - (huge + x)));
+	} else
+		/* |x| <= 0.5 ln2 */
 		k = 0;
 
 	/* x is now in primary range */
@@ -234,23 +230,23 @@ expm1(double x) {
 	r1 = one + hxs * (Q1 + hxs * (Q2 + hxs * (Q3 + hxs * (Q4 + hxs * Q5))));
 	t = 3.0 - r1 * hfx;
 	e = hxs * ((r1 - t) / (6.0 - x * t));
-	if (k == 0)
-		return x - (x * e - hxs);	/* c is 0 */
-	else {
+	if (k == 0) /* |x| <= 0.5 ln2 */
+		return (x - (x * e - hxs));
+	else {		/* |x| > 0.5 ln2 */
 		e = (x * (e - c) - c);
 		e -= hxs;
 		if (k == -1)
-			return 0.5 * (x - e) - 0.5;
+			return (0.5 * (x - e) - 0.5);
 		if (k == 1) {
 			if (x < -0.25)
-				return -2.0 * (e - (x + 0.5));
+				return (-2.0 * (e - (x + 0.5)));
 			else
-				return one + 2.0 * (x - e);
+				return (one + 2.0 * (x - e));
 		}
 		if (k <= -2 || k > 56) {	/* suffice to return exp(x)-1 */
 			y = one - (e - x);
 			((int *) &y)[HIWORD] += k << 20;
-			return y - one;
+			return (y - one);
 		}
 		t = one;
 		if (k < 20) {
@@ -258,13 +254,12 @@ expm1(double x) {
 							/* t = 1 - 2^-k */
 			y = t - (e - x);
 			((int *) &y)[HIWORD] += k << 20;
-		}
-		else {
+		} else {
 			((int *) &t)[HIWORD] = (0x3ff - k) << 20; /* 2^-k */
 			y = x - (e + t);
 			y += one;
 			((int *) &y)[HIWORD] += k << 20;
 		}
 	}
-	return y;
+	return (y);
 }

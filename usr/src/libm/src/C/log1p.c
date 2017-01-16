@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak log1p = __log1p
+#pragma weak __log1p = log1p
 
 /* INDENT OFF */
 /*
@@ -121,7 +123,7 @@ static const double xxx[] = {
 
 double
 log1p(double x) {
-	double	hfsq, f, c, s, z, R, u;
+	double	hfsq, f, c = 0.0, s, z, R, u;
 	int	k, hx, hu, ax;
 
 	hx = ((int *)&x)[HIWORD];		/* high word of x */
@@ -150,6 +152,7 @@ log1p(double x) {
 			hu = 1;
 		}
 	}
+	/* We will initialize 'c' here. */
 	if (k != 0) {
 		if (hx < 0x43400000) {
 			u = 1.0 + x;
@@ -181,6 +184,7 @@ log1p(double x) {
 		if (f == zero) {
 			if (k == 0)
 				return (zero);
+			/* We already initialized 'c' before, when (k != 0) */
 			c += k * ln2_lo;
 			return (k * ln2_hi + c);
 		}

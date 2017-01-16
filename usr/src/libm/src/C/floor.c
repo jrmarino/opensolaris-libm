@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak floor = __floor
+#pragma weak __floor = floor
 
 /*
  * floor(x) returns the biggest integral value less than or equal to x.

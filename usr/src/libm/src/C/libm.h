@@ -19,6 +19,9 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
@@ -26,6 +29,7 @@
 #ifndef	_LIBM_H
 #define	_LIBM_H
 
+#include <sys/isa_defs.h>
 
 #ifdef _ASM
 /* BEGIN CSTYLED */
@@ -48,9 +52,9 @@
 #if defined(__sparc)
 
 #define	LIBM_ANSI_PRAGMA_WEAK(sym,stype) \
-	.weak sym; \
-	.type sym,#stype; \
-sym	= __/**/sym
+	.weak __/**/sym;		 \
+	.type __/**/sym,#stype;		 \
+__/**/sym	= sym
 
 #ifndef SET_FILE
 #define	SET_FILE(x) \
@@ -144,12 +148,12 @@ sym	= __/**/sym
 #endif	/* !defined(PIC) */
 #endif /* defined(PROF) && defined(__sparcv9) */
 
-#elif defined(__i386) || defined(__amd64)
+#elif defined(__x86)
 
 #define	LIBM_ANSI_PRAGMA_WEAK(sym,stype) \
-	.weak sym; \
-	.type sym,@stype; \
-sym	= __/**/sym
+	.weak __/**/sym;		 \
+	.type __/**/sym,@stype;		 \
+__/**/sym	= sym
 
 #ifdef PIC
 #if defined(__amd64)
@@ -192,11 +196,13 @@ sym	= __/**/sym
 #else	/* defined(_ASM) */
 
 #include "libm_macros.h"
-#include "libm_synonyms.h"
 #include "libm_protos.h"
+#include "libm_inlines.h"
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 
 #endif	/* defined(_ASM) */
 
-#endif	/* defined(_LIBM_H) */
+#endif	/* _LIBM_H */

@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ceil = __ceil
+#pragma weak __ceil = ceil
 
 /*
  * ceil(x) returns the least integral value bigger than or equal to x.
