@@ -70,7 +70,7 @@ double
 tanh(double x) {
 	double t, y, z;
 	int signx;
-	volatile double dummy;
+	volatile double dummy __attribute__((unused));
 
 	if (isnan(x))
 		return (x * x);	/* + -> * for Cheetah */
