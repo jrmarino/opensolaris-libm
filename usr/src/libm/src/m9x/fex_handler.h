@@ -30,6 +30,8 @@
 #ifndef	_M9X_FEX_HANDLER_H
 #define	_M9X_FEX_HANDLER_H
 
+#include <sys/isa_defs.h>
+
 /* the following enums must match the bit positions in fenv.h */
 enum fex_exception {
 	fex_inexact		= 0,

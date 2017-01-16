@@ -24,6 +24,10 @@ extern "C" {
 
 #include <sys/types.h>
 
+#ifndef __GNU_INLINE
+#define __GNU_INLINE inline __attribute__((gnu_inline))
+#endif
+
 #if defined(__x86)
 
 /*
