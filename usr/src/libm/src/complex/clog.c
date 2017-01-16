@@ -26,7 +26,11 @@
  * Use is subject to license terms.
  */
 
-#pragma weak clog = __clog
+/*
+ * avoids: <built-in>: error: function 'clog' part of alias cycle
+ * Unclear if this is bug in compiler or not
+ * #pragma weak clog = __clog
+ */
 
 /* INDENT OFF */
 /*

@@ -30,6 +30,7 @@
 #ifndef _COMPLEX_WRAPPER_H
 #define	_COMPLEX_WRAPPER_H
 
+#include <sys/isa_defs.h>
 
 #if defined(__GNUC__)
 #define dcomplex double _Complex

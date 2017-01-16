@@ -40,10 +40,12 @@
 #define	__rem_pio2m	__libm__rem_pio2m
 
 #ifndef _ASM
+#ifndef __P
 #ifdef __STDC__
 #define	__P(p)	p
 #else
 #define	__P(p)	()
+#endif
 #endif
 
 #include <sys/ieeefp.h>
