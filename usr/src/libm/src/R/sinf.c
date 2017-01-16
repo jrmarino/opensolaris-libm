@@ -19,12 +19,14 @@
  * CDDL HEADER END
  */
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak sinf = __sinf
+#pragma weak __sinf = sinf
 
 /*
  * See sincosf.c
@@ -74,6 +76,7 @@ sinf(float x)
 	double	y, z, w;
 	float	f;
 	int	n, ix, hx, hy;
+	volatile int i __attribute__((unused));
 
 	hx = *((int *)&x);
 	ix = hx & 0x7fffffff;
@@ -83,7 +86,7 @@ sinf(float x)
 	if (ix <= 0x4016cbe4) {		/* |x| < 3*pi/4 */
 		if (ix <= 0x3f490fdb) {		/* |x| < pi/4 */
 			if (ix <= 0x39800000) {	/* |x| <= 2**-12 */
-				volatile int	i = (int)y;
+				i = (int)y;
 #ifdef lint
 				i = i;
 #endif

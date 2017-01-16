@@ -20,20 +20,20 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak logbf = __logbf
-#endif
+#pragma weak __logbf = logbf
 
 #include "libm.h"
 #include "xpg6.h"	/* __xpg6 */
 #define	_C99SUSv3_logb	_C99SUSv3_logb_subnormal_is_like_ilogb
 
-#if defined(USE_FPSCALE) || defined(__i386)
+#if defined(__x86)
 static const float two25 = 33554432.0F;
 #else
 /*
@@ -52,7 +52,7 @@ ilogbf_subnormal(unsigned v) {
 	v <<= 1;
 	return (r + ((0xffffaa50 >> v) & 0x3));
 }
-#endif	/* defined(USE_FPSCALE) */
+#endif	/* defined(__x86) */
 
 static float
 raise_division(float t) {
@@ -69,7 +69,7 @@ logbf(float x) {
 		if (k == 0)
 			return (raise_division(-1.0F));
 		else if ((__xpg6 & _C99SUSv3_logb) != 0) {
-#if defined(USE_FPSCALE) || defined(__i386)
+#if defined(__x86)
 			x *= two25;
 			return ((float) (((*((int *) &x) & 0x7f800000) >> 23) -
 				152));

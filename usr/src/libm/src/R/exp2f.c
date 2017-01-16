@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak exp2f = __exp2f
+#pragma weak __exp2f = exp2f
 
 #include "libm.h"
 

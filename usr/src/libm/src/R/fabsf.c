@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak fabsf = __fabsf
+#pragma weak __fabsf = fabsf
 
 #include "libm.h"
 

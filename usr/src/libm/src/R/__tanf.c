@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 #include "libm.h"
 
@@ -69,7 +71,7 @@ static const double q[] = {
 
 float
 __k_tanf(double x, int n) {
-	float ft;
+	float ft = 0.0;
 	double z, w;
 	int ix;
 

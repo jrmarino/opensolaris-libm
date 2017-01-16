@@ -20,14 +20,16 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak sincospif = __sincospif
-
 #include "libm.h"
+
+extern void sincospi(double, double *, double *);
 
 void
 sincospif(float x, float *s, float *c) {

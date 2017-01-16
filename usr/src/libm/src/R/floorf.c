@@ -20,13 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak ceilf = __ceilf
-#pragma weak floorf = __floorf
+#pragma weak __ceilf = ceilf
+#pragma weak __floorf = floorf
 
 /* INDENT OFF */
 /*
