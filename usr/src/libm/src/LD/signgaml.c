@@ -20,15 +20,16 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak signgaml = __signgaml
+#pragma weak __signgaml = signgaml
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "longdouble.h"
 
 int signgaml = 0;

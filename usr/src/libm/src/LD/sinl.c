@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak sinl = __sinl
+#pragma weak __sinl = sinl
 
 /* INDENT OFF */
 /* sinl(x)
@@ -61,14 +63,13 @@
 /* INDENT ON */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "longdouble.h"
 
 long double
 sinl(long double x) {
 	long double y[2], z = 0.0L;
 	int n, ix;
-#if defined(__i386)
+#if defined(__i386) || defined(__amd64)
 	int *px = (int *) &x;
 #endif
 
@@ -77,12 +78,11 @@ sinl(long double x) {
 		return x - x;
 
 	/* High word of x. */
-#if !defined(__i386)
-	ix = *(int *) &x;
-#else
+#if defined(__i386) || defined(__amd64)
 	XTOI(px, ix);
+#else
+	ix = *(int *) &x;
 #endif
-
 	/* |x| ~< pi/4 */
 	ix &= 0x7fffffff;
 	if (ix <= 0x3ffe9220)

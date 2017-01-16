@@ -20,15 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak atan2pil = __atan2pil
-
 #include "libm.h"
-#include "libm_synonyms.h"
 
 #define GENERIC	long double
 #define ATAN2PI	atan2pil

@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /*
  * Floating point Bessel's function of the first and second kinds
@@ -34,13 +36,17 @@
  *	y0(-ve)=y1(-ve)=yn(n,-ve) are NaN with invalid signal.
  */
 
-#pragma weak j0l = __j0l
-#pragma weak y0l = __y0l
+#pragma weak __j0l = j0l
+#pragma weak __y0l = y0l
 
 #include "libm.h"
-#include "libm_synonyms.h"
+
+#include "longdouble.h"
+
 #include <math.h>
+#if defined(__SUNPRO_C)
 #include <sunmath.h>
+#endif
 
 #define GENERIC long double
 static GENERIC 
@@ -78,13 +84,16 @@ j0l(x) GENERIC x;{
 	GENERIC z, s, c, ss, cc, r, u, v;
 	int i;
 
-	if(isnanl(x)) return x+x;
+	if (isnanl(x))
+		return (x+x);
 	x = fabsl(x);
 	if(x > 1.28L){
-		if(!finitel(x)) return zero;
+		if (!finitel(x))
+			return (zero);
 		s = sinl(x);
 		c = cosl(x);
-	/* j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
+	/*
+	 * j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
 	 * where x0 = x-pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
@@ -109,13 +118,16 @@ j0l(x) GENERIC x;{
 	 * j0(x) = 1/sqrt(pi) * (P(0,x)*cc - Q(0,x)*ss) / sqrt(x)
 	 * y0(x) = 1/sqrt(pi) * (P(0,x)*ss + Q(0,x)*cc) / sqrt(x)
 	 */
-		if(x>1.0e120L) return (invsqrtpi*cc)/sqrtl(x);
+		if (x > 1.0e120L)
+			return (invsqrtpi*cc)/sqrtl(x);
 		u = pzero(x); v = qzero(x);
-		return invsqrtpi*(u*cc-v*ss)/sqrtl(x);
+		return (invsqrtpi*(u*cc-v*ss)/sqrtl(x));
 	}
 	if(x<=small) {
-	    if(x<=tiny) return one-x;
-	    else return one-x*x*0.25L;
+	    if (x <= tiny)
+			return (one-x);
+	    else
+			return (one-x*x*0.25L);
 	}
 	z = x*x;
 	r = r0[6]; s = s0[6];
@@ -152,7 +164,8 @@ y0l(x) GENERIC x;{
 	GENERIC z, d, s, c, ss, cc, u, v;
 	int i;
 
-	if(isnanl(x)) return x+x;
+	if (isnanl(x))
+		return (x+x);
 	if(x <= zero){
 		if(x==zero) 
 		    d= -one/(x-x); 
@@ -160,10 +173,12 @@ y0l(x) GENERIC x;{
 		    d = zero/(x-x);
 	}
 	if(x > 1.28L){
-		if(!finitel(x)) return zero;
+		if (!finitel(x))
+			return (zero);
 		s = sinl(x);
 		c = cosl(x);
-	/* j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
+	/*
+	 * j0(x) = sqrt(2/(pi*x))*(p0(x)*cos(x0)-q0(x)*sin(x0))
 	 * where x0 = x-pi/4
 	 * 	Better formula:
 	 *		cos(x0) = cos(x)cos(pi/4)+sin(x)sin(pi/4)
@@ -188,8 +203,9 @@ y0l(x) GENERIC x;{
 	 * j0(x) = 1/sqrt(pi*x) * (P(0,x)*cc - Q(0,x)*ss)
 	 * y0(x) = 1/sqrt(pi*x) * (P(0,x)*ss + Q(0,x)*cc)
 	 */
-		if(x>1.0e120L) return (invsqrtpi*ss)/sqrtl(x);
-		return invsqrtpi*(pzero(x)*ss+qzero(x)*cc)/sqrtl(x);
+		if (x > 1.0e120L)
+			return (invsqrtpi*ss)/sqrtl(x);
+		return (invsqrtpi*(pzero(x)*ss+qzero(x)*cc)/sqrtl(x));
 
 	}
 	if(x<=tiny) {
@@ -419,7 +435,8 @@ GENERIC x;
 {
 	GENERIC s,r,t,z;
 	int i;
-	if(x>huge) return one;
+	if (x > huge)
+		return (one);
 	t = one/x; z = t*t;
 	if(x>sixteen) {
 	    r = z*pr0[11]+pr0[10]; s = ps0[10];
@@ -464,7 +481,7 @@ GENERIC x;
 		s = z*s + ps6[i];
 	    }
 	}
-	return r/s;
+	return (r/s);
 }
 		
 
@@ -681,7 +698,8 @@ GENERIC x;
 {
 	GENERIC s,r,t,z;
 	int i;
-	if(x>huge) return -0.125L/x;
+	if (x > huge)
+		return (-0.125L/x);
 	t = one/x; z = t*t;
 	if(x>sixteen) {
 	    r = z*qr0[11]+qr0[10]; s = qs0[10];
@@ -726,5 +744,5 @@ GENERIC x;
 		s = z*s + qs6[i];
 	    }
 	}
-	return t*(r/s);
+	return (t*(r/s));
 }

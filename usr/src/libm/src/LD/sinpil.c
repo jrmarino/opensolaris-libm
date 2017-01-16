@@ -20,12 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-
-#pragma weak sinpil = __sinpil
 
 /* long double sinpil(long double x),
  * return long double precision sinl(pi*x).
@@ -68,12 +68,11 @@
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "longdouble.h"
 
 #define I(q, m)	((int *) &(q))[m]
 #define U(q, m)	((unsigned *) &(q))[m]
-#if defined(__LITTLE_ENDIAN) || defined(__i386)
+#if defined(__i386) || defined(__amd64)
 #define LDBL_MOST_SIGNIF_I(ld)	((I(ld, 2) << 16) | (0xffff & (I(ld, 1) >> 15)))
 #define LDBL_LEAST_SIGNIF_U(ld)	U(ld, 0)
 #define PREC	64

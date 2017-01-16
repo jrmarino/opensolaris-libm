@@ -20,15 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak jnl = __jnl
-#pragma weak ynl = __ynl
-#endif
+#pragma weak __jnl = jnl
+#pragma weak __ynl = ynl
 
 /*
  * floating point Bessel's function of the 1st and 2nd kind
@@ -56,6 +56,7 @@
  */
 
 #include "libm.h"
+#include "longdouble.h"
 #include <float.h>	/* LDBL_MAX */
 
 #define GENERIC long double
@@ -69,9 +70,10 @@ one  = 1.0L;
 GENERIC
 jnl(n,x) int n; GENERIC x;{
 	int i, sgn;
-	GENERIC a, b, temp, z, w;
+	GENERIC a, b, temp = 0, z, w;
 
-    /* J(-n,x) = (-1)^n * J(n, x), J(n, -x) = (-1)^n * J(n, x)
+	/*
+	 * J(-n,x) = (-1)^n * J(n, x), J(n, -x) = (-1)^n * J(n, x)
      * Thus, J(-n,x) = J(n,-x)
      */
 	if(n<0){		
@@ -87,21 +89,25 @@ jnl(n,x) int n; GENERIC x;{
 		sgn = signbitl(x);	/* old n  */
 	x = fabsl(x);
 	if(x == zero||!finitel(x)) b = zero;
-	else if((GENERIC)n<=x) {   	/* Safe to use 
-					   J(n+1,x)=2n/x *J(n,x)-J(n-1,x) 
+	else if ((GENERIC)n <= x) {
+			/*
+			 * Safe to use
+			 * J(n+1,x)=2n/x *J(n,x)-J(n-1,x)
 					 */
-	    if(x>1.0e91L) {	/* x >> n**2 
-				    Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Let s=sin(x), c=cos(x), 
-					xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
-
-					   n	sin(xn)*sqt2	cos(xn)*sqt2
-					----------------------------------
-					   0	 s-c		 c+s
-					   1	-s-c 		-c+s
-					   2	-s+c		-c-s
-					   3	 s+c		 c-s
+	    if (x > 1.0e91L) {
+				/*
+				 * x >> n**2
+				 *  Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *  Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *  Let s=sin(x), c=cos(x),
+				 *  xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
+				 *
+				 *	   n	sin(xn)*sqt2	cos(xn)*sqt2
+				 *	----------------------------------
+				 *	   0	 s-c		 c+s
+				 *	   1	-s-c 		-c+s
+				 *	   2	-s+c		-c-s
+				 *	   3	 s+c		 c-s
 				 */
 		switch(n&3) {
 		    case 0: temp =  cosl(x)+sinl(x); break;
@@ -127,8 +133,9 @@ jnl(n,x) int n; GENERIC x;{
 		    b = b/a;
 		}
 	    } else {
-		/* use backward recurrence */
-		/* 			x      x^2      x^2       
+		/*
+		 * use backward recurrence
+		 * 			x      x^2      x^2
 		 *  J(n,x)/J(n-1,x) =  ----   ------   ------   .....
 		 *			2n  - 2(n+1) - 2(n+2)
 		 *
@@ -170,13 +177,14 @@ jnl(n,x) int n; GENERIC x;{
 		for(t=zero, i = 2*(n+k); i>=m; i -= 2) t = one/(i/x-t);
 		a = t;
 		b = one;
-                /* estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
-                   hence, if n*(log(2n/x)) > ...
-                    single 8.8722839355e+01
-                    double 7.09782712893383973096e+02
-                    long double 1.1356523406294143949491931077970765006170e+04
-                    then recurrent value may overflow and the result is
-                    likely underflow to zero
+			/*
+			 * Estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
+			 * hence, if n*(log(2n/x)) > ...
+			 * single 8.8722839355e+01
+			 * double 7.09782712893383973096e+02
+			 * long double 1.1356523406294143949491931077970765006170e+04
+			 * then recurrent value may overflow and the result is
+			 * likely underflow to zero.
                  */
 		tmp = n;
 		v = two/x;
@@ -202,16 +210,20 @@ jnl(n,x) int n; GENERIC x;{
 	    	b = (t*j0l(x)/b);
 	    }
 	}
-	if(sgn==1) return -b; else return b;
+	if (sgn == 1)
+		return -b;
+	else
+		return b;
 }
 
-GENERIC ynl(n,x) 
-int n; GENERIC x;{
+GENERIC
+ynl(n, x) int n; GENERIC x; {
 	int i;
 	int sign;
-	GENERIC a, b, temp;
+	GENERIC a, b, temp = 0;
 
-	if(x!=x) return x+x;
+	if (x != x)
+		return x+x;
 	if (x <= zero) {
 		if(x == zero)
 			return -one/zero;
@@ -227,18 +239,20 @@ int n; GENERIC x;{
 	if(n==1) return(sign*y1l(x));
 	if(!finitel(x)) return zero;
 
-	if(x>1.0e91L) {	/* x >> n**2 
-				    Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
-				    Let s=sin(x), c=cos(x), 
-					xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
-
-					   n	sin(xn)*sqt2	cos(xn)*sqt2
-					----------------------------------
-					   0	 s-c		 c+s
-					   1	-s-c 		-c+s
-					   2	-s+c		-c-s
-					   3	 s+c		 c-s
+	if (x > 1.0e91L) {
+				/*
+				 * x >> n**2
+				 * Jn(x) = cos(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *   Yn(x) = sin(x-(2n+1)*pi/4)*sqrt(2/x*pi)
+				 *   Let s=sin(x), c=cos(x),
+				 * xn=x-(2n+1)*pi/4, sqt2 = sqrt(2),then
+				 *
+				 *	   n	sin(xn)*sqt2	cos(xn)*sqt2
+				 *	----------------------------------
+				 * 	   0	 s-c		 c+s
+				 *	   1	-s-c 		-c+s
+				 * 	   2	-s+c		-c-s
+				 *	   3	 s+c		 c-s
 				 */
 		switch(n&3) {
 		    case 0: temp =  sinl(x)-cosl(x); break;
@@ -262,5 +276,8 @@ int n; GENERIC x;{
 			a = temp;
 		}
 	}
-	if(sign>0) return b; else return -b;
+	if (sign > 0)
+		return b;
+	else
+		return -b;
 }

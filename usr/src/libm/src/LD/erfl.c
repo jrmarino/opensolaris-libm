@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* long double function erf,erfc (long double x)
  * K.C. Ng, September, 1989.
@@ -90,8 +92,8 @@
  *	   erfc(inf) = 0
  */
 
-#pragma weak erfl = __erfl
-#pragma weak erfcl = __erfcl
+#pragma weak __erfl = erfl
+#pragma weak __erfcl = erfcl
 
 #include "libm.h"
 #include "longdouble.h"

@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak log1pl = __log1pl
-#endif
+#pragma weak __log1pl = log1pl
 
 /*
  * log1pl(x)
@@ -36,7 +36,7 @@
 
 #include "libm.h"
 
-#if defined(__i386)
+#if defined(__x86)
 #define	__swapRD	__swap87RD
 #endif
 extern enum fp_direction_type __swapRD(enum fp_direction_type);

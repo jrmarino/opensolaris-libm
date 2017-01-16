@@ -20,16 +20,18 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /*
  * long double lgammal_r(long double x, int *signgamlp);
  */
 
-#pragma weak lgammal_r = __lgammal_r
+#pragma weak __lgammal_r = lgammal_r
 
 #include "libm.h"
 #include "longdouble.h"

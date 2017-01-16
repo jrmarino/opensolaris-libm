@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak tanhl = __tanhl
-#endif
+#pragma weak __tanhl = tanhl
 
 /*
  * tanhl(x) returns the hyperbolic tangent of x
@@ -58,6 +58,7 @@
  */
 
 #include "libm.h"
+#include "longdouble.h"
 
 static const long double small = 1.0e-20L, one = 1.0, two = 2.0,
 #ifndef lint
@@ -69,6 +70,9 @@ long double
 tanhl(long double x) {
 	long double t, y, z;
 	int signx;
+#ifndef lint
+	volatile long double dummy __attribute__((unused));
+#endif
 
 	if (isnanl(x))
 		return (x + x);		/* x is NaN */
@@ -83,7 +87,7 @@ tanhl(long double x) {
 			z = -y / (y + two);
 		} else {
 #ifndef lint
-			volatile long double dummy = t + big;
+			dummy = t + big;
 							/* inexact if t != 0 */
 #endif
 			return (x);

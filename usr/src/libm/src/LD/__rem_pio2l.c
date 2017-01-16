@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* __rem_pio2l(x,y)
  *
@@ -32,6 +34,7 @@
  */
 
 #include "libm.h"
+#include "longdouble.h"
 
 extern const int _TBL_ipio2l_inf[];
 

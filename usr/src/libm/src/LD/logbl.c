@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak logbl = __logbl
-#endif
+#pragma weak __logbl = logbl
 
 #include "libm.h"
 #include "xpg6.h"	/* __xpg6 */
@@ -39,7 +39,7 @@
 #define	XSCALE_OFFSET	0x406f				/* 0x3fff + 112 */
 static const long double xscale = 5192296858534827628530496329220096.0L;
 								/* 2^112 */
-#elif defined(__i386)
+#elif defined(__x86)
 /*
  * if pseudo-denormal, replace by the equivalent normal
  */

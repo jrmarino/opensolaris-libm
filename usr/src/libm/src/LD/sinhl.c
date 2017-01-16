@@ -20,14 +20,17 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak sinhl = __sinhl
+#pragma weak __sinhl = sinhl
 
 #include "libm.h"
+#include "longdouble.h"
 
 /* SINH(X)
  * RETURN THE HYPERBOLIC SINE OF X

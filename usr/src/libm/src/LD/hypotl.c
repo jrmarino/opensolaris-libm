@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak hypotl = __hypotl
-#endif
+#pragma weak __hypotl = hypotl
 
 /*
  * hypotl(x,y)
@@ -58,7 +58,7 @@
 
 #include "libm.h"
 
-#if defined(__i386)
+#if defined(__x86)
 extern enum fp_direction_type __swap87RD(enum fp_direction_type);
 
 #define	k	0x7fff

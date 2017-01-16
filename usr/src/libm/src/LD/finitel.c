@@ -20,14 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
-
-#if defined(ELFOBJ)
-#pragma weak finitel = __finitel
-#endif
 
 #include "libm.h"
 
@@ -37,7 +35,7 @@ finitel(long double x) {
 	int *px = (int *) &x;
 	return ((px[0] & ~0x80000000) < 0x7fff0000);
 }
-#elif defined(__i386)
+#elif defined(__x86)
 int
 finitel(long double x) {
 	int *px = (int *) &x, t = px[2] & 0x7fff;
@@ -47,4 +45,4 @@ finitel(long double x) {
 	return (t != 0x7fff);
 #endif
 }
-#endif	/* defined(__sparc) || defined(__i386) */
+#endif	/* defined(__sparc) || defined(__x86) */

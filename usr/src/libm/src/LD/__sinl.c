@@ -20,10 +20,12 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
-
 
 /* INDENT OFF */
 /*
@@ -61,6 +63,8 @@
  */
 
 #include "libm.h"
+
+#include <sys/isa_defs.h>
 
 extern const long double _TBL_sinl_hi[], _TBL_sinl_lo[], _TBL_cosl_hi[];
 static const long double
@@ -103,10 +107,10 @@ __k_sinl(long double x, long double y) {
 	int i, j, hx, ix;
 
 	t = 1.0L;
-#if !defined(__i386) && !defined(__amd64)
-	hx = px[0];
-#else
+#if defined(__i386) || defined(__amd64)
 	XTOI(px, hx);
+#else
+	hx = px[0];
 #endif
 	ix = hx & 0x7fffffff;
 	if (ix < 0x3ffc9000) {
@@ -121,10 +125,10 @@ __k_sinl(long double x, long double y) {
 	}
 	j = (ix + 0x400) & 0x7ffff800;
 	i = (j - 0x3ffc4000) >> 11;
-#if !defined(__i386) && !defined(__amd64)
-	pt[0] = j;
-#else
+#if defined(__i386) || defined(__amd64)
 	ITOX(j, pt);
+#else
+	pt[0] = j;
 #endif
 	if (hx > 0)
 		x = y - (t - x);

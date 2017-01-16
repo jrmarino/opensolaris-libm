@@ -20,16 +20,17 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak cbrtl = __cbrtl
-#endif
+#pragma weak __cbrtl = cbrtl
 
 #include "libm.h"
+#include "longdouble.h"
 
 static const double d_one = 1.0;
 

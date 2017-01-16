@@ -20,18 +20,20 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#pragma weak gammal = __gammal
+#pragma weak __gammal = gammal
 
 /*
  * long double gammal(long double x);
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "longdouble.h"
 
 extern int signgam;

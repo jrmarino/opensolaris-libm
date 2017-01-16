@@ -20,12 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#pragma weak scalbl = __scalbl
+#pragma weak __scalbl = scalbl
 
 /*
  * scalbl(x,n): return x * 2**n by manipulating exponent.
@@ -43,7 +45,7 @@ scalbl(long double x, long double fn) {
 		return x * fn;
 
 	/* fn is +/-Inf */
-#if !defined(__i386)
+#if defined(_BIG_ENDIAN)
 	if ((py[0] & 0x7fff0000) == 0x7fff0000) {
 		if ((py[0] & 0x80000000) != 0)
 #else

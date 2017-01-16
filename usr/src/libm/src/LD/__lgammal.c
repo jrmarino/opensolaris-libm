@@ -20,12 +20,15 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-/* long double __k_lgammal(long double x, int *signgamlp);
+/*
+ * long double __k_lgammal(long double x, int *signgamlp);
  * K.C. Ng, August, 1989.
  *
  * We choose [1.5,2.5] to be the primary interval. Our algorithms
@@ -46,7 +49,6 @@
  */
 
 #include "libm.h"
-#include "libm_synonyms.h"
 #include "longdouble.h"
 
 static long double neg(long double, int *);
@@ -72,9 +74,11 @@ __k_lgammal(long double x, int *signgamlp) {
 	int i;
 
     /* purge off +-inf, NaN and negative arguments */
-	if(!finitel(x)) return x*x;
+	if (!finitel(x))
+		return (x*x);
 	*signgamlp = 1;
-	if(signbitl(x)) return(neg(x,signgamlp));
+	if (signbitl(x))
+		return (neg(x, signgamlp));
 
     /* for x < 8.0 */
 	if(x<8.0L) {
@@ -82,22 +86,24 @@ __k_lgammal(long double x, int *signgamlp) {
 	    i = (int) y;
 	    switch(i) {
 	    case 0:
-		if(x<1.0e-40L) return -logl(x); else
+		if (x < 1.0e-40L)
+			return (-logl(x));
+		else
 		return (primary(x)-log1pl(x))-logl(x);
 	    case 1:
-		return primary(x-y)-logl(x); 
+		return (primary(x-y)-logl(x));
 	    case 2:
-		return primary(x-y);
+		return (primary(x-y));
 	    case 3:
-		return primary(x-y)+logl(x-c1);
+		return (primary(x-y)+logl(x-c1));
 	    case 4:
-		return primary(x-y)+logl((x-c1)*(x-c2));
+		return (primary(x-y)+logl((x-c1)*(x-c2)));
 	    case 5:
-		return primary(x-y)+logl((x-c1)*(x-c2)*(x-c3));
+		return (primary(x-y)+logl((x-c1)*(x-c2)*(x-c3)));
 	    case 6:
-		return primary(x-y)+logl((x-c1)*(x-c2)*(x-c3)*(x-c4));
+		return (primary(x-y)+logl((x-c1)*(x-c2)*(x-c3)*(x-c4)));
 	    case 7:
-		return primary(x-y)+logl((x-c1)*(x-c2)*(x-c3)*(x-c4)*(x-c5));
+		return (primary(x-y)+logl((x-c1)*(x-c2)*(x-c3)*(x-c4)*(x-c5)));
 	    case 8:
 		return primary(x-y)+
 			logl((x-c1)*(x-c2)*(x-c3)*(x-c4)*(x-c5)*(x-c6));
@@ -107,11 +113,11 @@ __k_lgammal(long double x, int *signgamlp) {
     /* 8.0 <= x < 1.0e40 */
 	if (x < 1.0e40L) {
 	    t = logl(x);
-	    return x*(t-c1)-(ch*t-polytail(c1/x));
+	    return (x*(t-c1)-(ch*t-polytail(c1/x)));
 	}
 	
     /* 1.0e40 <= x <= inf */
-	return x*(logl(x)-c1);
+	return (x*(logl(x)-c1));
 }
 
 static const long double an1[] = {		/* 20 terms */
@@ -320,7 +326,7 @@ poly(long double s, const long double *p, int n) {
 	int i;
 	y = p[n-1];
 	for (i=n-2;i>=0;i--) y = p[i]+s*y;
-	return y;
+	return (y);
 }
 
 static const long double pt[] = {
@@ -352,7 +358,7 @@ polytail(long double s) {
 	z = s*s;
 	t = pt[18];
 	for (i=17;i>=1;i--) t = pt[i]+z*t;
-	return pt[0]+s*t;
+	return (pt[0]+s*t);
 }
 
 static long double
@@ -383,7 +389,7 @@ neg(long double z, int *signgamlp) {
 
 	t = sinpil(z);			/* t := sin(pi*z) */
 	if (t==c0)  			/* return   1.0/0.0 =  +INF */
-	    return c1/c0;
+	    return (c1/c0);
 	
 	z = -z;
 	if(z<=tiny) 
@@ -391,5 +397,5 @@ neg(long double z, int *signgamlp) {
 	else
       	    p = logl(pi/(fabsl(t)*z))-__k_lgammal(z,signgamlp);
 	if(t<c0) *signgamlp = -1;
-	return p;
+	return (p);
 }

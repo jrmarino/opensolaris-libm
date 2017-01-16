@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak asinhl = __asinhl
-#endif
+#pragma weak __asinhl = asinhl
 
 #include "libm.h"
 
@@ -40,13 +40,16 @@ static const long double
 long double
 asinhl(long double x) {
 	long double t, w;
+#ifndef lint
+	volatile long double dummy __attribute__((unused));
+#endif
 
 	w = fabsl(x);
 	if (isnanl(x))
 		return (x + x);	/* x is NaN */
 	if (w < tiny) {
 #ifndef lint
-		volatile long double dummy = x + big;	/* inexact if x != 0 */
+		dummy = x + big;	/* inexact if x != 0 */
 #endif
 		return (x);	/* tiny x */
 	} else if (w < big) {

@@ -20,14 +20,14 @@
  */
 
 /*
+ * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
+ */
+/*
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-
-#if defined(ELFOBJ)
-#pragma weak isnanl = __isnanl
-#endif
+#pragma weak __isnanl = isnanl
 
 #include "libm.h"
 
@@ -38,7 +38,7 @@ isnanl(long double x) {
 	return ((px[0] & ~0x80000000) >= 0x7fff0000 &&
 		((px[0] & ~0xffff0000) | px[1] | px[2] | px[3]) != 0);
 }
-#elif defined(__i386)
+#elif defined(__x86)
 int
 isnanl(long double x) {
 	int *px = (int *) &x, t = px[2] & 0x7fff;
@@ -49,4 +49,4 @@ isnanl(long double x) {
 	return (t == 0x7fff && ((px[1] & ~0x80000000) | px[0]) != 0);
 #endif
 }
-#endif	/* defined(__sparc) || defined(__i386) */
+#endif	/* defined(__sparc) || defined(__x86) */
