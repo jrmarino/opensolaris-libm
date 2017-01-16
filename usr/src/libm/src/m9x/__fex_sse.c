@@ -28,6 +28,12 @@
  */
 
 #include <ucontext.h>
+#ifdef __DragonFly__
+#include <machine/npx.h>
+#endif
+#ifdef __FreeBSD__
+#include <machine/fpu.h>
+#endif
 #include <fenv.h>
 #if defined(__SUNPRO_C)
 #include <sunmath.h>
@@ -37,19 +43,21 @@
 #include "fex_handler.h"
 #include "fenv_inlines.h"
 
-#if !defined(REG_PC)
-#define REG_PC	EIP
-#endif
+/* Hardcoded for amd64 */
 
-#if !defined(REG_PS)
-#define REG_PS	EFL
-#endif
-
-#ifdef __amd64
-#define regno(X)	((X < 4)? REG_RAX - X : \
-			((X > 4)? REG_RAX + 1 - X : REG_RSP))
+#if defined __DragonFly__ || defined __FreeBSD__
+#define REG_PC	mc_rip
+#define REG_PS	mc_rflags
+# ifdef __FreeBSD__
+#define FPU_STATE	mc_fpstate
+#define FPU_STRUCTURE	savefpu
+# endif
+# ifdef __DragonFly__
+#define FPU_STATE	mc_fpregs
+#define FPU_STRUCTURE	savexmm
+# endif
 #else
-#define regno(X)	(EAX - X)
+#error SSE instructions not supported on this platform
 #endif
 
 /*
@@ -66,9 +74,10 @@ __fex_parse_sse(ucontext_t *uap, sseinst_t *inst)
 	unsigned char	*ip;
 	char		*addr;
 	int		i, dbl, simd, rex, modrm, sib, r;
+	struct FPU_STRUCTURE	*fpstate;
 
 	i = 0;
-	ip = (unsigned char *)uap->uc_mcontext.gregs[REG_PC];
+	ip = (unsigned char *)uap->uc_mcontext.REG_PC;
 
 	/* look for pseudo-prefixes */
 	dbl = 0;
@@ -199,23 +208,34 @@ __fex_parse_sse(ucontext_t *uap, sseinst_t *inst)
 	    inst->op == cvtsd2siq || inst->op == cvttsd2siq) {
 		/* op1 is a gp register */
 		r = ((rex & 4) << 1) | ((modrm >> 3) & 7);
-		inst->op1 = (sseoperand_t *)&uap->uc_mcontext.gregs[regno(r)];
+		switch (r) {
+		case  0: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rax; break;
+		case  1: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rcx; break;
+		case  2: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rdx; break;
+		case  3: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rbx; break;
+		case  4: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rsp; break;
+		case  5: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rbp; break;
+		case  6: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rsi; break;
+		case  7: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_rdi; break;
+		case  8: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r8;  break;
+		case  9: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r9;  break;
+		case 10: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r10; break;
+		case 11: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r11; break;
+		case 12: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r12; break;
+		case 13: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r13; break;
+		case 14: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r14; break;
+		default: inst->op1 = (sseoperand_t *)&uap->uc_mcontext.mc_r15; break;
+		}
 	} else if (inst->op == cvtps2pi || inst->op == cvttps2pi ||
 	    inst->op == cvtpd2pi || inst->op == cvttpd2pi) {
 		/* op1 is a mmx register */
-#ifdef __amd64
-		inst->op1 = (sseoperand_t *)&uap->uc_mcontext.fpregs.fp_reg_set.
-		    fpchip_state.st[(modrm >> 3) & 7];
-#else
-		inst->op1 = (sseoperand_t *)(10 * ((modrm >> 3) & 7) +
-		    (char *)&uap->uc_mcontext.fpregs.fp_reg_set.
-		    fpchip_state.state[7]);
-#endif
+		fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+		inst->op1 = (sseoperand_t *)&fpstate->sv_fp[(modrm >> 3) & 7];
 	} else {
 		/* op1 is a xmm register */
 		r = ((rex & 4) << 1) | ((modrm >> 3) & 7);
-		inst->op1 = (sseoperand_t *)&uap->uc_mcontext.fpregs.
-		    fp_reg_set.fpchip_state.xmm[r];
+		fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+		inst->op1 = (sseoperand_t *)&fpstate->sv_xmm[r];
 	}
 
 	if ((modrm >> 6) == 3) {
@@ -223,36 +243,41 @@ __fex_parse_sse(ucontext_t *uap, sseinst_t *inst)
 		    inst->op == cvtsi2ssq || inst->op == cvtsi2sdq) {
 			/* op2 is a gp register */
 			r = ((rex & 1) << 3) | (modrm & 7);
-			inst->op2 = (sseoperand_t *)&uap->uc_mcontext.
-			    gregs[regno(r)];
+			switch (r) {
+			case  0: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rax; break;
+			case  1: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rcx; break;
+			case  2: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rdx; break;
+			case  3: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rbx; break;
+			case  4: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rsp; break;
+			case  5: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rbp; break;
+			case  6: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rsi; break;
+			case  7: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_rdi; break;
+			case  8: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r8;  break;
+			case  9: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r9;  break;
+			case 10: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r10; break;
+			case 11: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r11; break;
+			case 12: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r12; break;
+			case 13: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r13; break;
+			case 14: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r14; break;
+			default: inst->op2 = (sseoperand_t *)&uap->uc_mcontext.mc_r15; break;
+			}
 		} else if (inst->op == cvtpi2ps || inst->op == cvtpi2pd) {
 			/* op2 is a mmx register */
-#ifdef __amd64
-			inst->op2 = (sseoperand_t *)&uap->uc_mcontext.fpregs.
-			    fp_reg_set.fpchip_state.st[modrm & 7];
-#else
-			inst->op2 = (sseoperand_t *)(10 * (modrm & 7) +
-			    (char *)&uap->uc_mcontext.fpregs.fp_reg_set.
-			    fpchip_state.state[7]);
-#endif
+			fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+			inst->op2 = (sseoperand_t *)&fpstate->sv_fp[modrm & 7];
 		} else {
 			/* op2 is a xmm register */
 			r = ((rex & 1) << 3) | (modrm & 7);
-			inst->op2 = (sseoperand_t *)&uap->uc_mcontext.fpregs.
-			    fp_reg_set.fpchip_state.xmm[r];
+			fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+			inst->op2 = (sseoperand_t *)&fpstate->sv_xmm[r];
 		}
 	} else if ((modrm & 0xc7) == 0x05) {
-#ifdef __amd64
 		/* address of next instruction + offset */
 		r = i + 4;
 		if (inst->op == cmpss || inst->op == cmpps ||
 		    inst->op == cmpsd || inst->op == cmppd)
 			r++;
 		inst->op2 = (sseoperand_t *)(ip + r + *(int *)(ip + i));
-#else
-		/* absolute address */
-		inst->op2 = (sseoperand_t *)(*(int *)(ip + i));
-#endif
 		i += 4;
 	} else {
 		/* complex address */
@@ -266,17 +291,67 @@ __fex_parse_sse(ucontext_t *uap, sseinst_t *inst)
 			} else {
 				/* start with base */
 				r = ((rex & 1) << 3) | (sib & 7);
-				addr = (char *)uap->uc_mcontext.gregs[regno(r)];
+				switch (r) {
+				case  0: addr = (char *)&uap->uc_mcontext.mc_rax; break;
+				case  1: addr = (char *)&uap->uc_mcontext.mc_rcx; break;
+				case  2: addr = (char *)&uap->uc_mcontext.mc_rdx; break;
+				case  3: addr = (char *)&uap->uc_mcontext.mc_rbx; break;
+				case  4: addr = (char *)&uap->uc_mcontext.mc_rsp; break;
+				case  5: addr = (char *)&uap->uc_mcontext.mc_rbp; break;
+				case  6: addr = (char *)&uap->uc_mcontext.mc_rsi; break;
+				case  7: addr = (char *)&uap->uc_mcontext.mc_rdi; break;
+				case  8: addr = (char *)&uap->uc_mcontext.mc_r8;  break;
+				case  9: addr = (char *)&uap->uc_mcontext.mc_r9;  break;
+				case 10: addr = (char *)&uap->uc_mcontext.mc_r10; break;
+				case 11: addr = (char *)&uap->uc_mcontext.mc_r11; break;
+				case 12: addr = (char *)&uap->uc_mcontext.mc_r12; break;
+				case 13: addr = (char *)&uap->uc_mcontext.mc_r13; break;
+				case 14: addr = (char *)&uap->uc_mcontext.mc_r14; break;
+				default: addr = (char *)&uap->uc_mcontext.mc_r15; break;
+				}
 			}
 			r = ((rex & 2) << 2) | ((sib >> 3) & 7);
 			if (r != 4) {
 				/* add scaled index */
-				addr += uap->uc_mcontext.gregs[regno(r)]
-				    << (sib >> 6);
+				switch (r) {
+				case  0: addr += uap->uc_mcontext.mc_rax << (sib >> 6); break;
+				case  1: addr += uap->uc_mcontext.mc_rcx << (sib >> 6); break;
+				case  2: addr += uap->uc_mcontext.mc_rdx << (sib >> 6); break;
+				case  3: addr += uap->uc_mcontext.mc_rbx << (sib >> 6); break;
+				case  4: addr += uap->uc_mcontext.mc_rsp << (sib >> 6); break;
+				case  5: addr += uap->uc_mcontext.mc_rbp << (sib >> 6); break;
+				case  6: addr += uap->uc_mcontext.mc_rsi << (sib >> 6); break;
+				case  7: addr += uap->uc_mcontext.mc_rdi << (sib >> 6); break;
+				case  8: addr += uap->uc_mcontext.mc_r8  << (sib >> 6); break;
+				case  9: addr += uap->uc_mcontext.mc_r9  << (sib >> 6); break;
+				case 10: addr += uap->uc_mcontext.mc_r10 << (sib >> 6); break;
+				case 11: addr += uap->uc_mcontext.mc_r11 << (sib >> 6); break;
+				case 12: addr += uap->uc_mcontext.mc_r12 << (sib >> 6); break;
+				case 13: addr += uap->uc_mcontext.mc_r13 << (sib >> 6); break;
+				case 14: addr += uap->uc_mcontext.mc_r14 << (sib >> 6); break;
+				default: addr += uap->uc_mcontext.mc_r15 << (sib >> 6); break;
+				}
 			}
 		} else {
 			r = ((rex & 1) << 3) | (modrm & 7);
-			addr = (char *)uap->uc_mcontext.gregs[regno(r)];
+			switch (r) {
+			case  0: addr = (char *)uap->uc_mcontext.mc_rax; break;
+			case  1: addr = (char *)uap->uc_mcontext.mc_rcx; break;
+			case  2: addr = (char *)uap->uc_mcontext.mc_rdx; break;
+			case  3: addr = (char *)uap->uc_mcontext.mc_rbx; break;
+			case  4: addr = (char *)uap->uc_mcontext.mc_rsp; break;
+			case  5: addr = (char *)uap->uc_mcontext.mc_rbp; break;
+			case  6: addr = (char *)uap->uc_mcontext.mc_rsi; break;
+			case  7: addr = (char *)uap->uc_mcontext.mc_rdi; break;
+			case  8: addr = (char *)uap->uc_mcontext.mc_r8;  break;
+			case  9: addr = (char *)uap->uc_mcontext.mc_r9;  break;
+			case 10: addr = (char *)uap->uc_mcontext.mc_r10; break;
+			case 11: addr = (char *)uap->uc_mcontext.mc_r11; break;
+			case 12: addr = (char *)uap->uc_mcontext.mc_r12; break;
+			case 13: addr = (char *)uap->uc_mcontext.mc_r13; break;
+			case 14: addr = (char *)uap->uc_mcontext.mc_r14; break;
+			default: addr = (char *)uap->uc_mcontext.mc_r15; break;
+			}
 		}
 
 		/* add displacement, if any */
@@ -437,11 +512,9 @@ extern void sse_cvtss2sd(float *, double *);
 extern void sse_cvtsi2ss(int *, float *);
 extern void sse_cvttss2si(float *, int *);
 extern void sse_cvtss2si(float *, int *);
-#ifdef __amd64
 extern void sse_cvtsi2ssq(long long *, float *);
 extern void sse_cvttss2siq(float *, long long *);
 extern void sse_cvtss2siq(float *, long long *);
-#endif
 extern void sse_cmpeqsd(double *, double *, long long *);
 extern void sse_cmpltsd(double *, double *, long long *);
 extern void sse_cmplesd(double *, double *, long long *);
@@ -459,11 +532,9 @@ extern void sse_cvtsd2ss(double *, float *);
 extern void sse_cvtsi2sd(int *, double *);
 extern void sse_cvttsd2si(double *, int *);
 extern void sse_cvtsd2si(double *, int *);
-#ifdef __amd64
 extern void sse_cvtsi2sdq(long long *, double *);
 extern void sse_cvttsd2siq(double *, long long *);
 extern void sse_cvtsd2siq(double *, long long *);
-#endif
 
 /*
  * Fill in *info with the operands, default untrapped result, and
@@ -479,6 +550,7 @@ enum fex_exception
 __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 {
 	unsigned int	e, te, mxcsr, oldmxcsr, subnorm;
+	struct FPU_STRUCTURE	*fpstate;
 
 	/*
 	 * Perform the operation with traps disabled and check the
@@ -611,7 +683,6 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			sse_cvtsd2si(&info->op1.val.d, &info->res.val.i);
 			break;
 
-#ifdef __amd64
 		case cvtsi2sdq:
 			info->op = fex_cnvt;
 			sse_cvtsi2sdq(&info->op1.val.l, &info->res.val.d);
@@ -628,7 +699,6 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			info->res.type = fex_llong;
 			sse_cvtsd2siq(&info->op1.val.d, &info->res.val.l);
 			break;
-#endif
 
 		case ucomisd:
 			info->op = fex_cmp;
@@ -766,7 +836,6 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			sse_cvtss2si(&info->op1.val.f, &info->res.val.i);
 			break;
 
-#ifdef __amd64
 		case cvtsi2ssq:
 			info->op = fex_cnvt;
 			sse_cvtsi2ssq(&info->op1.val.l, &info->res.val.f);
@@ -783,7 +852,6 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 			info->res.type = fex_llong;
 			sse_cvtss2siq(&info->op1.val.f, &info->res.val.l);
 			break;
-#endif
 
 		case ucomiss:
 			info->op = fex_cmp;
@@ -805,8 +873,8 @@ __fex_get_sse_op(ucontext_t *uap, sseinst_t *inst, fex_info_t *info)
 	__fenv_setmxcsr(&oldmxcsr);
 
 	/* determine which exception would have been trapped */
-	te = ~(uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.mxcsr
-	    >> 7) & 0x3d;
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+	te = ~(fpstate->sv_env.en_mxcsr >> 7) & 0x3d;
 	e = mxcsr & te;
 	if (e & FE_INVALID)
 		return __fex_get_sse_invalid_type(inst);
@@ -1116,7 +1184,7 @@ __fex_st_sse_result(ucontext_t *uap, sseinst_t *inst, enum fex_exception e,
 	   to indicate "unordered" */
 	if (inst->op == ucomiss || inst->op == comiss ||
 	    inst->op == ucomisd || inst->op == comisd) {
-		uap->uc_mcontext.gregs[REG_PS] |= 0x45;
+		uap->uc_mcontext.REG_PS |= 0x45;
 		return;
 	}
 
