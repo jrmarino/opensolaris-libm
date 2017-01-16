@@ -41,7 +41,7 @@ void
 __vhypotf( int n, float * restrict x, int stridex, float * restrict y,
 	int stridey, float * restrict z, int stridez )
 {
-	float		x0, x1, x2, y0, y1, y2, z0, z1, z2, *pz0, *pz1, *pz2;
+	float		x0, x1, x2 = 0, y0, y1, y2 = 0, z0, z1, z2, *pz0, *pz1, *pz2;
 	unsigned	hx0, hx1, hx2, hy0, hy1, hy2;
 	int			i, j0, j1, j2;
 
