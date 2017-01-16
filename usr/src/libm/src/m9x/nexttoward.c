@@ -152,8 +152,8 @@ static union {
 	unsigned i[2];
 	double d;
 } C[] = {
-	0, 0x00100000,
-	0, 0x7fe00000,
+	{{ 0, 0x00100000 }},
+	{{ 0, 0x7fe00000 }},
 };
 
 #define	tiny	C[0].d

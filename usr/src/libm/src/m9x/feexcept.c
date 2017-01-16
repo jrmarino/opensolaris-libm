@@ -42,7 +42,7 @@
 #include <fenv.h>
 #include <sys/ieeefp.h>
 #include <ucontext.h>
-#include <thread.h>
+#include <pthread.h>
 #include "fex_handler.h"
 #include "fenv_inlines.h"
 

@@ -34,7 +34,7 @@
 
 #include <fenv.h>
 #include <ucontext.h>
-#include <thread.h>
+#include <pthread.h>
 #include "fex_handler.h"
 
 int fex_get_handling(int e)

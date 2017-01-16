@@ -39,10 +39,9 @@
 #include <string.h>
 #include <signal.h>
 #include <ucontext.h>
-#include <sys/frame.h>
 #include <fenv.h>
 #include <sys/ieeefp.h>
-#include <thread.h>
+#include <pthread.h>
 #include "fex_handler.h"
 
 #if !defined(PC)

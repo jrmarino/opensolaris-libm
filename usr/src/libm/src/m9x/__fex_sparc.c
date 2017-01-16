@@ -33,7 +33,7 @@
 #include <string.h>
 #include <signal.h>
 #include <siginfo.h>
-#include <thread.h>
+#include <pthread.h>
 #include <ucontext.h>
 #include <math.h>
 #if defined(__SUNPRO_C)

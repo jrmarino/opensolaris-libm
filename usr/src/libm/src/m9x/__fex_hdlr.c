@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <thread.h>
+#include <pthread.h>
 #include <math.h>
 #if defined(__SUNPRO_C)
 #include <sunmath.h>

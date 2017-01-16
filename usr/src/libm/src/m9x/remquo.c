@@ -43,6 +43,9 @@
 #include "libm_protos.h"
 #include <math.h>		/* fabs() */
 
+#undef HIWORD
+#undef LOWORD
+
 #if defined(_BIG_ENDIAN)
 #define	HIWORD	0
 #define	LOWORD	1
