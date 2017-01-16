@@ -24,7 +24,10 @@
  */
 
 
-#pragma weak isnan = __isnan
+/*
+ * isnan always provided by libm_inlines.h (through libm.h)
+ * #pragma weak isnan = __isnan
+ */
 #pragma weak _isnan = __isnan
 #pragma weak _isnand = __isnan
 #pragma weak isnand = __isnan
