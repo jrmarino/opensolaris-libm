@@ -457,11 +457,11 @@ m9xOBJS_sparcv9	= \
 #
 # lrint.o, lrintf.o, lrintl.o, lround.o, lroundf.o & lroundl.o are 32-bit only
 #
+# suppress fex_log.o, __fex_sym.o
 m9xOBJS		= \
 		$(m9xOBJS_$(SUNW_ISA)) \
 		__fex_$(MCPU).o \
 		__fex_hdlr.o \
-		__fex_sym.o \
 		fdim.o \
 		fdimf.o \
 		fdiml.o \
@@ -469,7 +469,6 @@ m9xOBJS		= \
 		fenv.o \
 		feround.o \
 		fex_handler.o \
-		fex_log.o \
 		fma.o \
 		fmaf.o \
 		fmal.o \

@@ -190,11 +190,13 @@ extern void fex_getexcepthandler __P((fex_handler_t *, int));
 extern void fex_setexcepthandler __P((const fex_handler_t *, int));
 
 #include <stdio.h>
+/* log disabled for now
 extern FILE *fex_get_log __P((void));
 extern int fex_set_log __P((FILE *));
 extern int fex_get_log_depth __P((void));
 extern int fex_set_log_depth __P((int));
 extern void fex_log_entry __P((const char *));
+*/
 
 #define	__fex_handler_t	fex_handler_t
 

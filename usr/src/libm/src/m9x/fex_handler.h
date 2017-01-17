@@ -54,12 +54,17 @@ extern struct fex_handler_data *__fex_get_thr_handlers(void);
 extern void __fex_update_te(void);
 
 /* auxiliary functions in __fex_sym.c */
+/* requires solaris-specific procfs, suppress
 extern void __fex_sym_init(void);
 extern char *__fex_sym(char *, char **);
+*/
 
 /* auxiliary functions in fex_log.c */
+/* Might be Solaris specific (sys/frame).  If not, more context and
+   mutex work required.  Suppress for now
 extern void __fex_mklog(ucontext_t *, char *, int, enum fex_exception,
 	int, void *);
+*/
 
 /* system-dependent auxiliary functions */
 extern enum fex_exception __fex_get_invalid_type(siginfo_t *, ucontext_t *);

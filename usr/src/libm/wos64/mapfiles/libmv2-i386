@@ -294,7 +294,7 @@ SUNW_1.2 {
 		__fetestexcept;
 		__feupdateenv;
 		__fex_get_handling;		#LSARC/1996/175
-		__fex_get_log;			#LSARC/1996/175
+#block		__fex_get_log;			#LSARC/1996/175
 		__fex_get_log_depth;		#LSARC/1996/175
 		__fex_getexcepthandler;		#LSARC/1996/175
 		__fex_log_entry;		#LSARC/1996/175
@@ -520,7 +520,7 @@ SUNW_1.2 {
 		fetestexcept;
 		feupdateenv;
 		fex_get_handling;		#LSARC/1996/175
-		fex_get_log;			#LSARC/1996/175
+#block		fex_get_log;			#LSARC/1996/175
 		fex_get_log_depth;		#LSARC/1996/175
 		fex_getexcepthandler;		#LSARC/1996/175
 		fex_log_entry;			#LSARC/1996/175

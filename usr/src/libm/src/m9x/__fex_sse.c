@@ -54,7 +54,7 @@
 # endif
 # ifdef __DragonFly__
 #define FPU_STATE	mc_fpregs
-#define FPU_STRUCTURE	savexmm
+#define FPU_STRUCTURE	savexmm64
 # endif
 #else
 #error SSE instructions not supported on this platform

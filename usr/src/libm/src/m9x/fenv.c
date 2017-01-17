@@ -111,6 +111,8 @@ void fex_merge_flags(const fenv_t *p)
 	__fenv_getfsr(&fsr);
 	__fenv_set_ex(fsr, __fenv_get_ex(fsr) | __fenv_get_ex(p->__fsr));
 	__fenv_setfsr(&fsr);
+	/* log disabled for now
 	if (fex_get_log())
 		__fex_update_te();
+	*/
 }

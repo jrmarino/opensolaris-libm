@@ -60,7 +60,7 @@
 # endif
 # ifdef __DragonFly__
 #define FPU_STATE	mc_fpregs
-#define FPU_STRUCTURE	savefpu
+#define FPU_STRUCTURE	savexmm64
 # endif
 #else
 #error SSE instructions not supported on this platform
@@ -167,7 +167,7 @@ __fex_get_x86_exc(siginfo_t *sip, ucontext_t *uap)
 	struct FPU_STRUCTURE	*fpstate;
 
 	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
-	sw = fpstate->sv_env.en_sw;
+	sw = fpstate->sv_env.en_sw; /* SunOS: "status", not "sw" */
 	cw = fpstate->sv_env.en_cw;
 	if ((sw & FE_INVALID) && !(cw & (1 << fp_trap_invalid)))
 		/* store 0 for stack fault, FPE_FLTINV for IEEE invalid op */
@@ -588,7 +588,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	/* get the exception type, status word, opcode, and data address */
 	ex = sip->si_code;
 	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
-	sw = fpstate->sv_env.en_sw;
+	sw = fpstate->sv_env.en_sw; /* SunOS: "status", not "sw" */
 	op = fpstate->sv_env.en_opcode >> 16;
 	ea = fpstate->sv_env.en_rdp;
 
