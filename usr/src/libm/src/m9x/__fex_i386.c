@@ -32,9 +32,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <siginfo.h>
 #include <ucontext.h>
-#include <thread.h>
+#ifdef __DragonFly__
+#include <machine/npx.h>
+#endif
+#ifdef __FreeBSD__
+#include <machine/fpu.h>
+#endif
+#include <pthread.h>
+#include <pthread_np.h>
 #include <math.h>
 #if defined(__SUNPRO_C)
 #include <sunmath.h>
@@ -43,41 +49,54 @@
 #include "fex_handler.h"
 #include "fenv_inlines.h"
 
-#if defined(__amd64)
-#define test_sse_hw	1
+/* Hardcoded for amd64 */
+
+#if defined __DragonFly__ || defined __FreeBSD__
+#define REG_PC	mc_rip
+#define REG_PS	mc_rflags
+# ifdef __FreeBSD__
+#define FPU_STATE	mc_fpstate
+#define FPU_STRUCTURE	savefpu
+# endif
+# ifdef __DragonFly__
+#define FPU_STATE	mc_fpregs
+#define FPU_STRUCTURE	savefpu
+# endif
 #else
-/*
- * The following variable lives in libc on Solaris 10, where it
- * gets set to a nonzero value at startup time on systems with SSE.
- */
-extern int _sse_hw;
-#define test_sse_hw	_sse_hw
+#error SSE instructions not supported on this platform
 #endif
 
+#define test_sse_hw	1
+
 static int accrued = 0;
-static thread_key_t accrued_key;
-static mutex_t accrued_key_lock = DEFAULTMUTEX;
+static pthread_key_t accrued_key;
+static pthread_mutex_t accrued_key_lock = PTHREAD_MUTEX_INITIALIZER;
 
 int *
 __fex_accrued()
 {
 	int		*p;
 
-	if (thr_main())
+	if (pthread_main_np())
 		return &accrued;
 	else {
 		p = NULL;
-		mutex_lock(&accrued_key_lock);
-		if (thr_getspecific(accrued_key, (void **)&p) != 0 &&
-			thr_keycreate(&accrued_key, free) != 0) {
-			mutex_unlock(&accrued_key_lock);
-			return NULL;
+		pthread_mutex_init(&accrued_key_lock, NULL);
+		pthread_mutex_lock(&accrued_key_lock);
+		p = pthread_getspecific(accrued_key);
+		if (p == NULL) {
+			if (pthread_key_create(&accrued_key, free) != 0) {
+				pthread_mutex_unlock(&accrued_key_lock);
+				pthread_mutex_destroy(&accrued_key_lock);
+				return NULL;
+			}
 		}
-		mutex_unlock(&accrued_key_lock);
+		pthread_mutex_unlock(&accrued_key_lock);
+		pthread_mutex_destroy(&accrued_key_lock);
 		if (!p) {
 			if ((p = (int*) malloc(sizeof(int))) == NULL)
 				return NULL;
-			if (thr_setspecific(accrued_key, (void *)p) != 0) {
+			if (pthread_setspecific(accrued_key, p) != 0) {
 				(void)free(p);
 				return NULL;
 			}
@@ -136,11 +155,7 @@ __fenv_setfsr(const unsigned long *fsr)
 #define EA	5	/* operand address */
 
 /* macro for accessing fp registers in the save area */
-#if defined(__amd64)
-#define fpreg(u,x)	*(long double *)(10*(x)+(char*)&(u)->uc_mcontext.fpregs.fp_reg_set.fpchip_state.st)
-#else
-#define fpreg(u,x)	*(long double *)(10*(x)+(char*)&(u)->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[7])
-#endif
+#define fpreg(x)	*(long double *)(10*(x)+(char*)&fpstate->sv_fp)
 
 /*
 *  Fix sip->si_code; the Solaris x86 kernel can get it wrong
@@ -149,13 +164,11 @@ void
 __fex_get_x86_exc(siginfo_t *sip, ucontext_t *uap)
 {
 	unsigned	sw, cw;
+	struct FPU_STRUCTURE	*fpstate;
 
-	sw = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.status;
-#if defined(__amd64)
-	cw = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.cw;
-#else
-	cw = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[CW];
-#endif
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+	sw = fpstate->sv_env.en_sw;
+	cw = fpstate->sv_env.en_cw;
 	if ((sw & FE_INVALID) && !(cw & (1 << fp_trap_invalid)))
 		/* store 0 for stack fault, FPE_FLTINV for IEEE invalid op */
 		sip->si_code = ((sw & 0x40)? 0 : FPE_FLTINV);
@@ -240,15 +253,12 @@ __fex_get_invalid_type(siginfo_t *sip, ucontext_t *uap)
 	unsigned			op;
 	unsigned long			ea;
 	enum fp_class_type	t1, t2;
+	struct FPU_STRUCTURE	*fpstate;
 
 	/* get the opcode and data address */
-#if defined(__amd64)
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.fop >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.rdp;
-#else
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[OP] >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[EA];
-#endif
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+	op = fpstate->sv_env.en_opcode >> 16;
+	ea = fpstate->sv_env.en_rdp;
 
 	/* if the instruction is fld, the source must be snan (it can't be
 	   an unsupported format, since fldt doesn't raise any exceptions) */
@@ -263,7 +273,7 @@ __fex_get_invalid_type(siginfo_t *sip, ucontext_t *uap)
 	}
 
 	/* otherwise st is one of the operands; see if it's snan */
-	t1 = my_fp_classl(&fpreg(uap, 0));
+	t1 = my_fp_classl(&fpreg(0));
 	if (t1 == fp_signaling)
 		return fex_inv_snan;
 	else if (t1 == (enum fp_class_type) -1)
@@ -343,7 +353,7 @@ __fex_get_invalid_type(siginfo_t *sip, ucontext_t *uap)
 			break;
 
 		default:
-			t2 = my_fp_classl(&fpreg(uap, op & 7));
+			t2 = my_fp_classl(&fpreg(op & 7));
 		}
 		break;
 
@@ -358,7 +368,7 @@ __fex_get_invalid_type(siginfo_t *sip, ucontext_t *uap)
 		case 0x1f9: /* fyl2xp1 */
 		case 0x1fd: /* fscale */
 		case 0x2e9: /* fucompp */
-			t2 = my_fp_classl(&fpreg(uap, 1));
+			t2 = my_fp_classl(&fpreg(1));
 			break;
 		}
 		break;
@@ -572,18 +582,15 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	long double			op2v, x;
 	unsigned int			cwsw, ex, sw, op;
 	unsigned long			ea;
-	volatile int			c;
+	volatile int			c __attribute__((unused));
+	struct FPU_STRUCTURE	*fpstate;
 
 	/* get the exception type, status word, opcode, and data address */
 	ex = sip->si_code;
-	sw = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.status;
-#if defined(__amd64)
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.fop >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.rdp;
-#else
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[OP] >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[EA];
-#endif
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+	sw = fpstate->sv_env.en_sw;
+	op = fpstate->sv_env.en_opcode >> 16;
+	ea = fpstate->sv_env.en_rdp;
 
 	/* initialize res to the default untrapped result and ex to the
 	   corresponding flags (assume trapping is disabled and flags
@@ -646,7 +653,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			return;
 		}
 		info->op1.type = fex_ldouble;
-		info->op1.val.q = fpreg(uap, 0);
+		info->op1.val.q = fpreg(0);
 		info->res.val.f = (float) info->op1.val.q;
 		goto done;
 
@@ -671,7 +678,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			return;
 		}
 		info->op1.type = fex_ldouble;
-		info->op1.val.q = fpreg(uap, 0);
+		info->op1.val.q = fpreg(0);
 		info->res.val.i = (int) info->op1.val.q;
 		goto done;
 
@@ -696,7 +703,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			return;
 		}
 		info->op1.type = fex_ldouble;
-		info->op1.val.q = fpreg(uap, 0);
+		info->op1.val.q = fpreg(0);
 		info->res.val.d = (double) info->op1.val.q;
 		goto done;
 
@@ -721,7 +728,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			return;
 		}
 		info->op1.type = fex_ldouble;
-		info->op1.val.q = fpreg(uap, 0);
+		info->op1.val.q = fpreg(0);
 		info->res.val.i = (short) info->op1.val.q;
 		goto done;
 
@@ -752,7 +759,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			return;
 		}
 		info->op1.type = fex_ldouble;
-		info->op1.val.q = fpreg(uap, 0);
+		info->op1.val.q = fpreg(0);
 		info->res.val.l = (long long) info->op1.val.q;
 		goto done;
 	}
@@ -766,8 +773,8 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		switch (op & 0x7f8) {
 		case 0x1f0:
 			/* fptan pushes 1.0 afterward, so result is in st(1) */
-			info->res.val.q = ((op == 0x1f2)? fpreg(uap, 1) :
-				fpreg(uap, 0));
+			info->res.val.q = ((op == 0x1f2)? fpreg(1) :
+				fpreg(0));
 			break;
 
 		case 0x4c0:
@@ -776,7 +783,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case 0x4e8:
 		case 0x4f0:
 		case 0x4f8:
-			info->res.val.q = fpreg(uap, op & 7);
+			info->res.val.q = fpreg(op & 7);
 			break;
 
 		case 0x6c0:
@@ -786,11 +793,11 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case 0x6f0:
 		case 0x6f8:
 			/* stack was popped afterward */
-			info->res.val.q = fpreg(uap, (op - 1) & 7);
+			info->res.val.q = fpreg((op - 1) & 7);
 			break;
 
 		default:
-			info->res.val.q = fpreg(uap, 0);
+			info->res.val.q = fpreg(0);
 		}
 
 		/* reconstruct default untrapped result */
@@ -888,7 +895,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	/* one operand is always in st */
 	info->op1.type = fex_ldouble;
-	info->op1.val.q = fpreg(uap, 0);
+	info->op1.val.q = fpreg(0);
 
 	/* oddball instructions */
 	info->op = fex_other;
@@ -908,7 +915,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case 0x1f1: /* fyl2x */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fyl2x(info->op1.val.q, info->op2.val.q);
 		goto done;
@@ -920,7 +927,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case 0x1f3: /* fpatan */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fpatan(info->op1.val.q, info->op2.val.q);
 		goto done;
@@ -932,21 +939,21 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case 0x1f5: /* fprem1 */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fprem1(info->op1.val.q, info->op2.val.q);
 		goto done;
 
 	case 0x1f8: /* fprem */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fprem(info->op1.val.q, info->op2.val.q);
 		goto done;
 
 	case 0x1f9: /* fyl2xp1 */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fyl2xp1(info->op1.val.q, info->op2.val.q);
 		goto done;
@@ -969,7 +976,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case 0x1fd: /* fscale */
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_ldouble;
 		info->res.val.q = fscale(info->op1.val.q, info->op2.val.q);
 		goto done;
@@ -987,7 +994,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x2e9: /* fucompp */
 		info->op = fex_cmp;
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, 1);
+		info->op2.val.q = fpreg(1);
 		info->res.type = fex_nodata;
 		c = (info->op1.val.q == info->op2.val.q);
 		goto done;
@@ -1001,7 +1008,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x7e8: /* unordered compares */
 		info->op = fex_cmp;
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, op & 7);
+		info->op2.val.q = fpreg(op & 7);
 		info->res.type = fex_nodata;
 		c = (info->op1.val.q == info->op2.val.q);
 		goto done;
@@ -1010,7 +1017,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x7f0: /* ordered compares */
 		info->op = fex_cmp;
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, op & 7);
+		info->op2.val.q = fpreg(op & 7);
 		info->res.type = fex_nodata;
 		c = (info->op1.val.q < info->op2.val.q);
 		goto done;
@@ -1037,7 +1044,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 
 	case 0x0c0:
 		info->op2.type = fex_ldouble;
-		op2v = info->op2.val.q = fpreg(uap, op & 7);
+		op2v = info->op2.val.q = fpreg(op & 7);
 		break;
 
 	case 0x200:
@@ -1071,7 +1078,7 @@ __fex_get_op(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x4c0:
 	case 0x6c0:
 		info->op2.type = fex_ldouble;
-		info->op2.val.q = fpreg(uap, op & 7);
+		info->op2.val.q = fpreg(op & 7);
 		t = info->op1;
 		info->op1 = info->op2;
 		info->op2 = t;
@@ -1163,63 +1170,45 @@ done:
 static void pop(ucontext_t *uap)
 {
 	unsigned top;
+	struct FPU_STRUCTURE	*fpstate;
 
-	fpreg(uap, 0) = fpreg(uap, 1);
-	fpreg(uap, 1) = fpreg(uap, 2);
-	fpreg(uap, 2) = fpreg(uap, 3);
-	fpreg(uap, 3) = fpreg(uap, 4);
-	fpreg(uap, 4) = fpreg(uap, 5);
-	fpreg(uap, 5) = fpreg(uap, 6);
-	fpreg(uap, 6) = fpreg(uap, 7);
-#if defined(__amd64)
-	top = (uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw >> 10)
-		& 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.fctw |= (3 << top);
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+
+	fpreg(0) = fpreg(1);
+	fpreg(1) = fpreg(2);
+	fpreg(2) = fpreg(3);
+	fpreg(3) = fpreg(4);
+	fpreg(4) = fpreg(5);
+	fpreg(5) = fpreg(6);
+	fpreg(6) = fpreg(7);
+
+	top = (fpstate->sv_env.en_sw >> 10) & 0xe;
+	fpstate->sv_env.en_tw |= (3 << top);
 	top = (top + 2) & 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw =
-		(uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw & ~0x3800)
-		| (top << 10);
-#else
-	top = (uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] >> 10)
-		& 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[TW] |= (3 << top);
-	top = (top + 2) & 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] =
-		(uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] & ~0x3800)
-		| (top << 10);
-#endif
+	fpstate->sv_env.en_sw = (fpstate->sv_env.en_sw & ~0x3800) | (top << 10);
 }
 
 /* push x onto the saved stack */
 static void push(long double x, ucontext_t *uap)
 {
 	unsigned top;
+	struct FPU_STRUCTURE	*fpstate;
 
-	fpreg(uap, 7) = fpreg(uap, 6);
-	fpreg(uap, 6) = fpreg(uap, 5);
-	fpreg(uap, 5) = fpreg(uap, 4);
-	fpreg(uap, 4) = fpreg(uap, 3);
-	fpreg(uap, 3) = fpreg(uap, 2);
-	fpreg(uap, 2) = fpreg(uap, 1);
-	fpreg(uap, 1) = fpreg(uap, 0);
-	fpreg(uap, 0) = x;
-#if defined(__amd64)
-	top = (uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw >> 10)
-		& 0xe;
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+
+	fpreg(7) = fpreg(6);
+	fpreg(6) = fpreg(5);
+	fpreg(5) = fpreg(4);
+	fpreg(4) = fpreg(3);
+	fpreg(3) = fpreg(2);
+	fpreg(2) = fpreg(1);
+	fpreg(1) = fpreg(0);
+	fpreg(0) = x;
+
+	top = (fpstate->sv_env.en_sw >> 10) & 0xe;
 	top = (top - 2) & 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.fctw &= ~(3 << top);
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw =
-		(uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw & ~0x3800)
-		| (top << 10);
-#else
-	top = (uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] >> 10)
-		& 0xe;
-	top = (top - 2) & 0xe;
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[TW] &= ~(3 << top);
-	uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] =
-		(uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] & ~0x3800)
-		| (top << 10);
-#endif
+	fpstate->sv_env.en_tw &= ~(3 << top);
+	fpstate->sv_env.en_sw = (fpstate->sv_env.en_sw & ~0x3800) | (top << 10);
 }
 
 /* scale factors for exponent wrapping */
@@ -1239,16 +1228,13 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 {
 	fex_numeric_t	r;
 	unsigned long		ex, op, ea, stack;
+	struct FPU_STRUCTURE	*fpstate;
 
 	/* get the exception type, opcode, and data address */
 	ex = sip->si_code;
-#if defined(__amd64)
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.fop >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.rdp; /*???*/
-#else
-	op = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[OP] >> 16;
-	ea = uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[EA];
-#endif
+	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
+	op = fpstate->sv_env.en_opcode >> 16;
+	ea = fpstate->sv_env.en_rdp; /*???*/
 
 	/* if the instruction is a compare, set the condition codes
 	   to unordered and update the stack */
@@ -1269,11 +1255,7 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x650:
 	case 0x690:
 		/* f[u]com */
-#if defined(__amd64)
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw |= 0x4500;
-#else
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] |= 0x4500;
-#endif
+		fpstate->sv_env.en_sw |= 0x4500;
 		return;
 
 	case 0x018:
@@ -1293,33 +1275,21 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x698:
 	case 0x6d0:
 		/* f[u]comp */
-#if defined(__amd64)
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw |= 0x4500;
-#else
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] |= 0x4500;
-#endif
+		fpstate->sv_env.en_sw |= 0x4500;
 		pop(uap);
 		return;
 
 	case 0x2e8:
 	case 0x6d8:
 		/* f[u]compp */
-#if defined(__amd64)
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw |= 0x4500;
-#else
-		uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] |= 0x4500;
-#endif
+		fpstate->sv_env.en_sw |= 0x4500;
 		pop(uap);
 		pop(uap);
 		return;
 
 	case 0x1e0:
 		if (op == 0x1e4) { /* ftst */
-#if defined(__amd64)
-			uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.sw |= 0x4500;
-#else
-			uap->uc_mcontext.fpregs.fp_reg_set.fpchip_state.state[SW] |= 0x4500;
-#endif
+			fpstate->sv_env.en_sw |= 0x4500;
 			return;
 		}
 		break;
@@ -1327,21 +1297,13 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x3e8:
 	case 0x3f0:
 		/* f[u]comi */
-#if defined(__amd64)
-		uap->uc_mcontext.gregs[REG_PS] |= 0x45;
-#else
-		uap->uc_mcontext.gregs[EFL] |= 0x45;
-#endif
+		uap->uc_mcontext.REG_PS |= 0x45;
 		return;
 
 	case 0x7e8:
 	case 0x7f0:
 		/* f[u]comip */
-#if defined(__amd64)
-		uap->uc_mcontext.gregs[REG_PS] |= 0x45;
-#else
-		uap->uc_mcontext.gregs[EFL] |= 0x45;
-#endif
+		uap->uc_mcontext.REG_PS |= 0x45;
 		pop(uap);
 		return;
 	}
@@ -1362,9 +1324,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 				if (!ea)
 					return;
 				if (ex == FPE_FLTOVF)
-					*(float *)ea = (fpreg(uap, 0) * fov) * fov;
+					*(float *)ea = (fpreg(0) * fov) * fov;
 				else
-					*(float *)ea = (fpreg(uap, 0) * fun) * fun;
+					*(float *)ea = (fpreg(0) * fun) * fun;
 				if ((op & 8) != 0)
 					pop(uap);
 				break;
@@ -1378,9 +1340,9 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 				if (!ea)
 					return;
 				if (ex == FPE_FLTOVF)
-					*(double *)ea = (fpreg(uap, 0) * dov) * dov;
+					*(double *)ea = (fpreg(0) * dov) * dov;
 				else
-					*(double *)ea = (fpreg(uap, 0) * dun) * dun;
+					*(double *)ea = (fpreg(0) * dun) * dun;
 				if ((op & 8) != 0)
 					pop(uap);
 				break;
@@ -1631,15 +1593,15 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 			/* pop the stack, leaving the result in st */
 			if (!stack)
 				pop(uap);
-			fpreg(uap, 0) = r.val.q;
+			fpreg(0) = r.val.q;
 			return;
 
 		case 0x1f2: /* fpatan */
 			/* fptan pushes 1.0 afterward */
 			if (stack)
-				fpreg(uap, 1) = r.val.q;
+				fpreg(1) = r.val.q;
 			else {
-				fpreg(uap, 0) = r.val.q;
+				fpreg(0) = r.val.q;
 				push(1.0L, uap);
 			}
 			return;
@@ -1648,16 +1610,16 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 		case 0x1fb: /* fsincos */
 			/* leave the supplied result in st */
 			if (stack)
-				fpreg(uap, 0) = r.val.q;
+				fpreg(0) = r.val.q;
 			else {
-				fpreg(uap, 0) = 0.0; /* punt */
+				fpreg(0) = 0.0; /* punt */
 				push(r.val.q, uap);
 			}
 			return;
 		}
 
 		/* all others leave the stack alone and the result in st */
-		fpreg(uap, 0) = r.val.q;
+		fpreg(0) = r.val.q;
 		return;
 
 	case 0x4c0:
@@ -1666,7 +1628,7 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x4e8:
 	case 0x4f0:
 	case 0x4f8:
-		fpreg(uap, op & 7) = r.val.q;
+		fpreg(op & 7) = r.val.q;
 		return;
 
 	case 0x6c0:
@@ -1677,15 +1639,15 @@ __fex_st_result(siginfo_t *sip, ucontext_t *uap, fex_info_t *info)
 	case 0x6f8:
 		/* stack is popped afterward */
 		if (stack)
-			fpreg(uap, (op - 1) & 7) = r.val.q;
+			fpreg((op - 1) & 7) = r.val.q;
 		else {
-			fpreg(uap, op & 7) = r.val.q;
+			fpreg(op & 7) = r.val.q;
 			pop(uap);
 		}
 		return;
 
 	default:
-		fpreg(uap, 0) = r.val.q;
+		fpreg(0) = r.val.q;
 		return;
 	}
 }
