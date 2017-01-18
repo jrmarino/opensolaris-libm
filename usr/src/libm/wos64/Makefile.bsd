@@ -990,8 +990,9 @@ amd64/mvobj_s/${SF:.o=.So}: ${SRC}/mvec/amd64/${SF:.o=.S} $(CG)/mvobj_s $(HEADER
 
 # All libm objects (dynamically create target based on path and assembly setting
 # The paths are hardcoded for amd64, may have to be redone if sparc needs supporting
+# Note that ../src/i386/common only compile with -m32, so the C variants of
+# those functions must be used on x6_64
 .PATH.s:	../src/i386/amd64
-.PATH.s:	../src/i386/common
 .PATH.c:	../src/C
 .PATH.c:	../src/${LDBLDIR}
 .PATH.c:	../src/R
@@ -999,22 +1000,13 @@ amd64/mvobj_s/${SF:.o=.So}: ${SRC}/mvec/amd64/${SF:.o=.S} $(CG)/mvobj_s $(HEADER
 .PATH.c:	../src/complex
 
 .for SF in ${LIBM_SO_OBJS}
-. if defined(USE_ASSEMBLY_VERSIONS) && (exists(${.CURDIR}/../src/i386/amd64/${SF:.o=.s}) || exists(${.CURDIR}/../src/i386/common/${SF:.o=.s}))
-.  if exists(${.CURDIR}/../src/i386/amd64/${SF:.o=.s})
+. if defined(USE_ASSEMBLY_VERSIONS) && exists(${.CURDIR}/../src/i386/amd64/${SF:.o=.s})
 amd64/mobj_s/${SF}: ${SRC}/i386/amd64/${SF:.o=.s} amd64/mobj_s $(C_HDR)
 	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -c ${.ALLSRC:M*.s} -o ${.TARGET}
 amd64/mobj_s/${SF:.o=.So}: ${SRC}/i386/amd64/${SF:.o=.s} amd64/mobj_s $(C_HDR)
 	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -fpic -DPIC -c ${.ALLSRC:M*.s} -o ${.TARGET}
-.  else
-amd64/mobj_s/${SF}: ${SRC}/i386/common/${SF:.o=.s} amd64/mobj_s $(C_HDR)
-	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
-		${MLIBC_FLAGS} -c ${.ALLSRC:M*.s} -o ${.TARGET}
-amd64/mobj_s/${SF:.o=.So}: ${SRC}/i386/common/${SF:.o=.s} amd64/mobj_s $(C_HDR)
-	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
-		${MLIBC_FLAGS} -fpic -DPIC -c ${.ALLSRC:M*.s} -o ${.TARGET}
-.  endif
 . else
 amd64/mobj_s/${SF}: ${SF:.o=.c} amd64/mobj_s $(C_HDR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(MLIBC_FLAGS) -c ${.ALLSRC:M*.c} -o ${.TARGET}
