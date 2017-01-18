@@ -29,7 +29,8 @@
         .file "exp2l.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(exp2l,function)
+	.weak __exp2l
+	.type __exp2l,@function
 
 	ENTRY(exp2l)
 	movl	16(%rsp),%ecx		# cx <--sign&bexp(x)

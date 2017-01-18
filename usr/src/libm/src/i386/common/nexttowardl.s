@@ -29,7 +29,8 @@
 	.file	"nexttowardl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
+	.weak __nexttowardl
+	.type __nexttowardl,@function
 
 	.section .rodata
 	.align	4
@@ -161,15 +162,37 @@ LIBM_ANSI_PRAGMA_WEAK(nexttowardl,function)
 	je	.Loverflow
 	jmp	.Lreturn
 .Loverflow:
-	PIC_SETUP(1)
-	fldt	PIC_L(.LFmaxl)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fldt	.LFmaxl@GOTOFF(%ebx)
+#else
+	fldt	.LFmaxl
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fmulp	%st,%st(0)	# create overflow signal
 	jmp	.Lreturn
 .Lunderflow:
-	PIC_SETUP(2)
-	fldt	PIC_L(.LFminl)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fldt	.LFminl@GOTOFF(%ebx)
+#else
+	fldt	.LFminl
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fmulp	%st,%st(0)	# create underflow signal
 	jmp	.Lreturn
 .Lequal:

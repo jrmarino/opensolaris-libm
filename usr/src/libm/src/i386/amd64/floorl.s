@@ -29,8 +29,10 @@
 	.file	"floorl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(ceill,function)
-LIBM_ANSI_PRAGMA_WEAK(floorl,function)
+	.weak __ceill
+	.type __ceill,@function
+	.weak __floorl
+	.type __floorl,@function
 
 	ENTRY(ceill)
 	subq	$16,%rsp

@@ -29,13 +29,25 @@
         .file "sincos.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(sincos,function)
+	.weak __sincos
+	.type __sincos,@function
 #include "libm_protos.h"
 
 	ENTRY(sincos)
-	PIC_SETUP(1)
-	call	PIC_F(__reduction)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-F macro */
+	call	__reduction@PLT
+#else
+	call	__reduction
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fsincos
 	cmpl	$1,%eax
 	jl	.sincos0

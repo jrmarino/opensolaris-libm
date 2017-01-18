@@ -29,7 +29,8 @@
 	.file	"scalbn.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(scalbn,function)
+	.weak __scalbn
+	.type __scalbn,@function
 
 	ENTRY(scalbn)
 	fildl	12(%esp)		# convert N to extended

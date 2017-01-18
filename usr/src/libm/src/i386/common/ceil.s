@@ -29,7 +29,8 @@
 	.file	"ceil.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(ceil,function)
+	.weak __ceil
+	.type __ceil,@function
 
 	ENTRY(ceil)
 	subl	$8,%esp

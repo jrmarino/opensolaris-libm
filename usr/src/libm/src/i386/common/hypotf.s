@@ -29,7 +29,8 @@
         .file "hypotf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(hypotf,function)
+	.weak __hypotf
+	.type __hypotf,@function
 #include "libm_protos.h"
 
 	ENTRY(hypotf)

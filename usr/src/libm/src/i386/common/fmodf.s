@@ -29,7 +29,8 @@
         .file "fmodf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(fmodf,function)
+	.weak __fmodf
+	.type __fmodf,@function
 
 	ENTRY(fmodf)
 	flds	8(%esp)			# load arg y

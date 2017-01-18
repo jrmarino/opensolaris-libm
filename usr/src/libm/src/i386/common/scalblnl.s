@@ -29,7 +29,8 @@
 	.file	"scalblnl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(scalblnl,function)
+	.weak __scalblnl
+	.type __scalblnl,@function
 
 	ENTRY(scalblnl)
 	fildl	16(%esp)		# convert 32-bit integer N

@@ -29,7 +29,8 @@
         .file "fmodl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(fmodl,function)
+	.weak __fmodl
+	.type __fmodl,@function
 
 	ENTRY(fmodl)
 	fldt	24(%rsp)		# load arg y

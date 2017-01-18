@@ -29,7 +29,8 @@
 	.file	"copysignl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(copysignl,function)
+	.weak __copysignl
+	.type __copysignl,@function
 
 	ENTRY(copysignl)
 	movl    12(%esp),%eax		# sign and bexp of x

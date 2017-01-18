@@ -29,7 +29,8 @@
 	.file "remainder.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(remainder,function)
+	.weak __remainder
+	.type __remainder,@function
 #include "libm_protos.h"
 
 	ENTRY(remainder)
@@ -64,7 +65,12 @@ LIBM_ANSI_PRAGMA_WEAK(remainder,function)
 	ret
 
 .yzero_or_xinf:
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	fstp	%st(0)			# x
 	fstp	%st(0)			# empty NPX stack
 	pushl	$28			# case 28 in _SVID_libm_err
@@ -72,9 +78,15 @@ LIBM_ANSI_PRAGMA_WEAK(remainder,function)
 	pushl	16(%ebp)
 	pushl	12(%ebp)		# pass x
 	pushl	8(%ebp)
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 	.align	4

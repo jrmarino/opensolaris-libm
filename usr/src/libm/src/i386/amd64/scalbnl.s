@@ -29,7 +29,8 @@
 	.file	"scalbnl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(scalbnl,function)
+	.weak __scalbnl
+	.type __scalbnl,@function
 
 	ENTRY(scalbnl)
 	subq	$16,%rsp

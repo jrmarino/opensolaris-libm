@@ -29,7 +29,8 @@
         .file "remainderl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(remainderl,function)
+	.weak __remainderl
+	.type __remainderl,@function
 
 	ENTRY(remainderl)
 	fldt	16(%esp)		# load arg y

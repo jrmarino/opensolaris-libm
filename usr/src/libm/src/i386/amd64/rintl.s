@@ -29,7 +29,8 @@
 	.file	"rintl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(rintl,function)
+	.weak __rintl
+	.type __rintl,@function
 
 	ENTRY(rintl)
 	fldt	8(%rsp)			# load x

@@ -29,7 +29,8 @@
 	.file	"floor.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(floor,function)
+	.weak __floor
+	.type __floor,@function
 
 	ENTRY(floor)
 	subl	$8,%esp

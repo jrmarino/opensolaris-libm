@@ -29,7 +29,8 @@
         .file "isnanf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(isnanf,function)
+	.weak __isnanf
+	.type __isnanf,@function
 	.weak _isnanf
 	.type _isnanf,@function
 _isnanf	= __isnanf

@@ -29,7 +29,8 @@
         .file "fmod.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(fmod,function)
+	.weak __fmod
+	.type __fmod,@function
 #include "libm_protos.h"
 
 	ENTRY(fmod)
@@ -58,11 +59,13 @@ LIBM_ANSI_PRAGMA_WEAK(fmod,function)
 	ret
 
 .yzero:
-	PIC_SETUP(1)
 	movl	$27,%edi
 	movl	$2,%eax
-	call	PIC_F(_SVID_libm_err)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	leave
 	ret
 	.align	4

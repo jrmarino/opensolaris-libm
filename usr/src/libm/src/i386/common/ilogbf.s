@@ -29,7 +29,8 @@
         .file "ilogbf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(ilogbf,function)
+	.weak __ilogbf
+	.type __ilogbf,@function
 #include "xpg6.h"
 
 	.data
@@ -58,9 +59,21 @@ two23:	.long	0x4b000000		# 2**23
 	jnz	.ilogb_subnorm
 	movl	$0x80000001,%eax	# x is +/-0, so return 0x80000001
 0:
-	PIC_SETUP(0)
-	PIC_G_LOAD(movzwl,__xpg6,ecx)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.0
+.0:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.0],%ebx
+#endif
+#ifdef PIC	/* PIC-G-LOAD macro */
+	mov	__xpg6@GOT(%ebx),%ecx
+	movzwl	(%ecx),%ecx
+#else
+	movzwl	__xpg6,%ecx
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	andl	$_C99SUSv3_ilogb_0InfNaN_raises_invalid,%ecx
 	cmpl	$0,%ecx
 	je	1f
@@ -71,10 +84,21 @@ two23:	.long	0x4b000000		# 2**23
 
 .ilogb_subnorm:				# subnormal input
 	flds	4(%esp)			# push x
-	PIC_SETUP(1)
-	fmuls	PIC_L(two23)		# x*2**23; rebias x by 127+23,
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fmuls	two23@GOTOFF(%ebx)	# x*2**23; rebias x by 127+23,
+#else
+	fmuls	two23			# x*2**23; rebias x by 127+23,
+#endif
 					#	   instead of 127
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	subl	$4,%esp			# set up storage area
 	fstps	(%esp)			# store x*2**23 in storage area
 	fwait				# (shouldn't raise exception, but

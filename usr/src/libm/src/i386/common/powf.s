@@ -57,7 +57,8 @@
 	# x ** y (x negative & y not integer) is NaN (i flag)
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(powf,function)
+	.weak __powf
+	.type __powf,@function
 #include "libm_protos.h"
 #include "xpg6.h"
 
@@ -84,7 +85,12 @@ ninfinity:
 	ENTRY(powf)
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 
 	flds	8(%ebp)			# x
 	fxam				# determine class of x
@@ -97,7 +103,9 @@ ninfinity:
 	movb	%ah,%dl			# %dl <- condition code of y
 
 	call	.pow_main		# LOCAL
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 
@@ -113,7 +121,12 @@ ninfinity:
 	ret
 
 1:	# y is not zero
-	PIC_G_LOAD(movzwl,__xpg6,eax)
+#ifdef PIC	/* PIC-G-LOAD macro */
+	mov	__xpg6@GOT(%ebx),%eax
+	movzwl	(%eax),%eax
+#else
+	movzwl	__xpg6,%eax
+#endif
 	andl	$_C99SUSv3_pow_treats_Inf_as_an_even_int,%eax
 	cmpl	$0,%eax
 	je	1f
@@ -148,7 +161,11 @@ ninfinity:
 
 1:	# x is not NaN
 	# x ** 1 is x
-	fcoms	PIC_L(one)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcoms	one@GOTOFF(%ebx)	# y , x
+#else
+	fcoms	one			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	jne	1f
@@ -191,17 +208,29 @@ ninfinity:
 	je	.xisninf
 
 	# x ** -1 is 1/x
-	fcoms	PIC_L(negone)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcoms	negone@GOTOFF(%ebx)	# y , x
+#else
+	fcoms	negone			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	jne	1f
 	fld	%st(1)			# x , y , x
-	fdivrs	PIC_L(one)		# 1/x , y , x
+#ifdef PIC	/* PIC-L macro */
+	fdivrs	one@GOTOFF(%ebx)	# 1/x , y , x
+#else
+	fdivrs	one			# 1/x , y , x
+#endif
 	jmp	.signok			# check for over/underflow
 
 1:	# y is not -1
 	# x ** 2 is square(x)
-	fcoms	PIC_L(two)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcoms	two@GOTOFF(%ebx)	# y , x
+#else
+	fcoms	two			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	jne	1f
@@ -212,7 +241,11 @@ ninfinity:
 
 1:	# y is not 2
 	# x ** 1/2 is sqrt(x)
-	fcoms	PIC_L(half)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcoms	half@GOTOFF(%ebx)	# y , x
+#else
+	fcoms	half			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	jne	1f
@@ -266,7 +299,11 @@ ninfinity:
 	je	1f			# px = int
 	fsub    %st(1),%st		# t-[t] , [t] , y , x
 	f2xm1				# 2**(t-[t])-1 , [t] , y , x
-	fadds	PIC_L(one)		# 2**(t-[t]) , [t] , y , x
+#ifdef PIC	/* PIC-L macro */
+	fadds	one@GOTOFF(%ebx)	# 2**(t-[t]) , [t] , y , x
+#else
+	fadds	one			# 2**(t-[t]) , [t] , y , x
+#endif
 	fscale				# 2**t = px**y , [t] , y , x
 	jmp	2f
 1:
@@ -299,14 +336,22 @@ ninfinity:
 .xisninf:
 	# -inf ** +-y is -0 ** -+y
 	fchs				# -y , x
-	flds	PIC_L(negzero)		# -0 , -y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	negzero@GOTOFF(%ebx)	# -0 , -y , x
+#else
+	flds	negzero			# -0 , -y , x
+#endif
 	fstp	%st(2)			# -y , -0
 	jmp	.xisnzero
 
 .yispinf:
 	fld	%st(1)			# x , y , x
 	fabs				# |x| , y , x
-	fcomps	PIC_L(one)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcomps	one@GOTOFF(%ebx)	# y , x
+#else
+	fcomps	one			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	je	.retponeorinvalid	# x == -1	C99
@@ -316,7 +361,11 @@ ninfinity:
 .yisninf:
 	fld	%st(1)			# x , y , x
 	fabs				# |x| , y , x
-	fcomps	PIC_L(one)		# y , x
+#ifdef PIC	/* PIC-L macro */
+	fcomps	one@GOTOFF(%ebx)	# y , x
+#else
+	fcomps	one			# y , x
+#endif
 	fnstsw	%ax			# store status in %ax
 	sahf				# 80387 flags in %ax to 80386 flags
 	je	.retponeorinvalid	# x == -1	C99
@@ -352,7 +401,11 @@ ninfinity:
 2:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(ninfinity)	# -inf
+#ifdef PIC	/* PIC-L macro */
+	flds	ninfinity@GOTOFF(%ebx)	# -inf
+#else
+	flds	ninfinity		# -inf
+#endif
 	ret
 
 1:	# y is not an odd integer
@@ -377,11 +430,20 @@ ninfinity:
 .retnzero:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(negzero)		# -0
+#ifdef PIC	/* PIC-L macro */
+	flds	negzero@GOTOFF(%ebx)	# -0
+#else
+	flds	negzero			# -0
+#endif
 	ret
 
 .retponeorinvalid:
-	PIC_G_LOAD(movzwl,__xpg6,eax)
+#ifdef PIC	/* PIC-G-LOAD macro */
+	mov	__xpg6@GOT(%ebx),%eax
+	movzwl	(%eax),%eax
+#else
+	movzwl	__xpg6,%eax
+#endif
 	andl	$_C99SUSv3_pow_treats_Inf_as_an_even_int,%eax
 	cmpl	$0,%eax
 	je	1f
@@ -393,21 +455,33 @@ ninfinity:
 1:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(Snan)		# Q NaN (i flag)
+#ifdef PIC	/* PIC-L macro */
+	flds	Snan@GOTOFF(%ebx)	# Q NaN (i flag)
+#else
+	flds	Snan			# Q NaN (i flag)
+#endif
 	fwait
 	ret
 
 .retpinf:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(pinfinity)	# +inf
+#ifdef PIC	/* PIC-L macro */
+	flds	pinfinity@GOTOFF(%ebx)	# +inf
+#else
+	flds	pinfinity		# +inf
+#endif
 	ret
 
 .retpinfzflag:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
 	fldz
-	fdivrs	PIC_L(one)		# 1/0
+#ifdef PIC	/* PIC-L macro */
+	fdivrs	one@GOTOFF(%ebx)	# 1/0
+#else
+	fdivrs	one			# 1/0
+#endif
 	ret
 
 	# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,

@@ -29,7 +29,8 @@
 	.file	"atan.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(atan,function)
+	.weak __atan
+	.type __atan,@function
 
 	ENTRY(atan)
 	fldl	4(%esp)			# push arg

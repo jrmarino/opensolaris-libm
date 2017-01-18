@@ -29,7 +29,8 @@
 	.file	"logl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(logl,function)
+	.weak __logl
+	.type __logl,@function
 
 	ENTRY(logl)
 	fldln2	

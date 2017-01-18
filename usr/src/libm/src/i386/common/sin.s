@@ -29,13 +29,25 @@
         .file "sin.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(sin,function)
+	.weak __sin
+	.type __sin,@function
 #include "libm_protos.h"
 
 	ENTRY(sin)
-	PIC_SETUP(1)
-	call	PIC_F(__reduction)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-F macro */
+	call	__reduction@PLT
+#else
+	call	__reduction
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	cmpl	$1,%eax
 	jl	.sin0
 	je	.sin1

@@ -29,7 +29,8 @@
         .file "log10l.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(log10l,function)
+	.weak __log10l
+	.type __log10l,@function
 
 	ENTRY(log10l)
 	fldlg2	

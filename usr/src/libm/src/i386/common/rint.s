@@ -29,7 +29,8 @@
         .file "rint.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(rint,function)
+	.weak __rint
+	.type __rint,@function
 
 	ENTRY(rint)
 	fldl	4(%esp)			# load x

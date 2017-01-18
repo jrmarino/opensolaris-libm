@@ -29,7 +29,8 @@
 	.file	"asinl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(asinl,function)
+	.weak __asinl
+	.type __asinl,@function
 
 	ENTRY(asinl)
 	fldt	4(%esp)			# push x

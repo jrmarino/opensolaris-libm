@@ -29,7 +29,8 @@
         .file "ilogbl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(ilogbl,function)
+	.weak __ilogbl
+	.type __ilogbl,@function
 #include "xpg6.h"
 
 	.data
@@ -58,9 +59,12 @@ two63:	.4byte	0x0,0x43d00000		# 2**63
 	jnz	.ilogbl_subnorm		# jump iff x is subnormal
 	movq	$-2147483647,%rax 	# x is +/-0, so return 1-2^31
 0:
-	PIC_SETUP(0)
-	PIC_G_LOAD(movzwq,__xpg6,rcx)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-G-LOAD macro */
+	movq	__xpg6@GOTPCREL(%rip),%rcx
+	movzwq	(%rcx),%rcx
+#else
+	movzwq	__xpg6,%rcx
+#endif
 	andl	$_C99SUSv3_ilogb_0InfNaN_raises_invalid,%ecx
 	cmpl	$0,%ecx
 	je	1f
@@ -72,9 +76,11 @@ two63:	.4byte	0x0,0x43d00000		# 2**63
 
 .ilogbl_subnorm:			# subnormal or pseudo-denormal input
 	fldt	8(%rsp)			# push x, setting D-flag
-	PIC_SETUP(1)
-	fmull	PIC_L(two63)		# x*2**63
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-L macro */
+	fmull	two63(%rip)		# x*2**63
+#else
+	fmull	two63			# x*2**63
+#endif
 	subq	$16,%rsp
 	fstpt	(%rsp)
 	movq	$0x7fff,%rax

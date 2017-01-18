@@ -29,7 +29,8 @@
         .file "hypot.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(hypot,function)
+	.weak __hypot
+	.type __hypot,@function
 #include "libm_protos.h"
 
 	.data
@@ -59,9 +60,20 @@ inf:
 	subl	$8,%esp
 	fstpl	(%esp)			# round to double
 	fldl	(%esp)			# sqrt(x*x+y*y) rounded to double
-	PIC_SETUP(1)
-	flds	PIC_L(inf)		# inf , sqrt(x*x+y*y)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	flds	inf@GOTOFF(%ebx)	# inf , sqrt(x*x+y*y)
+#else
+	flds	inf			# inf , sqrt(x*x+y*y)
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	addl	$8,%esp
 	fucomp
 	fstsw	%ax			# store status in %ax
@@ -78,15 +90,26 @@ inf:
 	fstp	%st(0)			# stack empty
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(2)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
 	pushl	$4
 	pushl	20(%ebp)		# high y
 	pushl	16(%ebp)		# low y
 	pushl	12(%ebp)		# high x
 	pushl	8(%ebp)			# low x
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 

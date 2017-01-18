@@ -29,7 +29,8 @@
         .file "ilogb.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(ilogb,function)
+	.weak __ilogb
+	.type __ilogb,@function
 #include "xpg6.h"
 
 	.data
@@ -57,9 +58,21 @@ two52:	.long	0x0,0x43300000	# 2**52
 	jnz	.ilogb_subnorm
 	movl	$0x80000001,%eax	# x is +/-0, so return 0x80000001
 0:
-	PIC_SETUP(0)
-	PIC_G_LOAD(movzwl,__xpg6,ecx)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.0
+.0:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.0],%ebx
+#endif
+#ifdef PIC	/* PIC-G-LOAD macro */
+	mov	__xpg6@GOT(%ebx),%ecx
+	movzwl	(%ecx),%ecx
+#else
+	movzwl	__xpg6,%ecx
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	andl	$_C99SUSv3_ilogb_0InfNaN_raises_invalid,%ecx
 	cmpl	$0,%ecx
 	je	1f
@@ -70,9 +83,20 @@ two52:	.long	0x0,0x43300000	# 2**52
 
 .ilogb_subnorm:				# subnormal input
 	fldl	4(%esp)			# push x
-	PIC_SETUP(1)
-	fmull	PIC_L(two52)		# x*2**52
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fmull	two52@GOTOFF(%ebx)	# x*2**52
+#else
+	fmull	two52			# x*2**52
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	subl	$8,%esp			# set up storage area
 	fstpl	(%esp)			# store x*2**52 in storage are
 	movl	$0x7ff00000,%eax

@@ -29,7 +29,8 @@
         .file "fmod.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(fmod,function)
+	.weak __fmod
+	.type __fmod,@function
 #include "libm_protos.h"
 
 	ENTRY(fmod)
@@ -50,15 +51,26 @@ LIBM_ANSI_PRAGMA_WEAK(fmod,function)
 .zero:
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	pushl	$27			# case 27 in _SVID_libm_err
 	pushl	20(%ebp)		# pass x
 	pushl	16(%ebp)
 	pushl	12(%ebp)		# pass y
 	pushl	8(%ebp)
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 	.align	4

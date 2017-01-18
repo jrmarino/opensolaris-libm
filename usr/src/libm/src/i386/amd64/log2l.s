@@ -29,7 +29,8 @@
 	.file	"log2l.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(log2l,function)
+	.weak __log2l
+	.type __log2l,@function
 
 	ENTRY(log2l)
 	fld1			# push 1.0

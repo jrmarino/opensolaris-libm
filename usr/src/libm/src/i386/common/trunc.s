@@ -29,7 +29,8 @@
 	.file	"trunc.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(trunc,function)
+	.weak __trunc
+	.type __trunc,@function
 
 	ENTRY(trunc)
 	movl	%esp,%eax

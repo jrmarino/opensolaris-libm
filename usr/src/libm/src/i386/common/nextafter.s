@@ -29,7 +29,8 @@
         .file "nextafter.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(nextafter,function)
+	.weak __nextafter
+	.type __nextafter,@function
 	.weak _nextafter
 	.type _nextafter,@function
 _nextafter	= __nextafter
@@ -102,23 +103,49 @@ ftmp:	.long	0,0		# WILL WRITE INTO
 	je	.overflow
 	jmp	.return
 .overflow:
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	pushl	$46
 	fstp	%st(0)		# stack empty
 	pushl	-4(%ebp)
 	pushl	-8(%ebp)
 	pushl	-4(%ebp)
 	pushl	-8(%ebp)
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	jmp	.return
 .underflow:
-	PIC_SETUP(2)
-	fldl	PIC_L(Fmin)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fldl	Fmin@GOTOFF(%ebx)
+#else
+	fldl	Fmin
+#endif
 	fmul	%st(0),%st
-	fstpl	PIC_L(ftmp)	# create underflow signal
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-L macro */
+	fstpl	ftmp@GOTOFF(%ebx)	# create underflow signal
+#else
+	fstpl	ftmp			# create underflow signal
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	jmp	.return
 .equal:
 	fstp	%st(0)		# C99 says to return y when x == y

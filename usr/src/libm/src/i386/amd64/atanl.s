@@ -29,7 +29,8 @@
 	.file	"atanl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(atanl,function)
+	.weak __atanl
+	.type __atanl,@function
 
 	ENTRY(atanl)
 	fldt	8(%rsp)			# push arg

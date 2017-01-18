@@ -29,13 +29,25 @@
         .file "tan.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(tan,function)
+	.weak __tan
+	.type __tan,@function
 #include "libm_protos.h"
 
 	ENTRY(tan)
-	PIC_SETUP(1)
-	call	PIC_F(__reduction)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-F macro */
+	call	__reduction@PLT
+#else
+	call	__reduction
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	andl	$1,%eax
 	cmpl	$0,%eax
 	je	.tan1

@@ -29,7 +29,8 @@
         .file "asin.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(asin,function)
+	.weak __asin
+	.type __asin,@function
 #include "libm_protos.h"
 
 	ENTRY(asin)
@@ -53,7 +54,12 @@ LIBM_ANSI_PRAGMA_WEAK(asin,function)
 	# |x| > 1
 	pushl   %ebp
 	movl    %esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	fstp	%st(0)			# x
 	fstp	%st(0)			# empty NPX stack
 	pushl   $2
@@ -61,9 +67,15 @@ LIBM_ANSI_PRAGMA_WEAK(asin,function)
 	pushl   8(%ebp)                 # low x
 	pushl   12(%ebp)                # high x
 	pushl   8(%ebp)                 # low x
-	call    PIC_F(_SVID_libm_err)	# report SVID result/error
+#ifdef PIC	/* PIC-F macro */
+	call    _SVID_libm_err@PLT	# report SVID result/error
+#else
+	call    _SVID_libm_err	# report SVID result/error
+#endif
 	addl    $20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 	.align	4

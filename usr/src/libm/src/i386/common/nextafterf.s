@@ -29,7 +29,8 @@
         .file "nextafterf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(nextafterf,function)
+	.weak __nextafterf
+	.type __nextafterf,@function
 
 	.data
 	.align	4
@@ -87,18 +88,48 @@ ftmpf:	.long	0
 	je	.overflow
 	jmp	.return
 .overflow:
-	PIC_SETUP(1)
-	flds	PIC_L(Fmaxf)	# Fmaxf, z
-	fmul	%st(0),%st	# overflow-to-Inf, z
-	fstps	PIC_L(ftmpf)	# z & create overflow signal
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	flds	Fmaxf@GOTOFF(%ebx)	# Fmaxf, z
+#else
+	flds	Fmaxf			# Fmaxf, z
+#endif
+	fmul	%st(0),%st		# overflow-to-Inf, z
+#ifdef PIC	/* PIC-L macro */
+	fstps	ftmpf@GOTOFF(%ebx)	# z & create overflow signal
+#else
+	fstps	ftmpf			# z & create overflow signal
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	jmp	.return
 .underflow:
-	PIC_SETUP(2)
-	flds	PIC_L(Fminf)	# Fminf, z
-	fmul	%st(0),%st	# underflow-to-0, z
-	fstps	PIC_L(ftmpf)	# z & create underflow signal
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	flds	Fminf@GOTOFF(%ebx)	# Fminf, z
+#else
+	flds	Fminf			# Fminf, z
+#endif
+	fmul	%st(0),%st		# underflow-to-0, z
+#ifdef PIC	/* PIC-L macro */
+	fstps	ftmpf@GOTOFF(%ebx)	# z & create underflow signal
+#else
+	fstps	ftmpf			# z & create underflow signal
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	jmp	.return
 .equal:
 	fstp	%st(0)		# C99 says to return y when x == y

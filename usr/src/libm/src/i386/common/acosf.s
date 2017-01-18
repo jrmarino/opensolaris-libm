@@ -29,7 +29,8 @@
         .file "acosf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(acosf,function)
+	.weak __acosf
+	.type __acosf,@function
 #include "libm_protos.h"
 
 	ENTRY(acosf)

@@ -29,7 +29,8 @@
         .file "expm1l.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(expm1l,function)
+	.weak __expm1l
+	.type __expm1l,@function
 
 	.data
 	.align	16
@@ -64,12 +65,18 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 	fmul				# z := x*log2(e), x
 	frndint				# [z], x
 	fst	%st(2)			# [z], x, [z]
-	PIC_SETUP(1)
-	fldt	PIC_L(ln2_hi)		# ln2_hi, [z], x, [z]
+#ifdef PIC	/* PIC-L macro */
+	fldt	ln2_hi(%rip)		# ln2_hi, [z], x, [z]
+#else
+	fldt	ln2_hi			# ln2_hi, [z], x, [z]
+#endif
 	fmul				# [z]*ln2_hi, x, [z]
 	fsubrp	%st,%st(1)		# x-[z]*ln2_hi, [z]
-	fldt	PIC_L(ln2_lo)		# ln2_lo, x-[z]*ln2_hi, [z]
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-L macro */
+	fldt	ln2_lo(%rip)		# ln2_lo, x-[z]*ln2_hi, [z]
+#else
+	fldt	ln2_lo			# ln2_lo, x-[z]*ln2_hi, [z]
+#endif
 	fmul	%st(2),%st		# [z]*ln2_lo, x-[z]*ln2_hi, [z]
 	fsubrp	%st,%st(1)		# r := x-[z]*ln(2), [z]
 	fldl2e				# log2(e), r, [z]

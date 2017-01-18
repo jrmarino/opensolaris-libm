@@ -29,7 +29,8 @@
         .file "expm1f.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(expm1f,function)
+	.weak __expm1f
+	.type __expm1f,@function
 
 	.data
 	.align	4
@@ -65,9 +66,20 @@ LIBM_ANSI_PRAGMA_WEAK(expm1f,function)
 	fsub    %st(1),%st		# z-[z],[z]
 	f2xm1				# 2**(z-[z])-1,[z]
 	# avoid spurious underflow when scaling to compute exp(x) 
-	PIC_SETUP(1)
-	flds	PIC_L(.mhundred)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	flds	.mhundred@GOTOFF(%ebx)
+#else
+	flds	.mhundred
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fucom	%st(2)			# if -100 !< [z], then use -100
 	fstsw	%ax
 	sahf
@@ -97,9 +109,20 @@ LIBM_ANSI_PRAGMA_WEAK(expm1f,function)
 .z_integral:				# here, z is integral
 	fstp	%st(0)			# ,z
 	# avoid spurious underflow when scaling to compute exp(x) 
-	PIC_SETUP(2)
-	flds	PIC_L(.mhundred)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	flds	.mhundred@GOTOFF(%ebx)
+#else
+	flds	.mhundred
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fucom	%st(1)			# if -100 !< [z], then use -100
 	fstsw	%ax
 	sahf

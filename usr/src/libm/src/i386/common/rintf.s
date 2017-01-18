@@ -29,7 +29,8 @@
         .file "rintf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(rintf,function)
+	.weak __rintf
+	.type __rintf,@function
 
 	ENTRY(rintf)
 	flds	4(%esp)			# load x

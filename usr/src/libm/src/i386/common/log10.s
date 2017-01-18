@@ -29,7 +29,8 @@
 	.file "log10.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(log10,function)
+	.weak __log10
+	.type __log10,@function
 #include "libm_protos.h"
 
 	ENTRY(log10)
@@ -63,7 +64,12 @@ LIBM_ANSI_PRAGMA_WEAK(log10,function)
 	# x = +/-0
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	pushl	$18
 	jmp	.merge
 
@@ -78,7 +84,12 @@ LIBM_ANSI_PRAGMA_WEAK(log10,function)
 .less_than_0:
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(2)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
 	pushl	$19
 .merge:
 	fstp	%st(0)			# stack empty
@@ -86,9 +97,15 @@ LIBM_ANSI_PRAGMA_WEAK(log10,function)
 	pushl	8(%ebp)
 	pushl	12(%ebp)
 	pushl	8(%ebp)
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 	.align	4

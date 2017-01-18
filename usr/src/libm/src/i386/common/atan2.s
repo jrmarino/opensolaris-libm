@@ -29,7 +29,8 @@
         .file "atan2.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(atan2,function)
+	.weak __atan2
+	.type __atan2,@function
 #include "libm_protos.h"
 
 	ENTRY(atan2)
@@ -54,15 +55,26 @@ LIBM_ANSI_PRAGMA_WEAK(atan2,function)
 	# both x and y are 0's
 	pushl	%ebp
 	movl	%esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	pushl	$3
 	pushl	12(%ebp)		# high y
 	pushl	8(%ebp)			# low y
 	pushl	20(%ebp)		# high x
 	pushl	16(%ebp)		# low x
-	call	PIC_F(_SVID_libm_err)	# report SVID result/error
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT	# report SVID result/error
+#else
+	call	_SVID_libm_err	# report SVID result/error
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 	.align	4

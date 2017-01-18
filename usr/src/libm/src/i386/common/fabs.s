@@ -29,7 +29,8 @@
 	.file	"fabs.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(fabs,function)
+	.weak __fabs
+	.type __fabs,@function
 
 	ENTRY(fabs)
 	fldl    4(%esp)

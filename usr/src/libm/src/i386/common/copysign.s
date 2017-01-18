@@ -29,7 +29,8 @@
 	.file	"copysign.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(copysign,function)
+	.weak __copysign
+	.type __copysign,@function
 
 	ENTRY(copysign)
 	movl    8(%esp),%eax		# eax <-- hi_32(x)

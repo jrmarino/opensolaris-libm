@@ -29,7 +29,8 @@
 	.file	"lroundl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(lroundl,function)
+	.weak __lroundl
+	.type __lroundl,@function
 
 	.section .rodata
 	.align	4
@@ -62,9 +63,20 @@ LIBM_ANSI_PRAGMA_WEAK(lroundl,function)
 	fxch				# x,[x]
 	fsub	%st(1),%st		# x-[x],[x]
 	fabs				# |x-[x]|,[x]
-	PIC_SETUP(1)
-	fcoms	PIC_L(.Lhalf)
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
+#ifdef PIC	/* PIC-L macro */
+	fcoms	.Lhalf@GOTOFF(%ebx)
+#else
+	fcoms	.Lhalf
+#endif
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	fnstsw	%ax
 	sahf
 	jae	2f			# if |x-[x]| = 0.5 goto halfway, 

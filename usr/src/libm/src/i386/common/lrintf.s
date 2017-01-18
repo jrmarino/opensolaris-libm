@@ -29,7 +29,8 @@
 	.file	"lrintf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(lrintf,function)
+	.weak __lrintf
+	.type __lrintf,@function
 
 	ENTRY(lrintf)
 	movl	%esp,%ecx

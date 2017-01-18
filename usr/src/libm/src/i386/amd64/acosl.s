@@ -29,7 +29,8 @@
         .file "acosl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(acosl,function)
+	.weak __acosl
+	.type __acosl,@function
 
 	ENTRY(acosl)
 	fldt	8(%rsp)			# push x

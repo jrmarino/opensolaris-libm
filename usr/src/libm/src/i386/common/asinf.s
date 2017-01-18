@@ -29,7 +29,8 @@
         .file "asinf.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(asinf,function)
+	.weak __asinf
+	.type __asinf,@function
 #include "libm_protos.h"
 
 	ENTRY(asinf)

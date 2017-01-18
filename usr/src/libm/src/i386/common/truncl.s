@@ -29,7 +29,8 @@
 	.file	"truncl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(truncl,function)
+	.weak __truncl
+	.type __truncl,@function
 
 	ENTRY(truncl)
 	movl	%esp,%eax

@@ -29,7 +29,8 @@
         .file "isnanl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(isnanl,function)
+	.weak __isnanl
+	.type __isnanl,@function
 
 	ENTRY(isnanl)
 	movl    12(%esp),%eax		# ax <-- sign bit and exp

@@ -29,7 +29,8 @@
 	.file "remquo.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(remquo,function)
+	.weak __remquo
+	.type __remquo,@function
 #include "libm_protos.h"
 
 	ENTRY(remquo)

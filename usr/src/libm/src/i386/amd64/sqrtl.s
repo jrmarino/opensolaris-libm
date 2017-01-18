@@ -29,7 +29,8 @@
 	.file	"sqrtl.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(sqrtl,function)
+	.weak __sqrtl
+	.type __sqrtl,@function
 
 	ENTRY(sqrtl)
 	fldt	8(%rsp)

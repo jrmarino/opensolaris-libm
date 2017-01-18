@@ -54,7 +54,8 @@
 	# x ** y (x negative & y not integer) is NaN (i flag)
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(powl,function)
+	.weak __powl
+	.type __powl,@function
 #include "xpg6.h"
 
 	.data
@@ -80,7 +81,6 @@ ninfinity:
 	ENTRY(powl)
 	pushq	%rbp
 	movq	%rsp,%rbp
-	PIC_SETUP(1)
 
 	fldt	16(%rbp)		# x
 	fxam				# determine class of x
@@ -93,7 +93,6 @@ ninfinity:
 	movb	%ah,%dl			# %dl <- condition code of y
 
 	call	.pow_main		# LOCAL
-	PIC_WRAPUP
 	leave
 	ret
 
@@ -109,7 +108,12 @@ ninfinity:
 	ret
 
 1:	# y is not zero
-	PIC_G_LOAD(movzwq,__xpg6,rax)
+#ifdef PIC	/* PIC-G-LOAD macro */
+	movq	__xpg6@GOTPCREL(%rip),%rax
+	movzwq	(%rax),%rax
+#else
+	movzwq	__xpg6,%rax
+#endif
 	andl	$_C99SUSv3_pow_treats_Inf_as_an_even_int,%eax
 	cmpl	$0,%eax
 	je	1f
@@ -184,16 +188,28 @@ ninfinity:
 	je	.xisninf
 
 	# x ** -1 is 1/x
-	flds	PIC_L(negone)		# -1, y, x
+#ifdef PIC	/* PIC-L macro */
+	flds	negone(%rip)		# -1, y, x
+#else
+	flds	negone			# -1, y, x
+#endif
 	fcomip	%st(1),%st		# y, x
 	jne	1f
 	fld	%st(1)			# x , y , x
-	fdivrs	PIC_L(one)		# 1/x , y , x
+#ifdef PIC	/* PIC-L macro */
+	fdivrs	one(%rip)		# 1/x , y , x
+#else
+	fdivrs	one			# 1/x , y , x
+#endif
 	jmp	.signok			# check for over/underflow
 
 1:	# y is not -1
 	# x ** 2 is x*x
-	flds	PIC_L(two)		# 2, y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	two(%rip)		# 2, y , x
+#else
+	flds	two			# 2, y , x
+#endif
 	fcomip	%st(1),%st		# y, x
 	jne	1f
 	fld	%st(1)			# x , y , x
@@ -203,7 +219,11 @@ ninfinity:
 
 1:	# y is not 2
 	# x ** 1/2 is sqrt(x)
-	flds	PIC_L(half)		# 1/2, y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	half(%rip)		# 1/2, y , x
+#else
+	flds	half			# 1/2, y , x
+#endif
 	fcomip	%st(1),%st		# y, x
 	jne	1f
 	fld	%st(1)			# x , y , x
@@ -251,7 +271,11 @@ ninfinity:
 	je	1f			# t is integral
 	fsub    %st(1),%st		# t-[t] , [t] , y , x
 	f2xm1				# 2**(t-[t])-1 , [t] , y , x
-	fadds	PIC_L(one)		# 2**(t-[t]) , [t] , y , x
+#ifdef PIC	/* PIC-L macro */
+	fadds	one(%rip)		# 2**(t-[t]) , [t] , y , x
+#else
+	fadds	one			# 2**(t-[t]) , [t] , y , x
+#endif
 	fscale				# 2**t = px**y , [t] , y , x
 	jmp	2f
 1:
@@ -279,14 +303,22 @@ ninfinity:
 .xisninf:
 	# -inf ** +-y is -0 ** -+y
 	fchs				# -y , x
-	flds	PIC_L(negzero)		# -0 , -y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	negzero(%rip)		# -0 , -y , x
+#else
+	flds	negzero			# -0 , -y , x
+#endif
 	fstp	%st(2)			# -y , -0
 	jmp	.xisnzero
 
 .yispinf:
 	fld	%st(1)			# x , y , x
 	fabs				# |x| , y , x
-	flds	PIC_L(one)		# 1 , |x| , y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	one(%rip)		# 1 , |x| , y , x
+#else
+	flds	one			# 1 , |x| , y , x
+#endif
 	fcomip	%st(1),%st		# |x| , y , x
 	fstp	%st(0)			# y , x
 	je	.retponeorinvalid	# x == -1	C99
@@ -296,7 +328,11 @@ ninfinity:
 .yisninf:
 	fld	%st(1)			# x , y , x
 	fabs				# |x| , y , x
-	flds	PIC_L(one)		# 1 , |x| , y , x
+#ifdef PIC	/* PIC-L macro */
+	flds	one(%rip)		# 1 , |x| , y , x
+#else
+	flds	one			# 1 , |x| , y , x
+#endif
 	fcomip	%st(1),%st		# |x| , y , x
 	fstp	%st(0)			# y , x
 	je	.retponeorinvalid	# x == -1	C99
@@ -330,7 +366,11 @@ ninfinity:
 2:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(ninfinity)	# -inf
+#ifdef PIC	/* PIC-L macro */
+	flds	ninfinity(%rip)		# -inf
+#else
+	flds	ninfinity		# -inf
+#endif
 	ret
 
 1:	# y is not an odd integer
@@ -354,11 +394,20 @@ ninfinity:
 .retnzero:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(negzero)		# -0
+#ifdef PIC	/* PIC-L macro */
+	flds	negzero(%rip)		# -0
+#else
+	flds	negzero			# -0
+#endif
 	ret
 
 .retponeorinvalid:
-	PIC_G_LOAD(movzwq,__xpg6,rax)
+#ifdef PIC	/* PIC-G-LOAD macro */
+	movq	__xpg6@GOTPCREL(%rip),%rax
+	movzwq	(%rax),%rax
+#else
+	movzwq	__xpg6,%rax
+#endif
 	andl	$_C99SUSv3_pow_treats_Inf_as_an_even_int,%eax
 	cmpl	$0,%eax
 	je	1f
@@ -370,21 +419,33 @@ ninfinity:
 1:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(Snan)		# Q NaN (i flag)
+#ifdef PIC	/* PIC-L macro */
+	flds	Snan(%rip)		# Q NaN (i flag)
+#else
+	flds	Snan			# Q NaN (i flag)
+#endif
 	fwait
 	ret
 
 .retpinf:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
-	flds	PIC_L(pinfinity)	# +inf
+#ifdef PIC	/* PIC-L macro */
+	flds	pinfinity(%rip)		# +inf
+#else
+	flds	pinfinity		# +inf
+#endif
 	ret
 
 .retpinfzflag:
 	fstp	%st(0)			# x
 	fstp	%st(0)			# stack empty
 	fldz
-	fdivrs	PIC_L(one)		# 1/0
+#ifdef PIC	/* PIC-L macro */
+	fdivrs	one(%rip)		# 1/0
+#else
+	fdivrs	one			# 1/0
+#endif
 	ret
 
 	# Set %ecx to 2 if y is an even integer, 1 if y is an odd integer,

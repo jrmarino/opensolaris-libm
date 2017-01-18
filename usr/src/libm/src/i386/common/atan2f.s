@@ -29,7 +29,8 @@
         .file "atan2f.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(atan2f,function)
+	.weak __atan2f
+	.type __atan2f,@function
 #include "libm_protos.h"
 
 	ENTRY(atan2f)

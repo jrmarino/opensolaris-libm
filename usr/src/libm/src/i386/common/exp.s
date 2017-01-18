@@ -29,7 +29,8 @@
         .file "exp.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(exp,function)
+	.weak __exp
+	.type __exp,@function
 #include "libm_protos.h"
 
 	ENTRY(exp)
@@ -91,7 +92,12 @@ LIBM_ANSI_PRAGMA_WEAK(exp,function)
 	fstp	%st(0)			# stack empty
 	push	%ebp
 	mov	%esp,%ebp
-	PIC_SETUP(1)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.1
+.1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.1],%ebx
+#endif
 	pushl	$6
 	jmp	.error
 
@@ -99,7 +105,12 @@ LIBM_ANSI_PRAGMA_WEAK(exp,function)
 	fstp	%st(0)			# stack empty
 	push	%ebp
 	mov	%esp,%ebp
-	PIC_SETUP(2)
+#ifdef PIC	/* PIC-SETUP macro */
+	pushl	%ebx
+	call	.2
+.2:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-.2],%ebx
+#endif
 	pushl	$7
 
 .error:
@@ -107,9 +118,15 @@ LIBM_ANSI_PRAGMA_WEAK(exp,function)
 	pushl	8(%ebp)			# low x
 	pushl	12(%ebp)		# high x
 	pushl	8(%ebp)			# low x
-	call	PIC_F(_SVID_libm_err)
+#ifdef PIC	/* PIC-F macro */
+	call	_SVID_libm_err@PLT
+#else
+	call	_SVID_libm_err
+#endif
 	addl	$20,%esp
-	PIC_WRAPUP
+#ifdef PIC	/* PIC-WRAPUP macro */
+	popl	%ebx
+#endif
 	leave
 	ret
 

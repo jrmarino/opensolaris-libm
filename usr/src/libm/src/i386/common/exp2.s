@@ -29,7 +29,8 @@
         .file "exp2.s"
 
 #include "libm.h"
-LIBM_ANSI_PRAGMA_WEAK(exp2,function)
+	.weak __exp2
+	.type __exp2,@function
 
 	ENTRY(exp2)
 	movl	8(%esp),%ecx		# ecx <-- hi_32(x)
