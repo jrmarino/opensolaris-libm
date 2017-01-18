@@ -87,17 +87,16 @@ typedef  union {
 
 /*
  * FPCLASS(X)
- * fpclass(x) returns the floating point class x belongs to
- */
-
-enum fp_class_type
-fpclass(double x)
-{
-/* #### original function ####
+ * fpclass(x) returns the floating point class to which x belongs
+ *
  * The original function distinguished between positive and negative
  * versions of infinity, normal, denormal, and zero, but the
  * fp_class_type enumeration doesn't make this distinguishment.
+ *
 
+fpclass_t
+fpclass(double x)
+{
 	int	sign, exp;
 
 	exp = EXPONENT(x);
@@ -119,7 +118,12 @@ fpclass(double x)
 	}
 	* if we reach here we have non-zero normalized number *
 	return (sign ? FP_NNORM : FP_PNORM);
+}
 */
+
+enum fp_class_type
+fp_class(double x)
+{
 	int	exp;
 	exp = EXPONENT(x);
 	if (exp == 0) {

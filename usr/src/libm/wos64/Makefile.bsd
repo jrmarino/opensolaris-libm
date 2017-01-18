@@ -191,7 +191,7 @@ COBJS_i386	= $(COBJS_sparc)
 # atan2pi.o and sincospi.o is for internal use only
 #
 COBJS		= \
-		fpclass.o \
+		fp_class.o \
 		$(COBJS_$(MCPU)) \
 		__cos.o \
 		__lgamma.o \
@@ -954,7 +954,7 @@ $(LIBM_S): $(MAPFMV2) $$(OBJS_LIBM_SO:.o=.So)
 	@echo Building shared library: ${.TARGET:T}
 	${RM} ${.TARGET}
 	${CC} ${LDFLAGS} -Wl,--version-script=${MAPFMV2} -shared -Wl,-x \
-		-o ${.TARGET} -Wl,-soname,${LIBM_S:T:R} \
+		-o ${.TARGET} -Wl,-soname,${LIBM_S:T} \
 		`lorder $(OBJS_LIBM_SO:.o=.So) | ${TSORT} -q`
 
 $(LIBMVEC_static): $(OBJS_LIBMVEC_SO)
@@ -967,7 +967,7 @@ $(LIBMVEC_S): $(MAPFMVEC) $(OBJS_LIBMVEC_SO:.o=.So)
 	@echo Building shared library: ${.TARGET:T}
 	${RM} ${.TARGET}
 	${CC} ${LDFLAGS} -Wl,--version-script=${MAPFMVEC} -shared -Wl,-x \
-		-o ${.TARGET} -Wl,-soname,${LIBMVEC_S:T:R} \
+		-o ${.TARGET} -Wl,-soname,${LIBMVEC_S:T} \
 		`lorder $(OBJS_LIBMVEC_SO:.o=.So) | ${TSORT} -q`
 
 # Todo: sparc support (maybe)
