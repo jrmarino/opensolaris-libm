@@ -191,6 +191,7 @@ COBJS_i386	= $(COBJS_sparc)
 # atan2pi.o and sincospi.o is for internal use only
 #
 COBJS		= \
+		fpclass.o \
 		$(COBJS_$(MCPU)) \
 		__cos.o \
 		__lgamma.o \
@@ -935,7 +936,7 @@ install:
 	${BSD_INSTALL_LIB} $(LIBM_S) ${DESTINO_LIB}/$(LIBM_S:T)
 	${BSD_INSTALL_DATA} $(LIBM_static) ${DESTINO_LIB}/$(LIBM_static:T)
 	${LN} -sf $(LIBM_S:T) ${DESTINO_LIB}/$(LIBM_S:T:R)
-.for OH in ${_OSOL_HEADERS}
+.for OH in ${_OSOL_HEADERS} sys/feature_tests.h
 	${BSD_INSTALL_DATA} ../inc/${OH} ${DESTINO_INCS}/${OH}
 .endfor
 
