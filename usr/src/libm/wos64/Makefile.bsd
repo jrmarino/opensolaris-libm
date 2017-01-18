@@ -595,6 +595,9 @@ complexOBJS	= \
 		#end
 
 # amd64 specific (sparc has C alternatives for these)
+.if defined(USE_ASSEMBLY_VERSIONS)
+NO_C_ALTERNATIVES=
+.else
 NO_C_ALTERNATIVES= \
 		acosl.o \
 		asinl.o \
@@ -622,6 +625,7 @@ NO_C_ALTERNATIVES= \
 		sqrtl.o \
 		__swapFLAGS.o \
 		#end
+.endif
 
 .for candidate in  $(COBJS) $(ROBJS) $(QOBJS) $(SOBJS) $(complexOBJS) $(m9xOBJS)
 . if !${NO_C_ALTERNATIVES:M${candidate}}
@@ -997,18 +1001,18 @@ amd64/mvobj_s/${SF:.o=.So}: ${SRC}/mvec/amd64/${SF:.o=.S} $(CG)/mvobj_s $(HEADER
 .for SF in ${LIBM_SO_OBJS}
 . if defined(USE_ASSEMBLY_VERSIONS) && (exists(${.CURDIR}/../src/i386/amd64/${SF:.o=.s}) || exists(${.CURDIR}/../src/i386/common/${SF:.o=.s}))
 .  if exists(${.CURDIR}/../src/i386/amd64/${SF:.o=.s})
-amd64/mobj_s/${SF}: ${SF:.o=.s} amd64/mobj_s $(C_HDR)
+amd64/mobj_s/${SF}: ${SRC}/i386/amd64/${SF:.o=.s} amd64/mobj_s $(C_HDR)
 	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -c ${.ALLSRC:M*.s} -o ${.TARGET}
-amd64/mobj_s/${SF:.o=.So}: ${SF:.o=.s} amd64/mobj_s $(C_HDR)
+amd64/mobj_s/${SF:.o=.So}: ${SRC}/i386/amd64/${SF:.o=.s} amd64/mobj_s $(C_HDR)
 	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -fpic -DPIC -c ${.ALLSRC:M*.s} -o ${.TARGET}
 .  else
-amd64/mobj_s/${SF}: ${SF:.o=.s} amd64/mobj_s $(C_HDR)
-	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) -m32 \
+amd64/mobj_s/${SF}: ${SRC}/i386/common/${SF:.o=.s} amd64/mobj_s $(C_HDR)
+	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -c ${.ALLSRC:M*.s} -o ${.TARGET}
-amd64/mobj_s/${SF:.o=.So}: ${SF:.o=.s} amd64/mobj_s $(C_HDR)
-	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) -m32 \
+amd64/mobj_s/${SF:.o=.So}: ${SRC}/i386/common/${SF:.o=.s} amd64/mobj_s $(C_HDR)
+	$(CC) -x assembler-with-cpp $(CPPFLAGS) $(APPFLAGS) \
 		${MLIBC_FLAGS} -fpic -DPIC -c ${.ALLSRC:M*.s} -o ${.TARGET}
 .  endif
 . else
