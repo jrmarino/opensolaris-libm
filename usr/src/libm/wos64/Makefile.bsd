@@ -924,7 +924,7 @@ DIRS_CG		= \
 # libm build rules
 #
 
-all: $(LIBMVEC_static) $(LIBMVEC_S)
+all: $(LIBMVEC_static) $(LIBMVEC_S) $(LIBM_static) $(LIBM_S)
 
 install:
 	${MKDIR} ${DESTINO_LIB} ${DESTINO_INCS}/sys ${DESTINO_INCS}/iso
@@ -932,6 +932,9 @@ install:
 	${BSD_INSTALL_LIB} $(LIBMVEC_S) ${DESTINO_LIB}/$(LIBMVEC_S:T)
 	${BSD_INSTALL_DATA} $(LIBMVEC_static) ${DESTINO_LIB}/$(LIBMVEC_static:T)
 	${LN} -sf $(LIBMVEC_S:T) ${DESTINO_LIB}/$(LIBMVEC_S:T:R)
+	${BSD_INSTALL_LIB} $(LIBM_S) ${DESTINO_LIB}/$(LIBM_S:T)
+	${BSD_INSTALL_DATA} $(LIBM_static) ${DESTINO_LIB}/$(LIBM_static:T)
+	${LN} -sf $(LIBM_S:T) ${DESTINO_LIB}/$(LIBM_S:T:R)
 .for OH in ${_OSOL_HEADERS}
 	${BSD_INSTALL_DATA} ../inc/${OH} ${DESTINO_INCS}/${OH}
 .endfor
