@@ -49,4 +49,9 @@
 
 #include "xpg6.h"
 
-unsigned int __xpg6 = _C99SUSv3_mode_OFF;
+/*
+ * original setting: unsigned int __xpg6 = _C99SUSv3_mode_OFF;
+ *
+ * However, specify C99 behavior:
+ */
+unsigned int __xpg6 = _C99SUSv3_pow_treats_Inf_as_an_even_int;
