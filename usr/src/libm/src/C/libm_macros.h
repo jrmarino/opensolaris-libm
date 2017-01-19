@@ -41,13 +41,15 @@
 #define	ISZEROL(x)	(((((int *)&x)[0] & ~XSGNMSK) | ((int *)&x)[1] | \
 				((int *)&x)[2] | ((int *)&x)[3]) == 0)
 
+#include <stdint.h>
+
 typedef union
 {
   double value;
   struct
   {
-    u_int32_t msw;
-    u_int32_t lsw;
+    uint32_t msw;
+    uint32_t lsw;
   } parts;
 } ieee_double_shape_type;
 
@@ -60,13 +62,15 @@ typedef union
 #define	XBIASED_EXP(x)	(((int *)&x)[HIXWORD] & 0x7fff)
 #define	ISZEROL(x)	(x == 0.0L)
 
+#include <stdint.h>
+
 typedef union
 {
   double value;
   struct
   {
-    u_int32_t lsw;
-    u_int32_t msw;
+    uint32_t lsw;
+    uint32_t msw;
   } parts;
 } ieee_double_shape_type;
 
