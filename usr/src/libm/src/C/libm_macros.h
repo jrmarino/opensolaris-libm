@@ -41,6 +41,16 @@
 #define	ISZEROL(x)	(((((int *)&x)[0] & ~XSGNMSK) | ((int *)&x)[1] | \
 				((int *)&x)[2] | ((int *)&x)[3]) == 0)
 
+typedef union
+{
+  double value;
+  struct
+  {
+    u_int32_t msw;
+    u_int32_t lsw;
+  } parts;
+} ieee_double_shape_type;
+
 #elif defined(__x86)
 
 #define	HIWORD		1
@@ -49,6 +59,16 @@
 #define	XSGNMSK		0x8000
 #define	XBIASED_EXP(x)	(((int *)&x)[HIXWORD] & 0x7fff)
 #define	ISZEROL(x)	(x == 0.0L)
+
+typedef union
+{
+  double value;
+  struct
+  {
+    u_int32_t lsw;
+    u_int32_t msw;
+  } parts;
+} ieee_double_shape_type;
 
 #define	HANDLE_UNSUPPORTED
 
@@ -75,5 +95,36 @@
 #else
 #error Unknown architecture
 #endif
+
+#define EXTRACT_WORDS(ix0,ix1,d) \
+{ \
+  ieee_double_shape_type ew_u; \
+  ew_u.value = (d); \
+  (ix0) = ew_u.parts.msw; \
+  (ix1) = ew_u.parts.lsw; \
+}
+
+#define GET_HIGH_WORD(i,d) \
+{ \
+  ieee_double_shape_type gh_u; \
+  gh_u.value = (d); \
+  (i) = gh_u.parts.msw; \
+}
+
+#define SET_HIGH_WORD(d,v) \
+{ \
+  ieee_double_shape_type sh_u; \
+  sh_u.value = (d); \
+  sh_u.parts.msw = (v); \
+  (d) = sh_u.value; \
+}
+
+#define INSERT_WORDS(d,ix0,ix1) \
+{ \
+  ieee_double_shape_type iw_u; \
+  iw_u.parts.msw = (ix0); \
+  iw_u.parts.lsw = (ix1); \
+  (d) = iw_u.value; \
+}
 
 #endif	/* _LIBM_MACROS_H */
