@@ -157,7 +157,7 @@ LDEND		= -lc
 
 APPFLAGS	= $(ASDEF) -Wp,-P
 ASFLAGS		=
-CFLAGS		+= $(COPT) -Wall
+CFLAGS		+= $(COPT) -Wall -g
 CPPFLAGS	= $(CDEF) $(CINC)
 
 #

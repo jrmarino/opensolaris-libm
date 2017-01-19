@@ -107,8 +107,6 @@ static const union {
 #define	NaN	C[0].d
 #define	PI_RZ	C[1].d
 
-#define	__HI(x)	((unsigned *)&x)[HIWORD]
-#define	__LO(x)	((unsigned *)&x)[LOWORD]
 #undef	Inf
 #define	Inf	HUGE_VAL
 
@@ -504,7 +502,7 @@ _SVID_libm_err(double x, double y, int type) {
 		exc.name = "pow";
 		ieee_retval = setexception(0, 1.0);
 		{
-			int ahy, k, j, yisint, ly, hx;
+			int ahy, k, j, yisint, ly, hx, hy;
 			/* INDENT OFF */
 			/*
 			 * determine if y is an odd int when x = -0
@@ -513,9 +511,9 @@ _SVID_libm_err(double x, double y, int type) {
 			 * yisint = 2       ... y is an even int
 			 */
 			/* INDENT ON */
-			hx  = __HI(x);
-			ahy = __HI(y)&0x7fffffff;
-			ly  = __LO(y);
+			GET_HIGH_WORD(hx,x);
+			EXTRACT_WORDS(hy,ly,y);
+			ahy = hy&0x7fffffff;
 
 			yisint = 0;
 			if (ahy >= 0x43400000) {

@@ -43,19 +43,6 @@
 #include "libm_protos.h"
 #include <math.h>		/* fabs() */
 
-#undef HIWORD
-#undef LOWORD
-
-#if defined(_BIG_ENDIAN)
-#define	HIWORD	0
-#define	LOWORD	1
-#else
-#define	HIWORD	1
-#define	LOWORD	0
-#endif
-#define	__HI(x)	((int *) &x)[HIWORD]
-#define	__LO(x)	((int *) &x)[LOWORD]
-
 static const double one = 1.0, Zero[] = {0.0, -0.0};
 
 static double
@@ -63,10 +50,8 @@ fmodquo(double x, double y, int *quo) {
 	int n, hx, hy, hz, ix, iy, sx, sq, i, m;
 	unsigned lx, ly, lz;
 
-	hx = __HI(x);		/* high word of x */
-	lx = __LO(x);		/* low  word of x */
-	hy = __HI(y);		/* high word of y */
-	ly = __LO(y);		/* low  word of y */
+	EXTRACT_WORDS(hx,lx,x);
+	EXTRACT_WORDS(hy,ly,y);
 	sx = hx & 0x80000000;	/* sign of x */
 	sq = (hx ^ hy) & 0x80000000;	/* sign of x/y */
 	hx ^= sx;		/* |x| */
@@ -187,8 +172,8 @@ fmodquo(double x, double y, int *quo) {
 	}
 	if (iy >= -1022) {	/* normalize output */
 		hx = (hx - 0x00100000) | ((iy + 1023) << 20);
-		__HI(x) = hx | sx;
-		__LO(x) = lx;
+		hx|= sx;
+		INSERT_WORDS(x,hx,lx);
 	} else {			/* subnormal output */
 		n = -1022 - iy;
 		if (n <= 20) {
@@ -201,8 +186,8 @@ fmodquo(double x, double y, int *quo) {
 			lx = hx >> (n - 32);
 			hx = sx;
 		}
-		__HI(x) = hx | sx;
-		__LO(x) = lx;
+		hx|= sx;
+		INSERT_WORDS(x,hx,lx);
 		x *= one;	/* create necessary signal */
 	}
 	return (x);		/* exact output */
@@ -216,9 +201,8 @@ remquo(double x, double y, int *quo) {
 	double v;
 	unsigned ly;
 
-	hx = __HI(x);		/* high word of x */
-	hy = __HI(y);		/* high word of y */
-	ly = __LO(y);		/* low  word of y */
+	GET_HIGH_WORD(hx,x);
+	EXTRACT_WORDS(hy,ly,y);
 	sx = hx & 0x80000000;	/* sign of x */
 	sq = (hx ^ hy) & 0x80000000;	/* sign of x/y */
 	hx ^= sx;		/* |x| */

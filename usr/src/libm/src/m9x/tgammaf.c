@@ -45,19 +45,6 @@
 #include <sunmath.h>
 #endif
 
-#undef HIWORD
-#undef LOWORD
-
-#if defined(_BIG_ENDIAN)
-#define	HIWORD	0
-#define	LOWORD	1
-#else
-#define	HIWORD	1
-#define	LOWORD	0
-#endif
-#define	__HI(x)	((int *) &x)[HIWORD]
-#define	__LO(x)	((unsigned *) &x)[LOWORD]
-
 /* Coefficients for primary intervals GTi() */
 static const double cr[] = {
 	/* p1 */
@@ -309,17 +296,15 @@ static const double T2[] = {   /* T2[j]=log(1+j/64+1/128) */
 static double
 large_gam(double x) {
 	double ss, zz, z, t1, t2, w, y, u;
-	unsigned lx;
+	unsigned lx, hz, hzz;
 	int k, ix, j, m;
 
-	ix = __HI(x);
-	lx = __LO(x);
+	EXTRACT_WORDS(ix,lx,x);
 	m = (ix >> 20) - 0x3ff;			/* exponent of x, range:3-5 */
 	ix = (ix & 0x000fffff) | 0x3ff00000;	/* y = scale x to [1,2] */
-	__HI(y) = ix;
-	__LO(y) = lx;
-	__HI(z) = (ix & 0xffffc000) | 0x2000;	/* z[j]=1+j/64+1/128 */
-	__LO(z) = 0;
+	INSERT_WORDS(y,ix,lx);
+	hz = (ix & 0xffffc000) | 0x2000;	/* z[j]=1+j/64+1/128 */
+	INSERT_WORDS(z,hz,0);
 	j = (ix >> 14) & 0x3f;
 	t1 = y + z;
 	t2 = y - z;
@@ -340,7 +325,9 @@ large_gam(double x) {
 	m = k >> 5;
 	z = w - (double) k *ln2_32;
 	zz = S[j] * (one + z + (z * z) * (Et1 + z * Et2));
-	__HI(zz) += m << 20;
+	GET_HIGH_WORD(hzz,zz);
+	hzz += m << 20;
+	SET_HIgH_WORD(zz,hzz);
 	return (zz);
 }
 /* INDENT OFF */

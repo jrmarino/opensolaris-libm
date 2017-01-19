@@ -750,9 +750,6 @@
 
 #include "libm.h"
 
-#define	__HI(x)	((int *) &x)[HIWORD]
-#define	__LO(x)	((unsigned *) &x)[LOWORD]
-
 struct Double {
 	double h;
 	double l;
@@ -1210,7 +1207,7 @@ static struct Double
 large_gam(double x, int *m) {
 	double z, t1, t2, t3, z2, t5, w, y, u, r, z4, v, t24 = 16777216.0,
 		p24 = 1.0 / 16777216.0;
-	int n2, j2, k, ix, j;
+	int n2, j2, k, ix, j, hz, hu;
 	unsigned lx;
 	struct Double zz;
 	double u2, ss_h, ss_l, r_h, w_h, w_l, t4;
@@ -1240,15 +1237,13 @@ large_gam(double x, int *m) {
  *                          [leading] + [Trailing]
  */
 /* INDENT ON */
-	ix = __HI(x);
-	lx = __LO(x);
+	EXTRACT_WORDS(ix,lx,x);
 	n2 = (ix >> 20) - 0x3ff;	/* exponent of x, range:3-7 */
 	n2 += n2;			/* 2n */
 	ix = (ix & 0x000fffff) | 0x3ff00000;	/* y = scale x to [1,2] */
-	__HI(y) = ix;
-	__LO(y) = lx;
-	__HI(z) = (ix & 0xffffc000) | 0x2000;	/* z[j]=1+j/64+1/128 */
-	__LO(z) = 0;
+	INSERT_WORDS(y,ix,lx);
+	hz = (ix & 0xffffc000) | 0x2000;	/* z[j]=1+j/64+1/128 */
+	INSERT_WORDS(z,hz,0);
 	j2 = (ix >> 13) & 0x7e;	/* 2j */
 	t1 = y + z;
 	t2 = y - z;
@@ -1257,7 +1252,8 @@ large_gam(double x, int *m) {
 	u = r * t2;		/* u = (y-z)/(y+z) */
 	t4 = T2[j2 + 1] + T1[n2 + 1];
 	z2 = u * u;
-	k = __HI(u) & 0x7fffffff;
+	GET_HIGH_WORD(hu, u);
+	k = hu & 0x7fffffff;
 	t3 = T2[j2] + T1[n2];
 	if ((k >> 20) < 0x3ec) {	/* |u|<2**-19 */
 		t2 = t4 + u * ((two + z2 * A1) + (z2 * z2) * (A2 + z2 * A3));
@@ -1406,6 +1402,7 @@ static struct Double
 gam_n(int i, double x) {
 	struct Double rr = {0.0L, 0.0L}, yy;
 	double r1, r2, t2, z, xh, xl, yh, yl, zh, z1, z2, zl, x5, wh, wl;
+	int	hzh;
 
 	/* compute yy = gamma(x+1) */
 	if (x > 0.2845) {
@@ -1461,8 +1458,9 @@ gam_n(int i, double x) {
 		z1 = x + 2.0;
 		z2 = (x + one) * (x + 3.0);
 		zh = z1;
-		__LO(zh) = 0;
-		__HI(zh) &= 0xfffffff8;	/* zh 18 bits mantissa */
+		GET_HIGH_WORD(hzh,zh);
+		hzh &= 0xfffffff8;	/* zh 18 bits mantissa */
+		INSERT_WORDS(zh,hzh,0);
 		zl = x - (zh - 2.0);
 		z = z1 * z2;
 		xh = (double) ((float) z);
@@ -1532,11 +1530,10 @@ double
 tgamma(double x) {
 	struct Double ss, ww;
 	double t, t1, t2, t3, t4, t5, w, y, z, z1, z2, z3, z5;
-	int i, j, k, m, ix, hx, xk;
+	int i, j, k, m, ix, hx, xk, ht, hw, hz;
 	unsigned lx;
 
-	hx = __HI(x);
-	lx = __LO(x);
+	EXTRACT_WORDS(hx,lx,x);
 	ix = hx & 0x7fffffff;
 	y = x;
 
@@ -1553,7 +1550,9 @@ tgamma(double x) {
 	if (hx >= 0x40200000) {	/* x >= 8 */
 		ww = large_gam(x, &m);
 		w = ww.h + ww.l;
-		__HI(w) += m << 20;
+		GET_HIGH_WORD(hw,w);
+		hw += m << 20;
+		SET_HIGH_WORD(w,hw);
 		return (w);
 	}
 	if (hx > 0) {		/* 0 < x < 8 */
@@ -1675,13 +1674,14 @@ tgamma(double x) {
 
 	/* check whether z*2**-m underflow */
 	if (m != 0) {
-		hx = __HI(z);
+		GET_HIGH_WORD(hx,z);
 		i = hx & 0x80000000;
 		ix = hx ^ i;
 		j = ix >> 20;
 		if (j > m) {
 			ix -= m << 20;
-			__HI(z) = ix ^ i;
+			hz = ix ^ i;
+			SET_HIGH_WORD(z,hz);
 		} else if ((m - j) > 52) {
 			/* underflow */
 			if (xk == 0)
@@ -1692,9 +1692,12 @@ tgamma(double x) {
 			/* subnormal */
 			m -= 60;
 			t = one;
-			__HI(t) -= 60 << 20;
+			GET_HIGH_WORD(ht,t);
+			ht -= 60 << 20;
+			SET_HIGH_WORD(t,ht);
 			ix -= m << 20;
-			__HI(z) = ix ^ i;
+			hz = ix ^ i;
+			SET_HIGH_WORD(z,hz);
 			z *= t;
 		}
 	}
