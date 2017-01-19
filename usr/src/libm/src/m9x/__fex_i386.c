@@ -81,18 +81,15 @@ __fex_accrued()
 		return &accrued;
 	else {
 		p = NULL;
-		pthread_mutex_init(&accrued_key_lock, NULL);
 		pthread_mutex_lock(&accrued_key_lock);
 		p = pthread_getspecific(accrued_key);
 		if (p == NULL) {
 			if (pthread_key_create(&accrued_key, free) != 0) {
 				pthread_mutex_unlock(&accrued_key_lock);
-				pthread_mutex_destroy(&accrued_key_lock);
 				return NULL;
 			}
 		}
 		pthread_mutex_unlock(&accrued_key_lock);
-		pthread_mutex_destroy(&accrued_key_lock);
 		if (!p) {
 			if ((p = (int*) malloc(sizeof(int))) == NULL)
 				return NULL;

@@ -45,33 +45,41 @@
 #include <pthread.h>
 #include "fex_handler.h"
 
-#if !defined(PC)
-#if defined(REG_PC)
-#define	PC	REG_PC
+#if defined __DragonFly__ || defined __FreeBSD__
+#define REG_PC	mc_rip
+#define REG_SP	mc_rsp
+#define REG_FP	mc_rbp
+# ifdef __FreeBSD__
+#define FPU_STATE	mc_fpstate
+#define FPU_STRUCTURE	savefpu
+# endif
+# ifdef __DragonFly__
+#define FPU_STATE	mc_fpregs
+#define FPU_STRUCTURE	savexmm64
+# endif
 #else
-#error Neither PC nor REG_PC is defined!
-#endif
+#error Fex log not supported on this platform
 #endif
 
 static FILE *log_fp = NULL;
-static mutex_t log_lock = DEFAULTMUTEX;
+static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
 static int log_depth = 100;
 
 FILE *fex_get_log(void)
 {
 	FILE	*fp;
 
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	fp = log_fp;
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 	return fp;
 }
 
 int fex_set_log(FILE *fp)
 {
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	log_fp = fp;
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 	__fex_update_te();
 	return 1;
 }
@@ -80,9 +88,9 @@ int fex_get_log_depth(void)
 {
 	int	d;
 
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	d = log_depth;
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 	return d;
 }
 
@@ -90,9 +98,9 @@ int fex_set_log_depth(int d)
 {
 	if (d < 0)
 		return 0;
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	log_depth = d;
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 	return 1;
 }
 
@@ -226,24 +234,19 @@ void fex_log_entry(const char *msg)
 	int		fd;
 
 	/* if logging is disabled, just return */
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	if (log_fp == NULL) {
-		mutex_unlock(&log_lock);
+		pthread_mutex_unlock(&log_lock);
 		return;
 	}
 
 	/* get the frame pointer from the current context and
 	   pop our own frame */
 	getcontext(&uc);
-#if defined(__sparc) || defined(__amd64)
-	fp = FRAMEP(uc.uc_mcontext.gregs[REG_SP]);
-#elif defined(__i386)	/* !defined(__amd64) */
-	fp = FRAMEP(uc.uc_mcontext.gregs[EBP]);
-#else
-#error Unknown architecture
-#endif
+	fp = FRAMEP(uc.uc_mcontext.REG_SP);
+
 	if (fp == NULL) {
-		mutex_unlock(&log_lock);
+		pthread_mutex_unlock(&log_lock);
 		return;
 	}
 	stk = (char *)fp->fr_savpc;
@@ -251,7 +254,7 @@ void fex_log_entry(const char *msg)
 
 	/* if we've already logged this message here, don't make an entry */
 	if (check_exc_list(stk, (unsigned long)msg, stk, fp)) {
-		mutex_unlock(&log_lock);
+		pthread_mutex_unlock(&log_lock);
 		return;
 	}
 
@@ -262,7 +265,7 @@ void fex_log_entry(const char *msg)
 	write(fd, "\n", 1);
 	__fex_sym_init();
 	print_stack(fd, stk, fp);
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 }
 
 static const char *exception[FEX_NUM_EXC] = {
@@ -289,25 +292,16 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	int		fd;
 
 	/* if logging is disabled, just return */
-	mutex_lock(&log_lock);
+	pthread_mutex_lock(&log_lock);
 	if (log_fp == NULL) {
-		mutex_unlock(&log_lock);
+		pthread_mutex_unlock(&log_lock);
 		return;
 	}
 
 	/* get stack info */
-#if defined(__sparc)
-	stk = (char*)uap->uc_mcontext.gregs[REG_PC];
-	fp = FRAMEP(uap->uc_mcontext.gregs[REG_SP]);
-#elif defined(__amd64)
-	stk = (char*)uap->uc_mcontext.gregs[REG_PC];
-	fp = FRAMEP(uap->uc_mcontext.gregs[REG_RBP]);
-#elif defined(__i386)	/* !defined(__amd64) */
-	stk = (char*)uap->uc_mcontext.gregs[PC];
-	fp = FRAMEP(uap->uc_mcontext.gregs[EBP]);
-#else
-#error Unknown architecture
-#endif
+	stk = (char*)uap->uc_mcontext.REG_PC;
+	fp = FRAMEP(uap->uc_mcontext.REG_FP);
+
 
 	/* if the handling mode is the default and this exception's
 	   flag is already raised, don't make an entry */
@@ -315,31 +309,31 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		switch (e) {
 		case fex_inexact:
 			if (f & FE_INEXACT) {
-				mutex_unlock(&log_lock);
+				pthread_mutex_unlock(&log_lock);
 				return;
 			}
 			break;
 		case fex_underflow:
 			if (f & FE_UNDERFLOW) {
-				mutex_unlock(&log_lock);
+				pthread_mutex_unlock(&log_lock);
 				return;
 			}
 			break;
 		case fex_overflow:
 			if (f & FE_OVERFLOW) {
-				mutex_unlock(&log_lock);
+				pthread_mutex_unlock(&log_lock);
 				return;
 			}
 			break;
 		case fex_division:
 			if (f & FE_DIVBYZERO) {
-				mutex_unlock(&log_lock);
+				pthread_mutex_unlock(&log_lock);
 				return;
 			}
 			break;
 		default:
 			if (f & FE_INVALID) {
-				mutex_unlock(&log_lock);
+				pthread_mutex_unlock(&log_lock);
 				return;
 			}
 			break;
@@ -349,7 +343,7 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	/* if we've already logged this exception at this address,
 	   don't make an entry */
 	if (check_exc_list(addr, (unsigned long)e, stk, fp)) {
-		mutex_unlock(&log_lock);
+		pthread_mutex_unlock(&log_lock);
 		return;
 	}
 
@@ -394,5 +388,5 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		break;
 	}
 	print_stack(fd, stk, fp);
-	mutex_unlock(&log_lock);
+	pthread_mutex_unlock(&log_lock);
 }

@@ -156,7 +156,6 @@ __fex_sync_with_libmtsk(int begin, int master)
     static pthread_mutex_t env_lock = PTHREAD_MUTEX_INITIALIZER;
 
 	if (begin) {
-		pthread_mutex_init(&env_lock, NULL);
 		pthread_mutex_lock(&env_lock);
 		if (master) {
 			(void) fegetenv(&master_env);
@@ -165,7 +164,6 @@ __fex_sync_with_libmtsk(int begin, int master)
 		else if (env_initialized)
 			(void) fesetenv(&master_env);
 		pthread_mutex_unlock(&env_lock);
-		pthread_mutex_destroy(&env_lock);
 	}
 	/* log disabled for now
 	else if (master && fex_get_log())
@@ -196,7 +194,6 @@ __fex_sync_with_threads(enum __libm_mt_fex_sync_actions action,
 {
 	switch (action) {
 	case __libm_mt_fex_start_master:
-		pthread_mutex_init(&thr_env->lock, NULL);
 		pthread_mutex_lock(&thr_env->lock);
 		(void) fegetenv(&thr_env->master_env);
 		thr_env->initialized = 1;
@@ -212,7 +209,6 @@ __fex_sync_with_threads(enum __libm_mt_fex_sync_actions action,
 
 	case __libm_mt_fex_finish_master:
 		__fex_update_te();
-		pthread_mutex_destroy(&thr_env->lock);
 		break;
 
 	case __libm_mt_fex_finish_slave:
@@ -550,11 +546,9 @@ update_state:
 
 not_ieee:
 	/* revert to the saved handler (if any) */
-	pthread_mutex_init(&hdlr_lock, NULL);
 	pthread_mutex_lock(&hdlr_lock);
 	act = oact;
 	pthread_mutex_unlock(&hdlr_lock);
-	pthread_mutex_destroy(&hdlr_lock);
 	switch ((unsigned long)act.sa_handler) {
 	case (unsigned long)SIG_DFL:
 		/* simulate trap with no handler installed */
@@ -596,18 +590,15 @@ __fex_get_thr_handlers()
 	}
 	else {
 		ptr = NULL;
-		pthread_mutex_init(&handlers_key_lock, NULL);
 		pthread_mutex_lock(&handlers_key_lock);
 		ptr = pthread_getspecific(handlers_key);
 		if (ptr == NULL) {
 			if (pthread_key_create(&handlers_key, free) != 0) {
 				pthread_mutex_unlock(&handlers_key_lock);
-				pthread_mutex_destroy(&handlers_key_lock);
 			return NULL;
 			}
 		}
 		pthread_mutex_unlock(&handlers_key_lock);
-		pthread_mutex_destroy(&handlers_key_lock);
 		if (!ptr) {
 			if ((ptr = (struct fex_handler_data *)
 				malloc(sizeof(fex_handler_t))) == NULL) {
@@ -653,11 +644,9 @@ __fex_update_te()
 		sigaction(SIGFPE, &act, &tmpact);
 		if (tmpact.sa_sigaction != (void *)__fex_hdlr)
 		{
-			pthread_mutex_init(&hdlr_lock, NULL);
 			pthread_mutex_lock(&hdlr_lock);
 			oact = tmpact;
 			pthread_mutex_unlock(&hdlr_lock);
-			pthread_mutex_destroy(&hdlr_lock);
 		}
 		hdlr_installed = 1;
 	}
