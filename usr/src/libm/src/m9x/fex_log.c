@@ -26,6 +26,9 @@
  * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
+/*
+ * Copyright 2017 John R. Marino <draco@marino.st>
+ */
 
 #pragma weak __fex_get_log = fex_get_log
 #pragma weak __fex_set_log = fex_set_log
@@ -39,7 +42,7 @@
 #include <string.h>
 #include <signal.h>
 #include <ucontext.h>
-//#include <sys/frame.h>
+#include <machine/frame.h>
 #include <fenv.h>
 #include <sys/ieeefp.h>
 #include <pthread.h>
@@ -49,17 +52,23 @@
 #define REG_PC	mc_rip
 #define REG_SP	mc_rsp
 #define REG_FP	mc_rbp
+#define NEXT_FRAME	tf_rbp
+#define FRAME_STRUCTURE	struct trapframe
+#define FRAMEP(X)	(struct trapframe *)(X)
 # ifdef __FreeBSD__
 #define FPU_STATE	mc_fpstate
 #define FPU_STRUCTURE	savefpu
 # endif
 # ifdef __DragonFly__
+#define FRAMEP(X)	(struct trapframe *)(X)
 #define FPU_STATE	mc_fpregs
 #define FPU_STRUCTURE	savexmm64
 # endif
 #else
 #error Fex log not supported on this platform
 #endif
+
+#define SYM_SUPPORT	0
 
 static FILE *log_fp = NULL;
 static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -112,25 +121,16 @@ static struct exc_list {
 	char			*stack[1]; /* actual length is max(1,nstack) */
 } *list = NULL;
 
-#ifdef __sparcv9
-#define FRAMEP(X)	(struct frame *)((char*)(X)+(((long)(X)&1)?2047:0))
-#else
-#define FRAMEP(X)	(struct frame *)(X)
-#endif
-
-#ifdef _LP64
+// amd64
 #define PDIG		"16"
-#else
-#define PDIG		"8"
-#endif
 
 /* look for a matching exc_list; return 1 if one is found,
    otherwise add this one to the list and return 0 */
 static int check_exc_list(char *addr, unsigned long code, char *stk,
-    struct frame *fp)
+    FRAME_STRUCTURE *fp)
 {
 	struct exc_list	*l, *ll = NULL;
-	struct frame	*f;
+	FRAME_STRUCTURE	*f;
 	int		i, n;
 
 	if (list) {
@@ -142,9 +142,10 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 			if (l->stack[0] != stk)
 				continue;
 			n = 1;
-			for (i = 1, f = fp; i < log_depth && i < l->nstack &&
-			    f && f->fr_savpc; i++, f = FRAMEP(f->fr_savfp))
-				if (l->stack[i] != (char *)f->fr_savpc) {
+			for (i = 1, f = fp;
+			  i < log_depth && i < l->nstack && f->NEXT_FRAME;
+			  i++, f = FRAMEP(f->NEXT_FRAME))
+				if (l->stack[i] != (char *)f->NEXT_FRAME) {
 					n = 0;
 					break;
 				}
@@ -154,8 +155,9 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 	}
 
 	/* create a new exc_list structure and tack it on the list */
-	for (n = 1, f = fp; n < log_depth && f && f->fr_savpc;
-	    n++, f = FRAMEP(f->fr_savfp)) ;
+	for (n = 1, f = fp;
+	  n < log_depth && f && f->NEXT_FRAME;
+	  n++, f = FRAMEP(f->NEXT_FRAME));
 	if ((l = (struct exc_list *)malloc(sizeof(struct exc_list) +
 	    (n - 1) * sizeof(char *))) != NULL) {
 		l->next = NULL;
@@ -164,8 +166,8 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 		l->nstack = ((log_depth < 1)? 0 : n);
 		l->stack[0] = stk;
 		for (i = 1; i < n; i++) {
-			l->stack[i] = (char *)fp->fr_savpc;
-			fp = FRAMEP(fp->fr_savfp);
+			l->stack[i] = (char *)fp->NEXT_FRAME;
+			fp = FRAMEP(fp->NEXT_FRAME);
 		}
 		if (list)
 			ll->next = l;
@@ -202,12 +204,16 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 * concern here, I opted for the safe and dumb route.)
 */
 
-static void print_stack(int fd, char *addr, struct frame *fp)
+static void print_stack(int fd, char *addr, FRAME_STRUCTURE *fp)
 {
 	int	i;
-	char	*name, buf[30];
+	char	buf[30];
+#if SYM_SUPPORT
+	char	*name;
+#endif
 
 	for (i = 0; i < log_depth && addr != NULL; i++) {
+#if SYM_SUPPORT
 		if (__fex_sym(addr, &name) != NULL) {
 			write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx  ",
 			    (long)addr));
@@ -216,20 +222,23 @@ static void print_stack(int fd, char *addr, struct frame *fp)
 			if (!strcmp(name, "main"))
 				break;
 		} else {
+#endif
 			write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx\n",
 			    (long)addr));
+#if SYM_SUPPORT
 		}
+#endif
 		if (fp == NULL)
 			break;
-		addr = (char *)fp->fr_savpc;
-		fp = FRAMEP(fp->fr_savfp);
+		addr = (char *)fp->NEXT_FRAME;
+		fp = FRAMEP(fp->NEXT_FRAME);
 	}
 }
 
 void fex_log_entry(const char *msg)
 {
 	ucontext_t	uc;
-	struct frame	*fp;
+	FRAME_STRUCTURE	*fp;
 	char		*stk;
 	int		fd;
 
@@ -249,8 +258,8 @@ void fex_log_entry(const char *msg)
 		pthread_mutex_unlock(&log_lock);
 		return;
 	}
-	stk = (char *)fp->fr_savpc;
-	fp = FRAMEP(fp->fr_savfp);
+	stk = (char *)fp->NEXT_FRAME;
+	fp = FRAMEP(fp->NEXT_FRAME);
 
 	/* if we've already logged this message here, don't make an entry */
 	if (check_exc_list(stk, (unsigned long)msg, stk, fp)) {
@@ -263,7 +272,9 @@ void fex_log_entry(const char *msg)
 	write(fd, "fex_log_entry: ", 15);
 	write(fd, msg, strlen(msg));
 	write(fd, "\n", 1);
+#if SYM_SUPPORT
 	__fex_sym_init();
+#endif
 	print_stack(fd, stk, fp);
 	pthread_mutex_unlock(&log_lock);
 }
@@ -287,9 +298,12 @@ void
 __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
     int m, void *p)
 {
-	struct	frame	*fp;
-	char		*stk, *name, buf[30];
+	FRAME_STRUCTURE	*fp;
+	char		*stk, buf[30];
 	int		fd;
+#if SYM_SUPPORT
+	char		*name;
+#endif
 
 	/* if logging is disabled, just return */
 	pthread_mutex_lock(&log_lock);
@@ -352,11 +366,13 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	write(fd, "Floating point ", 15);
 	write(fd, exception[e], strlen(exception[e]));
 	write(fd, buf, sprintf(buf, " at 0x%0" PDIG "lx", (long)addr));
+#if SYM_SUPPORT
 	__fex_sym_init();
 	if (__fex_sym(addr, &name) != NULL) {
 		write(fd, " ", 1);
 		write(fd, name, strlen(name));
 	}
+#endif
 	switch (m) {
 	case FEX_NONSTOP:
 		write(fd, ", nonstop mode\n", 15);
@@ -378,13 +394,17 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		/* fall through*/
 	default:
 		write(fd, ", handler: ", 11);
+#if SYM_SUPPORT
 		if (__fex_sym((char *)p, &name) != NULL) {
 			write(fd, name, strlen(name));
 			write(fd, "\n", 1);
 		} else {
+#endif
 			write(fd, buf, sprintf(buf, "0x%0" PDIG "lx\n",
 			    (long)p));
+#if SYM_SUPPORT
 		}
+#endif
 		break;
 	}
 	print_stack(fd, stk, fp);

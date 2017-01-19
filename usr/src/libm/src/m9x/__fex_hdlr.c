@@ -116,7 +116,7 @@ static const int te_bit[FEX_NUM_EXC] = {
 static int
 __fex_te_needed(struct fex_handler_data *thr_handlers, unsigned long fsr)
 {
-	int		i, te;
+	int		i, ex, te;
 
 	/* set traps for handling modes */
 	te = 0;
@@ -125,8 +125,6 @@ __fex_te_needed(struct fex_handler_data *thr_handlers, unsigned long fsr)
 			te |= te_bit[i];
 
 	/* add traps for retrospective diagnostics */
-	/* log disabled for now
-	int ex;
 	if (fex_get_log()) {
 		ex = (int)__fenv_get_ex(fsr);
 		if (!(ex & FE_INEXACT))
@@ -140,7 +138,6 @@ __fex_te_needed(struct fex_handler_data *thr_handlers, unsigned long fsr)
 		if (!(ex & FE_INVALID))
 			te |= (1 << fp_trap_invalid);
 	}
-	*/
 
 	return te;
 }
@@ -165,10 +162,8 @@ __fex_sync_with_libmtsk(int begin, int master)
 			(void) fesetenv(&master_env);
 		pthread_mutex_unlock(&env_lock);
 	}
-	/* log disabled for now
 	else if (master && fex_get_log())
 		__fex_update_te();
-	*/
 }
 
 /*
@@ -321,11 +316,9 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 				if ((int)simd_e[i] < 0)
 					continue;
 
-/* logging not yet implemented
 				__fex_mklog(uap, (char *)addr, accrued,
 				    simd_e[i], simd_mode[i],
 				    (void *)simd_handler[i]);
-*/
 			}
 
 			if (mode == FEX_NOHANDLER) {
@@ -390,10 +383,9 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 			ap = __fex_accrued();
 			accrued |= *ap;
 			accrued &= 0x3d;
-/* logging not yet implemented
 			__fex_mklog(uap, (char *)addr, accrued, e, mode,
 			    (void *)handler);
-*/
+
 			if (mode == FEX_NOHANDLER) {
 				__fenv_setcwsw(&oldcwsw);
 				__fenv_setmxcsr(&oldmxcsr);
@@ -479,9 +471,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 	ap = __fex_accrued();
 	accrued |= *ap;
 	accrued &= 0x3d;
-/* logging not yet implemented
 	__fex_mklog(uap, (char *)addr, accrued, e, mode, (void *)handler);
-*/
 
 	/* handle the exception based on the mode */
 	if (mode == FEX_NOHANDLER)

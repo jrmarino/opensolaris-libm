@@ -60,11 +60,8 @@ extern char *__fex_sym(char *, char **);
 */
 
 /* auxiliary functions in fex_log.c */
-/* Might be Solaris specific (sys/frame).  If not, more context and
-   mutex work required.  Suppress for now
 extern void __fex_mklog(ucontext_t *, char *, int, enum fex_exception,
 	int, void *);
-*/
 
 /* system-dependent auxiliary functions */
 extern enum fex_exception __fex_get_invalid_type(siginfo_t *, ucontext_t *);

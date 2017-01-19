@@ -54,10 +54,8 @@ int feclearexcept(int e)
 	__fenv_getfsr(&fsr);
 	__fenv_set_ex(fsr, __fenv_get_ex(fsr) & ~e);
 	__fenv_setfsr(&fsr);
-	/* log disabled for now
 	if (fex_get_log())
 		__fex_update_te();
-	*/
 	return 0;
 }
 
@@ -133,9 +131,7 @@ int fesetexceptflag(const fexcept_t *p, int e)
 	__fenv_set_ex(fsr, (((int)__fenv_get_ex(fsr) & ~e) | (*p & e)) &
 		FE_ALL_EXCEPT);
 	__fenv_setfsr(&fsr);
-	/* log disabled for now
 	if (fex_get_log())
 		__fex_update_te();
-	*/
 	return 0;
 }
