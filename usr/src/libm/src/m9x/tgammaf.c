@@ -327,7 +327,7 @@ large_gam(double x) {
 	zz = S[j] * (one + z + (z * z) * (Et1 + z * Et2));
 	GET_HIGH_WORD(hzz,zz);
 	hzz += m << 20;
-	SET_HIgH_WORD(zz,hzz);
+	SET_HIGH_WORD(zz,hzz);
 	return (zz);
 }
 /* INDENT OFF */

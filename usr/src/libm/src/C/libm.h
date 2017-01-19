@@ -203,8 +203,6 @@ __/**/sym	= sym
 #include <sunmath.h>
 #endif
 
-#endif	/* defined(_ASM) */
-
 #if defined(_BIG_ENDIAN)
 typedef union
 {
@@ -265,5 +263,7 @@ do { \
   iw_u.parts.lsw = (ix1); \
   (d) = iw_u.value; \
 } while (0)
+
+#endif	/* defined(_ASM) */
 
 #endif	/* _LIBM_H */
