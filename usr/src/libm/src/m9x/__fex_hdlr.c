@@ -248,13 +248,16 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 	unsigned long		addr;
 	siginfo_t		osip = *sip;
 	sseinst_t		inst;
+	int32_t			preserved_sw;
 	struct FPU_STRUCTURE	*fpstate;
 
 	fpstate = (struct FPU_STRUCTURE *)&uap->uc_mcontext.FPU_STATE;
 
 	/* check for an exception caused by an SSE instruction */
-	/* SunOS: "status", not "sw" */
+	/* SunOS: "status", not "sw" so for BSD check "sw and
+	          preserve a copy for later use.  */
 	if (!(fpstate->sv_env.en_sw & 0x80)) {
+		preserved_sw = fpstate->sv_env.en_sw;
 		len = __fex_parse_sse(uap, &inst);
 		if (len == 0)
 			goto not_ieee;
@@ -313,7 +316,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 				__fenv_setmxcsr(&oldmxcsr);
 				goto not_ieee;
 			}
-			accrued |= fpstate->sv_env.en_sw; /* SunOS: "status", not "sw" */
+			accrued |= preserved_sw;
 			ap = __fex_accrued();
 			accrued |= *ap;
 			accrued &= 0x3d;
@@ -387,7 +390,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 
 			addr = (unsigned long)uap->uc_mcontext.REG_PC;
 			accrued = fpstate->sv_env.en_mxcsr & ~te_bit[(int)e];
-			accrued |= fpstate->sv_env.en_sw; /* SunOS: "status", not "sw" */
+			accrued |= preserved_sw;
 			ap = __fex_accrued();
 			accrued |= *ap;
 			accrued &= 0x3d;
@@ -474,7 +477,7 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 
 	/* make an entry in the log of retro. diag. if need be */
 	addr = (unsigned long)fpstate->sv_env.en_rip;
-	accrued =  fpstate->sv_env.en_sw & ~te_bit[(int)e]; /* SunOS: "status", not "sw" */
+	accrued =  preserved_sw & ~te_bit[(int)e];
 	if (test_sse_hw)
 		accrued |= fpstate->sv_env.en_mxcsr;
 	ap = __fex_accrued();
