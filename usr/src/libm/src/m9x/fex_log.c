@@ -52,17 +52,17 @@
 #define REG_PC	mc_rip
 #define REG_SP	mc_rsp
 #define REG_FP	mc_rbp
-#define NEXT_FRAME	tf_rbp
 #define FRAME_STRUCTURE	struct trapframe
 #define FRAMEP(X)	(struct trapframe *)(X)
 # ifdef __FreeBSD__
 #define FPU_STATE	mc_fpstate
 #define FPU_STRUCTURE	savefpu
+#define NEXT_FRAME	tf_fs
 # endif
 # ifdef __DragonFly__
-#define FRAMEP(X)	(struct trapframe *)(X)
 #define FPU_STATE	mc_fpregs
 #define FPU_STRUCTURE	savexmm64
+#define NEXT_FRAME	tf_addr
 # endif
 #else
 #error Fex log not supported on this platform
