@@ -346,12 +346,11 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	}
 
 	/* make an entry */
+	line = convert_address_to_symbol (addr);
 	fd = fileno(log_fp);
 	write(fd, "Floating point ", 15);
 	write(fd, exception[e], strlen(exception[e]));
-	write(fd, buf, sprintf(buf, " at 0x%0" PDIG "lx", (long)addr));
-	line = convert_address_to_symbol (addr);
-	write(fd, " ", 1);
+	write(fd, " at ", 4);
 	write(fd, line, strlen(line));
 	switch (m) {
 	case FEX_NONSTOP:
