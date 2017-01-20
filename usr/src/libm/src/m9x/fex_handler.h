@@ -53,11 +53,8 @@ enum fex_exception {
 extern struct fex_handler_data *__fex_get_thr_handlers(void);
 extern void __fex_update_te(void);
 
-/* auxiliary functions in __fex_sym.c */
-/* requires solaris-specific procfs, suppress
-extern void __fex_sym_init(void);
-extern char *__fex_sym(char *, char **);
-*/
+/* auxiliary functions in __traceback.o */
+extern char *convert_address_to_symbol (char *address);
 
 /* auxiliary functions in fex_log.c */
 extern void __fex_mklog(ucontext_t *, char *, int, enum fex_exception,

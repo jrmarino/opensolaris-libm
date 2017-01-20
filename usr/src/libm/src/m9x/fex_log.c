@@ -68,8 +68,6 @@
 #error Fex log not supported on this platform
 #endif
 
-#define SYM_SUPPORT	0
-
 static FILE *log_fp = NULL;
 static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
 static int log_depth = 100;
@@ -208,26 +206,17 @@ static void print_stack(int fd, char *addr, FRAME_STRUCTURE *fp)
 {
 	int	i;
 	char	buf[30];
-#if SYM_SUPPORT
-	char	*name;
-#endif
+	char	*line;
 
 	for (i = 0; i < log_depth && addr != NULL; i++) {
-#if SYM_SUPPORT
-		if (__fex_sym(addr, &name) != NULL) {
-			write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx  ",
-			    (long)addr));
-			write(fd, name, strlen(name));
-			write(fd, "\n", 1);
+		line = convert_address_to_symbol (addr);
+		write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx  ", (long)addr));
+		write(fd, line, strlen(line));
+		write(fd, "\n", 1);
+/* temp -- figure out how to detect main
 			if (!strcmp(name, "main"))
 				break;
-		} else {
-#endif
-			write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx\n",
-			    (long)addr));
-#if SYM_SUPPORT
-		}
-#endif
+*/
 		if (fp == NULL)
 			break;
 		addr = (char *)fp->NEXT_FRAME;
@@ -272,9 +261,6 @@ void fex_log_entry(const char *msg)
 	write(fd, "fex_log_entry: ", 15);
 	write(fd, msg, strlen(msg));
 	write(fd, "\n", 1);
-#if SYM_SUPPORT
-	__fex_sym_init();
-#endif
 	print_stack(fd, stk, fp);
 	pthread_mutex_unlock(&log_lock);
 }
@@ -301,9 +287,7 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	FRAME_STRUCTURE	*fp;
 	char		*stk, buf[30];
 	int		fd;
-#if SYM_SUPPORT
-	char		*name;
-#endif
+	char		*line;
 
 	/* if logging is disabled, just return */
 	pthread_mutex_lock(&log_lock);
@@ -366,13 +350,9 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 	write(fd, "Floating point ", 15);
 	write(fd, exception[e], strlen(exception[e]));
 	write(fd, buf, sprintf(buf, " at 0x%0" PDIG "lx", (long)addr));
-#if SYM_SUPPORT
-	__fex_sym_init();
-	if (__fex_sym(addr, &name) != NULL) {
-		write(fd, " ", 1);
-		write(fd, name, strlen(name));
-	}
-#endif
+	line = convert_address_to_symbol (addr);
+	write(fd, " ", 1);
+	write(fd, line, strlen(line));
 	switch (m) {
 	case FEX_NONSTOP:
 		write(fd, ", nonstop mode\n", 15);
@@ -394,17 +374,9 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		/* fall through*/
 	default:
 		write(fd, ", handler: ", 11);
-#if SYM_SUPPORT
-		if (__fex_sym((char *)p, &name) != NULL) {
-			write(fd, name, strlen(name));
-			write(fd, "\n", 1);
-		} else {
-#endif
-			write(fd, buf, sprintf(buf, "0x%0" PDIG "lx\n",
-			    (long)p));
-#if SYM_SUPPORT
-		}
-#endif
+		line = convert_address_to_symbol (p);
+		write(fd, line, strlen(line));
+		write(fd, "\n", 1);
 		break;
 	}
 	print_stack(fd, stk, fp);
