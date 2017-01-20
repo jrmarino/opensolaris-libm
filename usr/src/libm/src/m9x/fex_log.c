@@ -54,15 +54,15 @@
 #define REG_FP	mc_rbp
 #define FRAME_STRUCTURE	struct trapframe
 #define FRAMEP(X)	(struct trapframe *)(X)
+#define NEXT_FRAME(fp)	(struct trapframe *)fp->tf_rbp
+#define NEXT_STACK(fp)	fp->tf_rip
 # ifdef __FreeBSD__
 #define FPU_STATE	mc_fpstate
 #define FPU_STRUCTURE	savefpu
-#define NEXT_FRAME	tf_fs
 # endif
 # ifdef __DragonFly__
 #define FPU_STATE	mc_fpregs
 #define FPU_STRUCTURE	savexmm64
-#define NEXT_FRAME	tf_addr
 # endif
 #else
 #error Fex log not supported on this platform
@@ -141,9 +141,9 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 				continue;
 			n = 1;
 			for (i = 1, f = fp;
-			  i < log_depth && i < l->nstack && f->NEXT_FRAME;
-			  i++, f = FRAMEP(f->NEXT_FRAME))
-				if (l->stack[i] != (char *)f->NEXT_FRAME) {
+			  i < log_depth && i < l->nstack && NEXT_STACK(f);
+			  i++, f = NEXT_FRAME(f))
+				if (l->stack[i] != (char *)NEXT_STACK(f)) {
 					n = 0;
 					break;
 				}
@@ -154,8 +154,8 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 
 	/* create a new exc_list structure and tack it on the list */
 	for (n = 1, f = fp;
-	  n < log_depth && f && f->NEXT_FRAME;
-	  n++, f = FRAMEP(f->NEXT_FRAME));
+	  n < log_depth && f && NEXT_STACK(f);
+	  n++, f = NEXT_FRAME(f));
 	if ((l = (struct exc_list *)malloc(sizeof(struct exc_list) +
 	    (n - 1) * sizeof(char *))) != NULL) {
 		l->next = NULL;
@@ -164,8 +164,8 @@ static int check_exc_list(char *addr, unsigned long code, char *stk,
 		l->nstack = ((log_depth < 1)? 0 : n);
 		l->stack[0] = stk;
 		for (i = 1; i < n; i++) {
-			l->stack[i] = (char *)fp->NEXT_FRAME;
-			fp = FRAMEP(fp->NEXT_FRAME);
+			l->stack[i] = (char *)NEXT_STACK(fp);
+			fp = NEXT_FRAME(f);
 		}
 		if (list)
 			ll->next = l;
@@ -219,8 +219,8 @@ static void print_stack(int fd, char *addr, FRAME_STRUCTURE *fp)
 */
 		if (fp == NULL)
 			break;
-		addr = (char *)fp->NEXT_FRAME;
-		fp = FRAMEP(fp->NEXT_FRAME);
+		addr = (char *)NEXT_STACK(fp);
+		fp = NEXT_FRAME(fp);
 	}
 }
 
@@ -247,8 +247,8 @@ void fex_log_entry(const char *msg)
 		pthread_mutex_unlock(&log_lock);
 		return;
 	}
-	stk = (char *)fp->NEXT_FRAME;
-	fp = FRAMEP(fp->NEXT_FRAME);
+	stk = (char *)NEXT_STACK(fp);
+	fp = NEXT_FRAME(fp);
 
 	/* if we've already logged this message here, don't make an entry */
 	if (check_exc_list(stk, (unsigned long)msg, stk, fp)) {
@@ -285,7 +285,7 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
     int m, void *p)
 {
 	FRAME_STRUCTURE	*fp;
-	char		*stk, buf[30];
+	char		*stk;
 	int		fd;
 	char		*line;
 
