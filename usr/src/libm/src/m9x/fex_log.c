@@ -68,6 +68,8 @@
 #error Fex log not supported on this platform
 #endif
 
+#define SUPPORT_STACK_WALKING	0
+
 static FILE *log_fp = NULL;
 static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
 static int log_depth = 100;
@@ -224,6 +226,28 @@ static void print_stack(int fd, char *addr, FRAME_STRUCTURE *fp)
 	}
 }
 
+static void
+print_previous_two_stack_addresses (int fd, char *addr, FRAME_STRUCTURE *fp) {
+	char	buf[30];
+	char	*line;
+	char	*next_addr;
+	const char	*crtstuff = "_start ";
+
+	line = convert_address_to_symbol (addr);
+	write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx  ", (long)addr));
+	write(fd, line, strlen(line));
+	write(fd, "\n", 1);
+	/* Don't print previous frame if it starts with "_start" symbol */
+	next_addr = (char *)fp->tf_rsi;
+	line = convert_address_to_symbol (next_addr);
+	if (strncmp(line, crtstuff, 7) == 0) {
+		return;
+	}
+	write(fd, buf, sprintf(buf, "  0x%0" PDIG "lx  ", (long)next_addr));
+	write(fd, line, strlen(line));
+	write(fd, "\n", 1);
+}
+
 void fex_log_entry(const char *msg)
 {
 	ucontext_t	uc;
@@ -338,12 +362,14 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		}
 	}
 
+#if SUPPORT_STACK_WALKING
 	/* if we've already logged this exception at this address,
 	   don't make an entry */
 	if (check_exc_list(addr, (unsigned long)e, stk, fp)) {
 		pthread_mutex_unlock(&log_lock);
 		return;
 	}
+#endif
 
 	/* make an entry */
 	line = convert_address_to_symbol (addr);
@@ -378,6 +404,10 @@ __fex_mklog(ucontext_t *uap, char *addr, int f, enum fex_exception e,
 		write(fd, "\n", 1);
 		break;
 	}
+#if SUPPORT_STACK_WALKING
 	print_stack(fd, stk, fp);
+#else
+	print_previous_two_stack_addresses(fd, stk, fp);
+#endif
 	pthread_mutex_unlock(&log_lock);
 }

@@ -247,8 +247,8 @@ __fex_hdlr(int sig, siginfo_t *sip, ucontext_t *uap)
 	/* check for an exception caused by an SSE instruction */
 	/* SunOS: "status", not "sw" so for BSD check "sw and
 	          preserve a copy for later use.  */
+	preserved_sw = fpstate->sv_env.en_sw;
 	if (!(fpstate->sv_env.en_sw & 0x80)) {
-		preserved_sw = fpstate->sv_env.en_sw;
 		len = __fex_parse_sse(uap, &inst);
 		if (len == 0)
 			goto not_ieee;
