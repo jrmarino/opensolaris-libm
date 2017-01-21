@@ -31,12 +31,12 @@
 	push	%rbp
 	movq	%rsp,%rbp
 
-/ on entry:
-/   %edi = n
-/   %rsi = x
-/   %edx = stridex
-/   %rcx = y
-/   %r8d = stridey
+	# on entry:
+	#   %edi = n
+	#   %rsi = x
+	#   %edx = stridex
+	#   %rcx = y
+	#   %r8d = stridey
 
 	movslq	%edx,%rdx		# sign extend and scale strides
 	shlq	$2,%rdx
@@ -51,7 +51,7 @@
 	cmpq	$4,%r8
 	jne	.nonunit
 
-/ unit-stride case
+	# unit-stride case
 	movq	%rdx,%r9
 	shlq	$2,%r9
 	movq	%r8,%r10
