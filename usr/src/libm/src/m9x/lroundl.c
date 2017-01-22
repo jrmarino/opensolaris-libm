@@ -145,7 +145,7 @@ lroundl(long double x) {
 static const long double dtype_min = LONG_MIN - 0.5;
 static const long double dtype_max = LONG_MAX + 0.5;
 
-static int
+static long
 raise_invalid_with_max_long() {
 	static const double zero = 0.0;
 	volatile double dummy  __attribute__((unused));
