@@ -64,8 +64,16 @@ lroundf(float x) {
 #else
 /* Derived from FreeBSD/DragonFly/OpenLibm (BSD licensed) */
 #include <machine/limits.h>
-static const type dtype_min = LONG_MIN - 0.5;
-static const type dtype_max = LONG_MAX + 0.5;
+static const float dtype_min = LONG_MIN - 0.5;
+static const float dtype_max = LONG_MAX + 0.5;
+
+static int
+raise_invalid_with_max_long {
+	static const double zero = 0.0;
+	volatile double dummy  __attribute__((unused));
+	dummy = zero / zero;
+	return (LONG_MAX);
+}
 
 long
 lroundf(float x) {
@@ -73,8 +81,7 @@ lroundf(float x) {
 		x = roundf(x);
 		return ((long)x);
 	} else {
-		feraiseexcept(FE_INVALID);
-		return (LONG_MAX);
+		return (raise_invalid_with_max_long);
 	}
 }
 #endif	/* defined(_ILP32) */
