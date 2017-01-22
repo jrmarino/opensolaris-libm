@@ -47,9 +47,10 @@
 void
 __vatan( int n, double * restrict x, int stridex, double * restrict y, int stridey )
 {
-  double  f, z, ans = 0.0L, ansu, ansl, tmp, poly, conup, conlo, dummy;
+  double  f, z, ans = 0.0L, ansu, ansl, tmp, poly, conup, conlo;
   double  f1,   ans1, ansu1, ansl1, tmp1, poly1, conup1, conlo1;
   double  f2,   ans2, ansu2, ansl2, tmp2, poly2, conup2, conlo2;
+  volatile double dummy __attribute__((unused));
   int index, sign, intf, intflo, intz, argcount;
   int index1, sign1 = 0;
   int index2, sign2 = 0;
@@ -93,7 +94,6 @@ __vatan( int n, double * restrict x, int stridex, double * restrict y, int strid
       else if( intf < 0x3e300000 ) 		/* avoid underflow for small arg */
       {
         dummy = 1.0e37 + f;
-        dummy = dummy;
 	ans   = f;
       }
       else if( intf > 0x43600000 )		/* avoid underflow for big arg  */
@@ -157,7 +157,6 @@ __vatan( int n, double * restrict x, int stridex, double * restrict y, int strid
       else if( intf < 0x3e300000 ) 		/* avoid underflow for small arg */
       {
         dummy = 1.0e37 + f1;
-        dummy = dummy;
 	ans   = f1;
       }
       else if( intf > 0x43600000 )		/* avoid underflow for big arg  */
@@ -226,7 +225,6 @@ __vatan( int n, double * restrict x, int stridex, double * restrict y, int strid
       else if( intf < 0x3e300000 ) 		/* avoid underflow for small arg */
       {
         dummy = 1.0e37 + f2;
-        dummy = dummy;
 	ans   = f2;
       }
       else if( intf > 0x43600000 )		/* avoid underflow for big arg  */
