@@ -67,3 +67,4 @@
 	ret
 	.align	16
 	SET_SIZE(acosl)
+	.section .note.GNU-stack,"",%progbits

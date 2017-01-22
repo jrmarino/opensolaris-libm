@@ -43,3 +43,4 @@
 	ret
 	.align	16
 	SET_SIZE(scalbnl)
+	.section .note.GNU-stack,"",%progbits

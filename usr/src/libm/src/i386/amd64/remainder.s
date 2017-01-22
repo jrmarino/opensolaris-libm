@@ -80,3 +80,4 @@
 	ret
 	.align	4
 	SET_SIZE(remainder)
+	.section .note.GNU-stack,"",%progbits

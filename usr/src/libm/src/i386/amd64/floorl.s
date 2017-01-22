@@ -80,3 +80,4 @@
 	ret
 	.align	16
 	SET_SIZE(floorl)
+	.section .note.GNU-stack,"",%progbits

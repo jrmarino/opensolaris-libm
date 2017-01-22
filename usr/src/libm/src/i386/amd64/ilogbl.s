@@ -90,3 +90,4 @@ two63:	.4byte	0x0,0x43d00000		# 2**63
 	ret
 	.align	16
 	SET_SIZE(ilogbl)
+	.section .note.GNU-stack,"",%progbits

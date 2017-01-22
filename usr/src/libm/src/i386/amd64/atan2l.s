@@ -39,3 +39,4 @@
 	ret
 	.align	16
 	SET_SIZE(atan2l)
+	.section .note.GNU-stack,"",%progbits

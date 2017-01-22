@@ -156,3 +156,4 @@
 	ret
 	.align	16
 	SET_SIZE(__swapRD)
+	.section .note.GNU-stack,"",%progbits

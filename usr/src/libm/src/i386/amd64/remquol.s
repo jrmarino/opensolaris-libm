@@ -66,3 +66,4 @@
 	ret
 	.align	16
 	SET_SIZE(remquol)
+	.section .note.GNU-stack,"",%progbits

@@ -39,3 +39,4 @@
 	ret
 	.align	16
 	SET_SIZE(logl)
+	.section .note.GNU-stack,"",%progbits

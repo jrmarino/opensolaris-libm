@@ -44,3 +44,4 @@
 	ret
 	.align	16
 	SET_SIZE(fmodl)
+	.section .note.GNU-stack,"",%progbits

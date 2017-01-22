@@ -115,3 +115,4 @@
 	ret
 	.align	16
 	SET_SIZE(signbitl)
+	.section .note.GNU-stack,"",%progbits

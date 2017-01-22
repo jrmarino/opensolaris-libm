@@ -38,3 +38,4 @@
 	ret
 	.align	16
 	SET_SIZE(fabsl)
+	.section .note.GNU-stack,"",%progbits

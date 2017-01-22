@@ -138,3 +138,4 @@ half:	.float	0.5
 	ret
 	.align	16
 	SET_SIZE(nintl)
+	.section .note.GNU-stack,"",%progbits

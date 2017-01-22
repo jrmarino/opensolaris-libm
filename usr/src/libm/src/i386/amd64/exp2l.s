@@ -98,3 +98,4 @@
 	ret
 	.align	16
 	SET_SIZE(exp2l)
+	.section .note.GNU-stack,"",%progbits

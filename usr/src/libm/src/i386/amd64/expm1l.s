@@ -128,3 +128,4 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 	ret
 	.align	16
 	SET_SIZE(expm1l)
+	.section .note.GNU-stack,"",%progbits

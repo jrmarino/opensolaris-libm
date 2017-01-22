@@ -1,3 +1,4 @@
+	.section .note.GNU-stack,"",%progbits
 /*
  * CDDL HEADER START
  *
@@ -476,3 +477,4 @@ ninfinity:
 	ret
 	.align	16
 	SET_SIZE(powl)
+	.section .note.GNU-stack,"",%progbits

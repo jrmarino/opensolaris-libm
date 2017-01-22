@@ -123,3 +123,4 @@
 	jmp	.finish
 
 	SET_SIZE(__vsqrtf)
+	.section .note.GNU-stack,"",%progbits

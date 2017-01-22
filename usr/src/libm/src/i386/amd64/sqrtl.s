@@ -38,3 +38,4 @@
 	ret
 	.align	16
 	SET_SIZE(sqrtl)
+	.section .note.GNU-stack,"",%progbits
