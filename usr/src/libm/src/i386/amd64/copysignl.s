@@ -43,3 +43,4 @@
 	ret
 	.align	16
 	SET_SIZE(copysignl)
+	.section .note.GNU-stack,"",%progbits
