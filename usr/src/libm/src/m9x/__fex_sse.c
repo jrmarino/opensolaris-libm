@@ -32,6 +32,7 @@
 #include <machine/npx.h>
 #endif
 #ifdef __FreeBSD__
+#include <stdint.h>
 #include <machine/fpu.h>
 #endif
 #include <fenv.h>
