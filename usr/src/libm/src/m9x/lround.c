@@ -97,7 +97,7 @@ lround(double x) {
 		x = round(x);
 		return ((long)x);
 	} else {
-		return (raise_invalid_with_max_long);
+		return (raise_invalid_with_max_long());
 	}
 }
 #endif	/* defined(_ILP32) */
