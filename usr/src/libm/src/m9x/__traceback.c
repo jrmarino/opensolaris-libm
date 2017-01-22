@@ -5,12 +5,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
 #include <sys/sysctl.h>
 
 #define ADDR2LINE_PROG        "/usr/bin/addr2line"
 #define MAXIMUM_PATH_LEN      1024
 #define MAXIMUM_OUTPUT_LEN    512
-#define MAXIMUM_COMMAND_SIZE 1120 
+#define MAXIMUM_COMMAND_SIZE 1120
 
 char full_path [MAXIMUM_PATH_LEN];
 char addr2line_output [MAXIMUM_OUTPUT_LEN];
@@ -20,7 +21,7 @@ void
 determine_full_path () {
   size_t len = MAXIMUM_PATH_LEN - 1;
   int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
-  
+
   if (sysctl(mib, 4, full_path, &len, NULL, 0) == 0) {
     self_path_known = 1;
   }
@@ -48,6 +49,6 @@ convert_address_to_symbol (char *address) {
   result_len = strlen(addr2line_output);
   if (result_len > 0)
     addr2line_output[result_len - 1] = 0;
-  
+
   return addr2line_output;
 }
