@@ -20,6 +20,7 @@
  */
 
 /*
+ * Copyright 2017 John R Marino <draco@marino.st>
  * Copyright 2011 Nexenta Systems, Inc.  All rights reserved.
  */
 /*
@@ -77,5 +78,19 @@ lround(double x) {
 	return ((long) xx.d);
 }
 #else
-#error Unsupported architecture
+/* Derived from FreeBSD/DragonFly/OpenLibm (BSD licensed) */
+#include <machine/limits.h>
+static const type dtype_min = LONG_MIN - 0.5;
+static const type dtype_max = LONG_MAX + 0.5;
+
+long
+lround(double x) {
+	if ((dtype_max - LONG_MAX != 0.5 || ((x) > dtype_min && (x) < dtype_max))) {
+		x = round(x);
+		return ((long)x);
+	} else {
+		feraiseexcept(FE_INVALID);
+		return (LONG_MAX);
+	}
+}
 #endif	/* defined(_ILP32) */

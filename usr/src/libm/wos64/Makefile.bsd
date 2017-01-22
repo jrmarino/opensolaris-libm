@@ -455,9 +455,6 @@ m9xOBJS_amd64	= \
 m9xOBJS_sparcv9	= \
 		#end
 
-#
-# lround.o, lroundf.o & lroundl.o are 32-bit only
-#
 # unused: __fex_sym.o (replaced by __traceback.o)
 m9xOBJS		= \
 		$(m9xOBJS_$(SUNW_ISA)) \
@@ -496,6 +493,9 @@ m9xOBJS		= \
 		lrint.o \
 		lrintf.o \
 		lrintl.o \
+		lround.o \
+		lroundf.o \
+		lroundl.o \
 		modf.o \
 		modff.o \
 		modfl.o \
