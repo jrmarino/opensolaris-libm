@@ -215,7 +215,7 @@ ninfinity:
 	jne	1f
 	fld	%st(1)			# x , y , x
 	fld	%st(0)			# x , x , y , x
-	fmul				# x^2 , y , x
+	fmulp				# x^2 , y , x
 	jmp	.signok			# check for over/underflow
 
 1:	# y is not 2

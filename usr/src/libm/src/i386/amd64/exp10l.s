@@ -53,19 +53,19 @@ lt2_lo:	.4byte	0x653f4837, 0x8677076a, 0xbfc9, 0x0
 	fldt	8(%rsp)			# x
 	fld	%st(0)			# x, x
 	fldl2t				# log2(10), x, x
-	fmul				# z := x*log2(10), x
+	fmulp				# z := x*log2(10), x
 	frndint				# [z], x
 	fst	%st(2)			# [z], x, [z]
 	PIC_SETUP(1)
 	fldt	PIC_L(lt2_hi)		# lt2_hi, [z], x, [z]
-	fmul				# [z]*lt2_hi, x, [z]
+	fmulp				# [z]*lt2_hi, x, [z]
 	fsubrp	%st,%st(1)		# x-[z]*lt2_hi, [z]
 	fldt	PIC_L(lt2_lo)		# lt2_lo, x-[z]*lt2_hi, [z]
 	PIC_WRAPUP
-	fmul	%st(2),%st		# [z]*lt2_lo, x-[z]*lt2_hi, [z]
+	fmulp	%st(2),%st		# [z]*lt2_lo, x-[z]*lt2_hi, [z]
 	fsubrp	%st,%st(1)		# r := x-[z]*log10(2), [z]
 	fldl2t				# log2(10), r, [z]
-	fmul				# f := r*log2(10), [z]
+	fmulp				# f := r*log2(10), [z]
 	f2xm1				# 2^f-1,[z]
 	fld1				# 1, 2^f-1, [z]
 	faddp	%st,%st(1)		# 2^f, [z]
@@ -87,7 +87,7 @@ lt2_lo:	.4byte	0x653f4837, 0x8677076a, 0xbfc9, 0x0
 	# whence z is in f2xm1's domain.
 	fldt	8(%rsp)			# x
 	fldl2t				# log2(10), x
-	fmul				# z := x*log2(10)
+	fmulp				# z := x*log2(10)
 	f2xm1				# 2^z-1
 	fld1				# 1, 2^z-1
 	faddp	%st,%st(1)		# 10^x

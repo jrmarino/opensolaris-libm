@@ -55,7 +55,7 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 	fldt	8(%rsp)			# x
 	fld	%st(0)			# x, x
 	fldl2e				# log2(e), x, x
-	fmul				# z := x*log2(e), x
+	fmulp				# z := x*log2(e), x
 	frndint				# [z], x
 	fst	%st(2)			# [z], x, [z]
 #ifdef PIC	/* PIC-L macro */
@@ -63,17 +63,17 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 #else
 	fldt	ln2_hi			# ln2_hi, [z], x, [z]
 #endif
-	fmul				# [z]*ln2_hi, x, [z]
+	fmulp				# [z]*ln2_hi, x, [z]
 	fsubrp	%st,%st(1)		# x-[z]*ln2_hi, [z]
 #ifdef PIC	/* PIC-L macro */
 	fldt	ln2_lo(%rip)		# ln2_lo, x-[z]*ln2_hi, [z]
 #else
 	fldt	ln2_lo			# ln2_lo, x-[z]*ln2_hi, [z]
 #endif
-	fmul	%st(2),%st		# [z]*ln2_lo, x-[z]*ln2_hi, [z]
+	fmulp	%st(2),%st		# [z]*ln2_lo, x-[z]*ln2_hi, [z]
 	fsubrp	%st,%st(1)		# r := x-[z]*ln(2), [z]
 	fldl2e				# log2(e), r, [z]
-	fmul				# f := r*log2(e), [z]
+	fmulp				# f := r*log2(e), [z]
 	f2xm1				# 2^f-1,[z]
 	fld1				# 1, 2^f-1, [z]
 	faddp	%st,%st(1)		# 2^f, [z]
@@ -103,7 +103,7 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 	# whence z is in f2xm1's domain.
 	fldt	8(%rsp)			# x
 	fldl2e				# log2(e), x
-	fmul				# x*log2(e)
+	fmulp				# x*log2(e)
 	f2xm1				# 2^(x*log2(e))-1 = e^x-1
 	fld1				# 1, e^x-1
 	faddp	%st,%st(1)		# e^x
