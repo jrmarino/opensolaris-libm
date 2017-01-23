@@ -63,7 +63,7 @@ lroundf(float x) {
 }
 #else
 /* Derived from FreeBSD/DragonFly/OpenLibm (BSD licensed) */
-#include <machine/limits.h>
+#include <sys/limits.h>
 static const float dtype_min = LONG_MIN - 0.5;
 static const float dtype_max = LONG_MAX + 0.5;
 

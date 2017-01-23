@@ -141,7 +141,7 @@ lroundl(long double x) {
 #endif	/* defined(__sparc) || defined(__x86) */
 #else
 /* Derived from FreeBSD/DragonFly/OpenLibm (BSD licensed) */
-#include <machine/limits.h>
+#include <sys/limits.h>
 static const long double dtype_min = LONG_MIN - 0.5;
 static const long double dtype_max = LONG_MAX + 0.5;
 

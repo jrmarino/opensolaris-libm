@@ -79,7 +79,7 @@ lround(double x) {
 }
 #else
 /* Derived from FreeBSD/DragonFly/OpenLibm (BSD licensed) */
-#include <machine/limits.h>
+#include <sys/limits.h>
 static const double dtype_min = LONG_MIN - 0.5;
 static const double dtype_max = LONG_MAX + 0.5;
 
