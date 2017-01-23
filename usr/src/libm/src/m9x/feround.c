@@ -30,8 +30,6 @@
 #pragma weak __fegetround = fegetround
 #pragma weak __fesetround = fesetround
 
-#pragma weak fegetround96 = __fegetround
-
 #include <fenv.h>
 #include <ucontext.h>
 #include <pthread.h>
