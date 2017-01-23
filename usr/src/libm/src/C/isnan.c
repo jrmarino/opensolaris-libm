@@ -24,13 +24,10 @@
  */
 
 
-/*
- * isnan always provided by libm_inlines.h (through libm.h)
- * #pragma weak isnan = __isnan
- */
-#pragma weak _isnan = __isnan
-#pragma weak _isnand = __isnan
-#pragma weak isnand = __isnan
+#pragma weak __isnan = isnan
+#pragma weak _isnan = isnan
+#pragma weak _isnand = isnan
+#pragma weak isnand = isnan
 
 #include "libm.h"
 
@@ -41,7 +38,7 @@
  * be better to use 32-bit code, but we have assembly for x86.
  */
 int
-__isnan(double x) {
+isnan(double x) {
 	long long	llx;
 
 	llx = *(long long *)&x & ~0x8000000000000000ull;
