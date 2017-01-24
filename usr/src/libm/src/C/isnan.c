@@ -31,6 +31,7 @@
 
 #include "libm.h"
 
+#ifndef isnan	/* usually defined by iso/math_c99.h */
 /*
  * The following implementation assumes fast 64-bit integer arith-
  * metic.  This is fine for sparc because we build libm in v8plus
@@ -44,3 +45,4 @@ isnan(double x) {
 	llx = *(long long *)&x & ~0x8000000000000000ull;
 	return ((unsigned long long)(0x7ff0000000000000ll - llx) >> 63);
 }
+#endif
