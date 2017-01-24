@@ -77,9 +77,9 @@ extern "C" {
 #define	isnormal(x)	__extension__( \
 			{ __typeof(x) __x_r = (x); isfinite(__x_r) && \
 			(sizeof (__x_r) == sizeof (float) ? \
-			__builtin_fabsf(__x_r) >= __FLT_MIN__ : \
+			__builtin_fabsf((float)__x_r) >= __FLT_MIN__ : \
 			sizeof (__x_r) == sizeof (double) ? \
-			__builtin_fabs(__x_r) >= __DBL_MIN__ : \
+			__builtin_fabs((double)__x_r) >= __DBL_MIN__ : \
 			__builtin_fabsl(__x_r) >= __LDBL_MIN__); })
 #undef	fpclassify
 #define	fpclassify(x)	__extension__( \
