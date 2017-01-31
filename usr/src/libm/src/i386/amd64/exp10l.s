@@ -62,7 +62,7 @@ lt2_lo:	.4byte	0x653f4837, 0x8677076a, 0xbfc9, 0x0
 	fsubrp	%st,%st(1)		# x-[z]*lt2_hi, [z]
 	fldt	PIC_L(lt2_lo)		# lt2_lo, x-[z]*lt2_hi, [z]
 	PIC_WRAPUP
-	fmulp	%st(2),%st		# [z]*lt2_lo, x-[z]*lt2_hi, [z]
+	fmulp	%st,%st(2)		# [z]*lt2_lo, x-[z]*lt2_hi, [z]
 	fsubrp	%st,%st(1)		# r := x-[z]*log10(2), [z]
 	fldl2t				# log2(10), r, [z]
 	fmulp				# f := r*log2(10), [z]

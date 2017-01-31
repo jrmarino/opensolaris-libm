@@ -70,7 +70,7 @@ ln2_lo:	.4byte	0x4c67fc0d, 0x8654361c, 0xbfce, 0x0
 #else
 	fldt	ln2_lo			# ln2_lo, x-[z]*ln2_hi, [z]
 #endif
-	fmulp	%st(2),%st		# [z]*ln2_lo, x-[z]*ln2_hi, [z]
+	fmulp	%st,%st(2)		# [z]*ln2_lo, x-[z]*ln2_hi, [z]
 	fsubrp	%st,%st(1)		# r := x-[z]*ln(2), [z]
 	fldl2e				# log2(e), r, [z]
 	fmulp				# f := r*log2(e), [z]
